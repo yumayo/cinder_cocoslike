@@ -37,6 +37,10 @@ std::list<std::shared_ptr<network_object>>::iterator network_factory::find_netwo
     }
     return std::end( _network_objects );
 }
+std::list<std::shared_ptr<network_object>>& network_factory::get_clients( )
+{
+    return _network_objects;
+}
 void network_factory::update( float delta_second )
 {
     utility::scoped_mutex mutex( _connection.get_mutex( ) );

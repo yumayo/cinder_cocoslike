@@ -49,6 +49,7 @@ public:
 
     void update( float delta_second );
 
+    std::list<std::shared_ptr<network_object>>& get_clients( );
     utility::recursion_usable_mutex& get_mutex( );
 private:
     // エントリーポイント

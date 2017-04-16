@@ -123,6 +123,10 @@ void udp_connection::member::_receive( )
         }
     } );
 }
+std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients( )
+{
+    return _client_manager.get_clients( );
+}
 utility::recursion_usable_mutex & udp_connection::member::get_mutex( )
 {
     return _mutex;

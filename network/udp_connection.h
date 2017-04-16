@@ -20,6 +20,7 @@ public:
     void write( network_handle const& handle, std::string const& send_data );
     void write( network_handle const& handle, char const* send_data );
     void write( network_handle const& handle, char const* send_data, size_t send_data_byte );
+    std::list<std::shared_ptr<network_object>>& get_clients( );
     utility::recursion_usable_mutex& get_mutex( );
 public:
     void update( float delta_second ) override;
