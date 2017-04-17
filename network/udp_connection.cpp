@@ -42,10 +42,6 @@ std::list<std::shared_ptr<network_object>>& udp_connection::get_clients( )
 {
     return _m->get_clients( );
 }
-utility::recursion_usable_mutex & udp_connection::get_mutex( )
-{
-    return _m->get_mutex( );
-}
 void udp_connection::close( )
 {
     _m->close( );

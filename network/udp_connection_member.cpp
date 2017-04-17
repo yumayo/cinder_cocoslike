@@ -10,19 +10,18 @@ udp_connection::member::member( udp_connection & server, udp::endpoint const & e
 {
     _remote_buffer.fill( 0 );
 
-    _receive( );
-
     _update_io_service = std::thread( [ this ]
     {
         while ( !_is_pause )
         {
+            _receive( );
             _io_service.run( );
             _io_service.reset( );
         }
     } );
 }
 udp_connection::member::member( udp_connection & server )
-    : udp_connection::member( server, udp::endpoint( )/*空のendpointを送るとopenやlocal_endpointも設定してくれるようです。*/ )
+    : udp_connection::member( server, udp::endpoint( udp::v4( ), 0 ) )
 {
 }
 udp_connection::member::member( udp_connection& server, int const & port_num )
@@ -55,16 +54,16 @@ void udp_connection::member::write( network_handle const & handle, char const * 
                                     boost::lexical_cast<std::string>( handle->port ) );
         _udp_socket.send_to( asio::buffer( send_data, send_data_byte ),
                              resolver.resolve( query )->endpoint( ) );
-        utility::log_network( _remote_endpoint.address( ).to_string( ), _remote_endpoint.port( ),
+        utility::log_network( handle->ip_address, handle->port,
                               "データを送信しました。" );
+        if ( _connection.on_sended )_connection.on_sended( );
     }
     catch ( asio::error_code& error )
     {
-        utility::log_network( _remote_endpoint.address( ).to_string( ), _remote_endpoint.port( ),
+        utility::log_network( handle->ip_address, handle->port,
                               "データを送れませんでした。: %s", error.message( ).c_str( ) );
         if ( _connection.on_send_failed )_connection.on_send_failed( );
     }
-    if ( _connection.on_sended )_connection.on_sended( );
 }
 void udp_connection::member::close( )
 {
@@ -80,8 +79,9 @@ void udp_connection::member::open( )
     _io_service.restart( );
     _update_io_service = std::thread( [ this ]
     {
-        while ( !_io_service.stopped( ) )
+        while ( !_is_pause )
         {
+            _receive( );
             _io_service.run( );
             _io_service.reset( );
         }
@@ -95,21 +95,27 @@ void udp_connection::member::update( float delta_second )
 
     for ( auto& data : _receive_deque )
     {
+        utility::log_network( data.first.address( ).to_string( ), data.first.port( ),
+                              "データを受信しました。" );
+        auto handle = _network_factory.regist( data.first.address( ).to_string( ),
+                                               data.first.port( ) );
+        handle->timeout_restart( );
+
         // データを受け取ったら呼び出されます。
-        if ( _connection.on_received ) _connection.on_received( data.first,
+        if ( _connection.on_received ) _connection.on_received( handle,
                                                                 data.second.data( ), data.second.size( ) );
 
         Json::Value root;
         if ( Json::Reader( ).parse( std::string( data.second.data( ), data.second.size( ) ), root ) )
         {
             // 通常用のjson関数を呼び出します。
-            if ( _connection.on_received_json )_connection.on_received_json( data.first, root );
+            if ( _connection.on_received_json )_connection.on_received_json( handle, root );
 
             // map式のjson関数を呼び出します。
             auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
             if ( itr != std::end( _connection.on_received_named_json ) )
             {
-                if ( itr->second ) itr->second( data.first, root );
+                if ( itr->second ) itr->second( handle, root );
             }
         }
     }
@@ -131,28 +137,14 @@ void udp_connection::member::_receive( )
         {
             utility::scoped_mutex m( _mutex );
 
-            utility::log_network( _remote_endpoint.address( ).to_string( ), _remote_endpoint.port( ),
-                                  "データを受信しました。" );
-
-            auto handle = _network_factory.regist( _remote_endpoint.address( ).to_string( ),
-                                                   _remote_endpoint.port( ) );
-            handle->timeout_restart( );
-
-            _receive_deque.emplace_back( std::make_pair( handle, std::vector<char>( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred ) ) );
+            _receive_deque.emplace_back( std::make_pair( _remote_endpoint, std::vector<char>( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred ) ) );
 
             std::fill_n( _remote_buffer.begin( ), bytes_transferred, 0 );
-
-            // 再帰呼び出しですが、非同期なので大丈夫です。
-            _receive( );
         }
     } );
 }
 std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients( )
 {
     return _network_factory.get_clients( );
-}
-utility::recursion_usable_mutex & udp_connection::member::get_mutex( )
-{
-    return _mutex;
 }
 }

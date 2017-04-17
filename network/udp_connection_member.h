@@ -35,7 +35,7 @@ class udp_connection::member
     // 繋がったオブジェクトたちを保存しておきます。
     network_factory _network_factory;
 
-    std::deque<std::pair<network_handle, std::vector<char>>> _receive_deque;
+    std::deque<std::pair<udp::endpoint, std::vector<char>>> _receive_deque;
 private:
     member( udp_connection& server, udp::endpoint const& end_point );
 public:
@@ -53,7 +53,6 @@ public:
     void open( );
 
     std::list<std::shared_ptr<network_object>>& get_clients( );
-    utility::recursion_usable_mutex& get_mutex( );
 
     void update( float delta_second );
 private:
