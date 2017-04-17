@@ -22,10 +22,12 @@ public:
     void write( network_handle const& handle, char const* send_data, size_t send_data_byte );
     std::list<std::shared_ptr<network_object>>& get_clients( );
     utility::recursion_usable_mutex& get_mutex( );
+    void close( );
+    void open( );
 public:
     void update( float delta_second ) override;
 public:
-    // 以下3つは別スレッドでの呼び出しなのでnetwork_handleを扱う際に、mutexを付けて変数を操作してください。
+    // receive関係は別スレッドでの呼び出しなのでnetwork_handleを扱う際に、mutexを付けて変数を操作してください。
 
     std::function<void( network_handle handle, 
                         char const* received_data, 
@@ -34,7 +36,7 @@ public:
                         Json::Value root )> on_received_json;
     std::map<std::string, std::function<void( network_handle handle,
                                               Json::Value root )>> on_received_named_json;
-    std::function<void( )> on_read_failed;
+    std::function<void( )> on_receive_failed;
 
     std::function<void( )> on_sended;
     std::function<void( )> on_send_failed;

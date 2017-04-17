@@ -29,11 +29,13 @@ class udp_connection::member
 
     // 非同期的に受信をしないとプログラムが止まってしまうので。
     std::thread _update_io_service;
-    bool _is_update = true;
+    bool _is_pause = false;
     utility::recursion_usable_mutex _mutex;
 
     // 繋がったオブジェクトたちを保存しておきます。
-    network_factory _client_manager;
+    network_factory _network_factory;
+
+    std::deque<std::pair<network_handle, std::vector<char>>> _receive_deque;
 private:
     member( udp_connection& server, udp::endpoint const& end_point );
 public:
@@ -47,13 +49,15 @@ public:
     void write( network_handle const& handle, char const* send_data );
     void write( network_handle const& handle, char const* send_data, size_t const& send_data_byte );
 
-    void update( float delta_second );
+    void close( );
+    void open( );
 
     std::list<std::shared_ptr<network_object>>& get_clients( );
     utility::recursion_usable_mutex& get_mutex( );
+
+    void update( float delta_second );
 private:
     // エントリーポイント
     void _receive( );
-    void _kill( );
 };
 }

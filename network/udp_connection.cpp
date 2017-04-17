@@ -46,6 +46,14 @@ utility::recursion_usable_mutex & udp_connection::get_mutex( )
 {
     return _m->get_mutex( );
 }
+void udp_connection::close( )
+{
+    _m->close( );
+}
+void udp_connection::open( )
+{
+    _m->open( );
+}
 void udp_connection::update( float delta_second )
 {
     _m->update( delta_second );

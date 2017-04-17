@@ -6,7 +6,7 @@ namespace network
 udp_connection::member::member( udp_connection & server, udp::endpoint const & end_point )
     : _connection( server )
     , _udp_socket( _io_service, end_point )
-    , _client_manager( server )
+    , _network_factory( server )
 {
     _remote_buffer.fill( 0 );
 
@@ -14,7 +14,7 @@ udp_connection::member::member( udp_connection & server, udp::endpoint const & e
 
     _update_io_service = std::thread( [ this ]
     {
-        while ( _is_update )
+        while ( !_is_pause )
         {
             _io_service.run( );
             _io_service.reset( );
@@ -31,7 +31,7 @@ udp_connection::member::member( udp_connection& server, int const & port_num )
 }
 udp_connection::member::~member( )
 {
-    _kill( );
+    close( );
 }
 void udp_connection::member::write( network_handle const & handle, Json::Value const & send_data )
 {
@@ -66,16 +66,54 @@ void udp_connection::member::write( network_handle const & handle, char const * 
     }
     if ( _connection.on_sended )_connection.on_sended( );
 }
-void udp_connection::member::_kill( )
+void udp_connection::member::close( )
 {
-    if ( !_is_update ) return;
-    _is_update = false;
+    _is_pause = true;
     _io_service.stop( );
     _update_io_service.join( );
+    _udp_socket.close( );
+}
+void udp_connection::member::open( )
+{
+    _is_pause = false;
+    _udp_socket.open( udp::v4( ) );
+    _io_service.restart( );
+    _update_io_service = std::thread( [ this ]
+    {
+        while ( !_io_service.stopped( ) )
+        {
+            _io_service.run( );
+            _io_service.reset( );
+        }
+    } );
 }
 void udp_connection::member::update( float delta_second )
 {
-    _client_manager.update( delta_second );
+    utility::scoped_mutex m( _mutex );
+
+    _network_factory.update( delta_second );
+
+    for ( auto& data : _receive_deque )
+    {
+        // データを受け取ったら呼び出されます。
+        if ( _connection.on_received ) _connection.on_received( data.first,
+                                                                data.second.data( ), data.second.size( ) );
+
+        Json::Value root;
+        if ( Json::Reader( ).parse( std::string( data.second.data( ), data.second.size( ) ), root ) )
+        {
+            // 通常用のjson関数を呼び出します。
+            if ( _connection.on_received_json )_connection.on_received_json( data.first, root );
+
+            // map式のjson関数を呼び出します。
+            auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
+            if ( itr != std::end( _connection.on_received_named_json ) )
+            {
+                if ( itr->second ) itr->second( data.first, root );
+            }
+        }
+    }
+    _receive_deque.clear( );
 }
 void udp_connection::member::_receive( )
 {
@@ -87,34 +125,20 @@ void udp_connection::member::_receive( )
         {
             utility::log_network( _remote_endpoint.address( ).to_string( ), _remote_endpoint.port( ),
                                   "データを受け取れませんでした。: %s", e.message( ).c_str( ) );
-            if ( _connection.on_read_failed ) _connection.on_read_failed( );
+            if ( _connection.on_receive_failed ) _connection.on_receive_failed( );
         }
         else
         {
+            utility::scoped_mutex m( _mutex );
+
             utility::log_network( _remote_endpoint.address( ).to_string( ), _remote_endpoint.port( ),
                                   "データを受信しました。" );
 
-            auto handle = _client_manager.regist( _remote_endpoint.address( ).to_string( ),
-                                                  _remote_endpoint.port( ) );
+            auto handle = _network_factory.regist( _remote_endpoint.address( ).to_string( ),
+                                                   _remote_endpoint.port( ) );
             handle->timeout_restart( );
 
-            // データを受け取ったら呼び出されます。
-            if ( _connection.on_received ) _connection.on_received( handle,
-                                                                    _remote_buffer.data( ), bytes_transferred );
-
-            Json::Value root;
-            if ( Json::Reader( ).parse( std::string( _remote_buffer.data( ), bytes_transferred ), root ) )
-            {
-                // 通常用のjson関数を呼び出します。
-                if ( _connection.on_received_json )_connection.on_received_json( handle, root );
-                
-                // map式のjson関数を呼び出します。
-                auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
-                if ( itr != std::end( _connection.on_received_named_json ) )
-                {
-                    if ( itr->second ) itr->second( handle, root );
-                }
-            }
+            _receive_deque.emplace_back( std::make_pair( handle, std::vector<char>( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred ) ) );
 
             std::fill_n( _remote_buffer.begin( ), bytes_transferred, 0 );
 
@@ -125,7 +149,7 @@ void udp_connection::member::_receive( )
 }
 std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients( )
 {
-    return _client_manager.get_clients( );
+    return _network_factory.get_clients( );
 }
 utility::recursion_usable_mutex & udp_connection::member::get_mutex( )
 {
