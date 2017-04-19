@@ -3,6 +3,7 @@
 class app_delegate : public cinder::app::App
 {
 private:
+    static void entry_point( );
     void setup( ) override;
     void cleanup( ) override;
     void update( ) override;

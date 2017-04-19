@@ -8,6 +8,7 @@ int const app_delegate::_INVALID_ID = -1;
 void app_delegate::setup( )
 {
     utility::log( "stand by ready!" );
+    app_delegate::entry_point( );
 }
 void app_delegate::cleanup( )
 {
