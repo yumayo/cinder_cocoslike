@@ -1,11 +1,6 @@
 ﻿#include "tcp_client.h"
-#ifndef ASIO_HAS_STD_ATOMIC
-#define ASIO_HAS_STD_ATOMIC
-#endif
-#define ASIO_HAS_BOOST_DATE_TIME
-#define BOOST_DATE_TIME_NO_LIB
-#include "asio/asio.hpp"
-using asio::ip::tcp;
+#include "boost/asio.hpp"
+using boost::asio::ip::tcp;
 #include "boost/lexical_cast.hpp"
 #include "boost/bind.hpp"
 #include "utility/assert_log.h"
@@ -25,11 +20,11 @@ struct tcp_client::_member
     }
     tcp_client& parent;
     void connect( );
-    void write( asio::const_buffers_1 buffer, std::function<void( )> on_send );
+    void write( boost::asio::const_buffers_1 buffer, std::function<void( )> on_send );
     void read( );
     void close( );
-    void error( asio::error_code const& error );
-    asio::io_service io;
+    void error( boost::system::error_code const& error );
+    boost::asio::io_service io;
     tcp::socket socket;
     boost::array<char, 512> buffer;
     std::string ip_address;
@@ -38,8 +33,8 @@ struct tcp_client::_member
 void tcp_client::_member::connect( )
 {
     socket.async_connect(
-        tcp::endpoint( asio::ip::address::from_string( ip_address ), boost::lexical_cast<int>( port ) ),
-        [ this ] ( const asio::error_code& e )
+        tcp::endpoint( boost::asio::ip::address::from_string( ip_address ), boost::lexical_cast<int>( port ) ),
+        [ this ] ( const boost::system::error_code& e )
     {
         if ( e )
         {
@@ -54,12 +49,12 @@ void tcp_client::_member::connect( )
         }
     } );
 }
-void tcp_client::_member::write( asio::const_buffers_1 buffer, std::function<void( )> on_send )
+void tcp_client::_member::write( boost::asio::const_buffers_1 buffer, std::function<void( )> on_send )
 {
-    asio::async_write(
+    boost::asio::async_write(
         socket,
         buffer,
-        [ this, on_send, buffer ] ( const asio::error_code& e, size_t bytes_transferred )
+        [ this, on_send, buffer ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
@@ -76,15 +71,15 @@ void tcp_client::_member::write( asio::const_buffers_1 buffer, std::function<voi
 }
 void tcp_client::_member::read( )
 {
-    asio::async_read(
+    boost::asio::async_read(
         socket,
-        asio::buffer( buffer ),
-        asio::transfer_at_least( 1 ),
-        [ this ] ( const asio::error_code& e, size_t bytes_transferred )
+        boost::asio::buffer( buffer ),
+        boost::asio::transfer_at_least( 1 ),
+        [ this ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
-            if ( e == asio::error::eof )
+            if ( e == boost::asio::error::eof )
             {
                 log( "【tcp_client】サーバーが接続を切りました。: %s", e.message( ).c_str( ) );
                 if ( parent.on_disconnected ) parent.on_disconnected( );
@@ -113,7 +108,7 @@ void tcp_client::_member::close( )
     if ( parent.on_closed ) parent.on_closed( );
     socket.close( );
 }
-void tcp_client::_member::error( asio::error_code const& e )
+void tcp_client::_member::error( boost::system::error_code const& e )
 {
     if ( parent.on_errored ) parent.on_errored( e );
 }
@@ -149,6 +144,6 @@ void tcp_client::write( std::string const & message, std::function<void( )> on_s
 void tcp_client::write( char const * message, size_t size, std::function<void( )> on_send )
 {
     log( "【tcp_client】送信中..." );
-    _m->write( asio::buffer( message, size ), on_send );
+    _m->write( boost::asio::buffer( message, size ), on_send );
 }
 }

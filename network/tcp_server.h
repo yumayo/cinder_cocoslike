@@ -1,6 +1,6 @@
 #pragma once
 #include "node.h"
-#include "asio/error.hpp"
+#include "boost/system/error_code.hpp"
 #include "client_handle.h"
 namespace network
 {
@@ -25,6 +25,6 @@ public:
     std::function<void( client_handle const& )> on_send_failed;
     std::function<void( client_handle const&, char const*, size_t )> on_readed;
     std::function<void( client_handle const& )> on_client_disconnected;
-    std::function<void( client_handle const&, asio::error_code const& )> on_errored;
+    std::function<void( client_handle const&, boost::system::error_code const& )> on_errored;
 };
 }

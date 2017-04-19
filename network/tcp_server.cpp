@@ -1,11 +1,6 @@
 ﻿#include "tcp_server.h"
-#ifndef ASIO_HAS_STD_ATOMIC
-#define ASIO_HAS_STD_ATOMIC
-#endif
-#define ASIO_HAS_BOOST_DATE_TIME
-#define BOOST_DATE_TIME_NO_LIB
-#include "asio/asio.hpp"
-using asio::ip::tcp;
+#include "boost/asio.hpp"
+using boost::asio::ip::tcp;
 #include "boost/lexical_cast.hpp"
 #include "boost/bind.hpp"
 #include "utility/assert_log.h"
@@ -20,7 +15,7 @@ class socket_object
 public:
     socket_object( ) = delete;
     socket_object( socket_object const& ) = delete;
-    socket_object( asio::io_service& io )
+    socket_object( boost::asio::io_service& io )
         : socket( io )
         , handle( _ip_address, _port )
     {
@@ -73,13 +68,13 @@ struct tcp_server::_member
     }
     void async_accept( socket_object& sock_obj );
     bool is_max( );
-    void write( socket_object& sock_obj, asio::const_buffers_1 buffer, std::function<void( )> on_send );
+    void write( socket_object& sock_obj, boost::asio::const_buffers_1 buffer, std::function<void( )> on_send );
     void read( socket_object& sock_obj );
-    void on_errored( socket_object& sock_obj, asio::error_code const& e );
+    void on_errored( socket_object& sock_obj, boost::system::error_code const& e );
     void close_with_async( socket_object& sock_obj );
     void find_run( client_handle const& handle, std::function<void( socket_object& )> call );
     tcp_server& parent;
-    asio::io_service io;
+    boost::asio::io_service io;
     std::unique_ptr<tcp::acceptor> acceptor;
     std::vector<std::unique_ptr<socket_object>> sockets;
     std::string port;
@@ -87,7 +82,7 @@ struct tcp_server::_member
 void tcp_server::_member::async_accept( socket_object& sock_obj )
 {
     log( "【tcp_server】ソケットの準備" );
-    acceptor->async_accept( sock_obj.socket, [ this, &sock_obj ] ( asio::error_code const& e )
+    acceptor->async_accept( sock_obj.socket, [ this, &sock_obj ] ( boost::system::error_code const& e )
     {
         if ( e )
         {
@@ -122,15 +117,15 @@ bool tcp_server::_member::is_max( )
 }
 void tcp_server::_member::read( socket_object & sock_obj )
 {
-    asio::async_read(
+    boost::asio::async_read(
         sock_obj.socket,
-        asio::buffer( sock_obj.buffer ),
-        asio::transfer_at_least( 1 ), // １バイトでもデータが送られてきたら、読み込みを開始します。
-        [ this, &sock_obj ] ( const asio::error_code& e, size_t bytes_transferred )
+        boost::asio::buffer( sock_obj.buffer ),
+        boost::asio::transfer_at_least( 1 ), // １バイトでもデータが送られてきたら、読み込みを開始します。
+        [ this, &sock_obj ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
-            if ( e == asio::error::eof )
+            if ( e == boost::asio::error::eof )
             {
                 log( "【tcp_server】クライアントが接続を切りました。: %s", e.message( ).c_str( ) );
                 if ( parent.on_client_disconnected ) parent.on_client_disconnected( sock_obj.handle );
@@ -154,12 +149,12 @@ void tcp_server::_member::read( socket_object & sock_obj )
         }
     } );
 }
-void tcp_server::_member::write( socket_object& sock_obj, asio::const_buffers_1 buffer, std::function<void( )> on_send )
+void tcp_server::_member::write( socket_object& sock_obj, boost::asio::const_buffers_1 buffer, std::function<void( )> on_send )
 {
-    asio::async_write(
+    boost::asio::async_write(
         sock_obj.socket,
         buffer,
-        [ this, &sock_obj, on_send, buffer ] ( const asio::error_code& e, size_t bytes_transferred )
+        [ this, &sock_obj, on_send, buffer ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
@@ -173,7 +168,7 @@ void tcp_server::_member::write( socket_object& sock_obj, asio::const_buffers_1 
         }
     } );
 }
-void tcp_server::_member::on_errored( socket_object& sock_obj, asio::error_code const & e )
+void tcp_server::_member::on_errored( socket_object& sock_obj, boost::system::error_code const & e )
 {
     if ( parent.on_errored ) parent.on_errored( sock_obj.handle, e );
 }
@@ -233,7 +228,7 @@ void tcp_server::write( client_handle const& handle, char const * message, size_
 {
     _m->find_run( handle, [ this, message, size, on_send ] ( socket_object& sock_obj )
     {
-        _m->write( sock_obj, asio::buffer( message, size ), on_send );
+        _m->write( sock_obj, boost::asio::buffer( message, size ), on_send );
     } );
 }
 void tcp_server::speech( std::string const & message, std::function<void( )> on_send )
@@ -244,7 +239,7 @@ void tcp_server::speech( char const * message, size_t size, std::function<void( 
 {
     for ( auto& obj : _m->sockets )
     {
-        _m->write( *obj, asio::buffer( message, size ), on_send );
+        _m->write( *obj, boost::asio::buffer( message, size ), on_send );
     }
 }
 void tcp_server::close( client_handle const& handle )

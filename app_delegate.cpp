@@ -3,13 +3,11 @@
 #include "user_default.h"
 #include "utility/assert_log.h"
 #include "cinder/gl/gl.h"
-#include "../src/main.h"
+#define safe_top_scene if ( auto& top = scene_manager::get_instans( )->top( ) ) top
 int const app_delegate::_INVALID_ID = -1;
 void app_delegate::setup( )
 {
     utility::log( "stand by ready!" );
-    entry_point( );
-    scene_manager::get_instans( )->update( );
 }
 void app_delegate::cleanup( )
 {
@@ -19,29 +17,29 @@ void app_delegate::cleanup( )
 void app_delegate::update( )
 {
     auto delta = (float)getElapsedSeconds( ) - (float)_prev_second;
-    scene_manager::get_instans( )->top( )->_update( delta );
+    safe_top_scene->_update( delta );
     _prev_second = getElapsedSeconds( );
     scene_manager::get_instans( )->update( );
 }
 void app_delegate::draw( )
 {
     cinder::gl::clear( cinder::ColorA( 0.1, 0.1, 0.1, 1.0 ) );
-    scene_manager::get_instans( )->top( )->_render( );
+    safe_top_scene->_render( );
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {
     if ( isMultiTouchEnabled( ) ) return;
-    scene_manager::get_instans( )->top( )->_mouse_began( event );
+    safe_top_scene->_mouse_began( event );
 }
 void app_delegate::mouseDrag( cinder::app::MouseEvent event )
 {
     if ( isMultiTouchEnabled( ) ) return;
-    scene_manager::get_instans( )->top( )->_mouse_moved( event );
+    safe_top_scene->_mouse_moved( event );
 }
 void app_delegate::mouseUp( cinder::app::MouseEvent event )
 {
     if ( isMultiTouchEnabled( ) ) return;
-    scene_manager::get_instans( )->top( )->_mouse_ended( event );
+    safe_top_scene->_mouse_ended( event );
 }
 void app_delegate::touchesBegan( cinder::app::TouchEvent event )
 {
@@ -52,10 +50,11 @@ void app_delegate::touchesBegan( cinder::app::TouchEvent event )
         {
             return touch.getId( ) == _touch_id;
         } );
-        if ( itr != event.getTouches( ).end( ) ) scene_manager::get_instans( )->top( )->_touch_began( *itr );
+        if ( itr != event.getTouches( ).end( ) ) 
+            safe_top_scene->_touch_began( *itr );
     }
 
-    scene_manager::get_instans( )->top( )->_touches_began( event );
+    safe_top_scene->_touches_began( event );
 }
 void app_delegate::touchesMoved( cinder::app::TouchEvent event )
 {
@@ -63,9 +62,10 @@ void app_delegate::touchesMoved( cinder::app::TouchEvent event )
     {
         return touch.getId( ) == _touch_id;
     } );
-    if ( itr != event.getTouches( ).end( ) ) scene_manager::get_instans( )->top( )->_touch_moved( *itr );
+    if ( itr != event.getTouches( ).end( ) ) 
+        safe_top_scene->_touch_moved( *itr );
 
-    scene_manager::get_instans( )->top( )->_touches_moved( event );
+    safe_top_scene->_touches_moved( event );
 }
 void app_delegate::touchesEnded( cinder::app::TouchEvent event )
 {
@@ -75,9 +75,10 @@ void app_delegate::touchesEnded( cinder::app::TouchEvent event )
     } );
     if ( itr != event.getTouches( ).end( ) )
     {
-        scene_manager::get_instans( )->top( )->_touch_ended( *itr );
+        safe_top_scene->_touch_ended( *itr );
         _touch_id = _INVALID_ID;
     }
 
-    scene_manager::get_instans( )->top( )->_touches_ended( event );
+    safe_top_scene->_touches_ended( event );
 }
+#undef safe_top_scene

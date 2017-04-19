@@ -52,13 +52,13 @@ void udp_connection::member::write( network_handle const & handle, char const * 
         udp::resolver::query query( udp::v4( ),
                                     handle->ip_address,
                                     boost::lexical_cast<std::string>( handle->port ) );
-        _udp_socket.send_to( asio::buffer( send_data, send_data_byte ),
+        _udp_socket.send_to( boost::asio::buffer( send_data, send_data_byte ),
                              resolver.resolve( query )->endpoint( ) );
         utility::log_network( handle->ip_address, handle->port,
                               "データを送信しました。" );
         if ( _connection.on_sended )_connection.on_sended( );
     }
-    catch ( asio::error_code& error )
+    catch ( boost::system::error_code& error )
     {
         utility::log_network( handle->ip_address, handle->port,
                               "データを送れませんでした。: %s", error.message( ).c_str( ) );
@@ -76,7 +76,7 @@ void udp_connection::member::open( )
 {
     _is_pause = false;
     _udp_socket.open( udp::v4( ) );
-    _io_service.restart( );
+    _io_service.reset( );
     _update_io_service = std::thread( [ this ]
     {
         while ( !_is_pause )
@@ -123,9 +123,9 @@ void udp_connection::member::update( float delta_second )
 }
 void udp_connection::member::_receive( )
 {
-    _udp_socket.async_receive_from( asio::buffer( _remote_buffer ),
+    _udp_socket.async_receive_from( boost::asio::buffer( _remote_buffer ),
                                     _remote_endpoint,
-                                    [ this ] ( const asio::error_code& e, size_t bytes_transferred )
+                                    [ this ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
