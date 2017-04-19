@@ -9,7 +9,7 @@ public:
     void pop( );
     size_t size( );
     bool empty( );
-    std::shared_ptr<scene>& top( );
+    std::shared_ptr<scene> top( );
     void update( );
     std::weak_ptr<node> get_dont_destroy_node( );
 private:

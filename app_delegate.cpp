@@ -3,7 +3,7 @@
 #include "user_default.h"
 #include "utility/assert_log.h"
 #include "cinder/gl/gl.h"
-#define safe_top_scene if ( auto& top = scene_manager::get_instans( )->top( ) ) top
+#define safe_top_scene if ( auto top = scene_manager::get_instans( )->top( ) ) top
 int const app_delegate::_INVALID_ID = -1;
 void app_delegate::setup( )
 {

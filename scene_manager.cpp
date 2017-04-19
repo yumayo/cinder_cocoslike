@@ -22,8 +22,9 @@ bool scene_manager::empty( )
 {
     return _stack.empty( );
 }
-std::shared_ptr<scene>& scene_manager::top( )
+std::shared_ptr<scene> scene_manager::top( )
 {
+    if ( _stack.empty( ) ) return nullptr;
     return _stack.top( );
 }
 void scene_manager::update( )
