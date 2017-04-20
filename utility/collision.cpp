@@ -64,44 +64,18 @@ bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & objec
     auto _rotation = object->get_rotation( );
 
     auto obj = mat;
-    obj = translate( obj, _position );
-    obj = scale( obj, _scale );
-    obj = rotate( obj, _rotation );
+    obj = translate( obj, vec3( _position, 0.0F ) );
+    obj = scale( obj, vec3( _scale, 0.0F ) );
+    obj = rotate( obj, _rotation, vec3( 0, 0, 1 ) );
+    obj = translate( obj, vec3( -_content_size * _anchor_point, 0.0F ) );
 
-    auto slide_size = -_content_size * _anchor_point;
-    auto ma = translate( obj, slide_size + vec2( 0.0F, 0.0F ) );
+    auto ma = translate( obj, vec3( 0.0F, 0.0F, 0.0F ) );
     auto a = vec2( ma[2][0], ma[2][1] );
-    auto mb = translate( obj, slide_size + vec2( _content_size.x, 0.0F ) );
+    auto mb = translate( obj, vec3( _content_size.x, 0.0F, 0.0F ) );
     auto b = vec2( mb[2][0], mb[2][1] );
-    auto mc = translate( obj, slide_size + vec2( _content_size.x, _content_size.y ) );
+    auto mc = translate( obj, vec3( _content_size.x, _content_size.y, 0.0F ) );
     auto c = vec2( mc[2][0], mc[2][1] );
-    auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
-    auto d = vec2( md[2][0], md[2][1] );
-
-    return utility::hit_point_plane_2d( point, a, b, c, d );
-}
-bool hit_point_plane_2d_default_size( cinder::vec2 point, std::shared_ptr<node> const & object )
-{
-    auto mat = object->get_world_matrix( );
-    auto _content_size = object->get_content_size( );
-    auto _anchor_point = object->get_anchor_point( );
-    auto _position = object->get_position( );
-    auto _scale = object->get_scale( );
-    auto _rotation = object->get_rotation( );
-
-    auto obj = mat;
-    obj = translate( obj, _position );
-    // obj = scale( obj, _scale ); スケール無し版を作ります。
-    obj = rotate( obj, _rotation );
-
-    auto slide_size = -_content_size * _anchor_point;
-    auto ma = translate( obj, slide_size + vec2( 0.0F, 0.0F ) );
-    auto a = vec2( ma[2][0], ma[2][1] );
-    auto mb = translate( obj, slide_size + vec2( _content_size.x, 0.0F ) );
-    auto b = vec2( mb[2][0], mb[2][1] );
-    auto mc = translate( obj, slide_size + vec2( _content_size.x, _content_size.y ) );
-    auto c = vec2( mc[2][0], mc[2][1] );
-    auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
+    auto md = translate( obj, vec3( 0.0F, _content_size.y, 0.0F ) );
     auto d = vec2( md[2][0], md[2][1] );
 
     return utility::hit_point_plane_2d( point, a, b, c, d );
@@ -187,39 +161,6 @@ bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::v
                                                 // というように線分で当たり判定を取ります。
                                                 // それでも当たらない場合は、windowの範囲外です。
 }
-bool hit_window( std::shared_ptr<node> const & object )
-{
-    auto mat = object->get_world_matrix( );
-    auto _content_size = object->get_content_size( );
-    auto _anchor_point = object->get_anchor_point( );
-    auto _position = object->get_position( );
-    auto _scale = object->get_scale( );
-    auto _rotation = object->get_rotation( );
-
-    auto obj = mat;
-    obj = translate( obj, _position );
-    obj = scale( obj, _scale );
-    obj = rotate( obj, _rotation );
-
-    auto slide_size = -_content_size * _anchor_point;
-    auto ma = translate( obj, slide_size + vec2( 0.0F, 0.0F ) );
-    auto a = vec2( ma[2][0], ma[2][1] );
-    auto mb = translate( obj, slide_size + vec2( _content_size.x, 0.0F ) );
-    auto b = vec2( mb[2][0], mb[2][1] );
-    auto mc = translate( obj, slide_size + vec2( _content_size.x, _content_size.y ) );
-    auto c = vec2( mc[2][0], mc[2][1] );
-    auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
-    auto d = vec2( md[2][0], md[2][1] );
-
-    auto win_size = vec2( cinder::app::getWindowSize( ) );
-    vec2
-        e = { 0.0F, 0.0F },
-        f = { win_size.x, 0.0F },
-        g = { win_size.x, win_size.y },
-        h = { 0.0F, win_size.y };
-
-    return hit_quad_quad( a, b, c, d, e, f, g, h );
-}
 bool hit_window_aabb( cinder::mat4 model_view_matrix, std::shared_ptr<node> const & object )
 {
     auto _content_size = object->get_content_size( );
@@ -232,13 +173,14 @@ bool hit_window_aabb( cinder::mat4 model_view_matrix, std::shared_ptr<node> cons
     auto md = translate( model_view_matrix, vec3( 0.0F, _content_size.y, 0.0F ) );
     auto d = vec2( md[3][0], md[3][1] );
 
-    vec2 win_pos = { 0.0F, 0.0F };
-    vec2 win_size = vec2( cinder::app::getWindowSize( ) );
+    auto win_size = vec2( cinder::app::getWindowSize( ) );
 
     auto aabb = create_aabb( a, b, c, d );
-    vec2 pos = aabb.first, size = aabb.second;
+    vec2
+        pos = aabb.first,
+        size = aabb.second;
 
-    return hit_rect_rect( pos, size, win_pos, win_size );
+    return hit_rect_rect( pos, size, vec2( 0.0F ), win_size );
 }
 float determinant_2d( cinder::vec2 a, cinder::vec2 b )
 {

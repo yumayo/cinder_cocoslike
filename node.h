@@ -207,5 +207,5 @@ public:
     bool is_running_action( );
 
 public:
-    cinder::mat3 get_world_matrix( );
+    cinder::mat4 get_world_matrix( );
 };
