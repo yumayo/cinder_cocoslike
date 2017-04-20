@@ -64,19 +64,19 @@ bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & objec
     auto _rotation = object->get_rotation( );
 
     auto obj = mat;
-    obj = translate( obj, vec3( _position, 0.0F ) );
-    obj = scale( obj, vec3( _scale, 0.0F ) );
-    obj = rotate( obj, _rotation, vec3( 0, 0, 1 ) );
-    obj = translate( obj, vec3( -_content_size * _anchor_point, 0.0F ) );
+    obj = translate( obj, _position );
+    obj = scale( obj, _scale );
+    obj = rotate( obj, _rotation );
+    obj = translate( obj, -_content_size * _anchor_point );
 
-    auto ma = translate( obj, vec3( 0.0F, 0.0F, 0.0F ) );
-    auto a = vec2( ma[3][0], ma[3][1] );
-    auto mb = translate( obj, vec3( _content_size.x, 0.0F, 0.0F ) );
-    auto b = vec2( mb[3][0], mb[3][1] );
-    auto mc = translate( obj, vec3( _content_size.x, _content_size.y, 0.0F ) );
-    auto c = vec2( mc[3][0], mc[3][1] );
-    auto md = translate( obj, vec3( 0.0F, _content_size.y, 0.0F ) );
-    auto d = vec2( md[3][0], md[3][1] );
+    auto ma = translate( obj, vec2( 0.0F, 0.0F ) );
+    auto a = vec2( ma[2][0], ma[2][1] );
+    auto mb = translate( obj, vec2( _content_size.x, 0.0F ) );
+    auto b = vec2( mb[2][0], mb[2][1] );
+    auto mc = translate( obj, vec2( _content_size.x, _content_size.y ) );
+    auto c = vec2( mc[2][0], mc[2][1] );
+    auto md = translate( obj, vec2( 0.0F, _content_size.y ) );
+    auto d = vec2( md[2][0], md[2][1] );
 
     return utility::hit_point_plane_2d( point, a, b, c, d );
 }
@@ -161,17 +161,17 @@ bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::v
                                                 // というように線分で当たり判定を取ります。
                                                 // それでも当たらない場合は、windowの範囲外です。
 }
-bool hit_window_aabb( cinder::mat4 model_view_matrix, std::shared_ptr<node> const & object )
+bool hit_window_aabb( cinder::mat3 model_view_matrix, std::shared_ptr<node> const & object )
 {
     auto _content_size = object->get_content_size( );
-    auto ma = translate( model_view_matrix, vec3( 0.0F ) );
-    auto a = vec2( ma[3][0], ma[3][1] );
-    auto mb = translate( model_view_matrix, vec3( _content_size.x, 0.0F, 0.0F ) );
-    auto b = vec2( mb[3][0], mb[3][1] );
-    auto mc = translate( model_view_matrix, vec3( _content_size.x, _content_size.y, 0.0F ) );
-    auto c = vec2( mc[3][0], mc[3][1] );
-    auto md = translate( model_view_matrix, vec3( 0.0F, _content_size.y, 0.0F ) );
-    auto d = vec2( md[3][0], md[3][1] );
+    auto ma = translate( model_view_matrix, vec2( 0.0F ) );
+    auto a = vec2( ma[2][0], ma[2][1] );
+    auto mb = translate( model_view_matrix, vec2( _content_size.x, 0.0F ) );
+    auto b = vec2( mb[2][0], mb[2][1] );
+    auto mc = translate( model_view_matrix, vec2( _content_size.x, _content_size.y ) );
+    auto c = vec2( mc[2][0], mc[2][1] );
+    auto md = translate( model_view_matrix, vec2( 0.0F, _content_size.y ) );
+    auto d = vec2( md[2][0], md[2][1] );
 
     auto win_size = vec2( cinder::app::getWindowSize( ) );
 
