@@ -41,7 +41,7 @@ private:
     void _touches_moved( cinder::app::TouchEvent event );
     void _touches_ended( cinder::app::TouchEvent event );
     void _update( float delta );
-    void _render( );
+    void _render( cinder::mat4 model_view_matrix );
 
 protected:
     bool init( );

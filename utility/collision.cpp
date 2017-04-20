@@ -212,37 +212,25 @@ bool hit_window( std::shared_ptr<node> const & object )
     auto d = vec2( md[2][0], md[2][1] );
 
     auto win_size = vec2( cinder::app::getWindowSize( ) );
-    vec2 
-        e = { 0.0F, 0.0F }, 
-        f = { win_size.x, 0.0F }, 
-        g = { win_size.x, win_size.y }, 
+    vec2
+        e = { 0.0F, 0.0F },
+        f = { win_size.x, 0.0F },
+        g = { win_size.x, win_size.y },
         h = { 0.0F, win_size.y };
 
     return hit_quad_quad( a, b, c, d, e, f, g, h );
 }
-bool hit_window_aabb( std::shared_ptr<node> const & object )
+bool hit_window_aabb( cinder::mat4 model_view_matrix, std::shared_ptr<node> const & object )
 {
-    auto mat = object->get_world_matrix( );
     auto _content_size = object->get_content_size( );
-    auto _anchor_point = object->get_anchor_point( );
-    auto _position = object->get_position( );
-    auto _scale = object->get_scale( );
-    auto _rotation = object->get_rotation( );
-
-    auto obj = mat;
-    obj = translate( obj, _position );
-    obj = scale( obj, _scale );
-    obj = rotate( obj, _rotation );
-
-    auto slide_size = -_content_size * _anchor_point;
-    auto ma = translate( obj, slide_size + vec2( 0.0F, 0.0F ) );
-    auto a = vec2( ma[2][0], ma[2][1] );
-    auto mb = translate( obj, slide_size + vec2( _content_size.x, 0.0F ) );
-    auto b = vec2( mb[2][0], mb[2][1] );
-    auto mc = translate( obj, slide_size + vec2( _content_size.x, _content_size.y ) );
-    auto c = vec2( mc[2][0], mc[2][1] );
-    auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
-    auto d = vec2( md[2][0], md[2][1] );
+    auto ma = translate( model_view_matrix, vec3( 0.0F ) );
+    auto a = vec2( ma[3][0], ma[3][1] );
+    auto mb = translate( model_view_matrix, vec3( _content_size.x, 0.0F, 0.0F ) );
+    auto b = vec2( mb[3][0], mb[3][1] );
+    auto mc = translate( model_view_matrix, vec3( _content_size.x, _content_size.y, 0.0F ) );
+    auto c = vec2( mc[3][0], mc[3][1] );
+    auto md = translate( model_view_matrix, vec3( 0.0F, _content_size.y, 0.0F ) );
+    auto d = vec2( md[3][0], md[3][1] );
 
     vec2 win_pos = { 0.0F, 0.0F };
     vec2 win_size = vec2( cinder::app::getWindowSize( ) );

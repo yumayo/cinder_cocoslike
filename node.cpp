@@ -227,28 +227,28 @@ void node::_update( float delta )
     for ( auto const& rem : _remove_signal ) rem( );
     _remove_signal.clear( );
 }
-void node::_render( )
+void node::_render( cinder::mat4 model_view_matrix )
 {
     if ( !_visible ) return;
 
-    gl::pushModelView( );
-    gl::translate( _position );
-    gl::scale( _scale );
-    gl::rotate( _rotation );
-    gl::translate( -_content_size * _anchor_point );
+    model_view_matrix = translate( model_view_matrix, vec3( _position, 0 ) );
+    model_view_matrix = scale( model_view_matrix, vec3( _scale, 0 ) );
+    model_view_matrix = rotate( model_view_matrix, _rotation, vec3( 0, 0, 1 ) );
+    model_view_matrix = translate( model_view_matrix, vec3( -_content_size * _anchor_point, 0 ) );
+    gl::setModelMatrix( model_view_matrix );
+
     gl::color( _color );
 
-    if ( utility::hit_window_aabb( shared_from_this( ) ) )
+    if ( utility::hit_window_aabb( model_view_matrix, shared_from_this( ) ) )
     {
         this->render( );
     }
 
-    gl::translate( _content_size * _pivot );
+    model_view_matrix = translate( model_view_matrix, vec3( _content_size * _pivot, 0 ) );
     for ( auto const& c : _children )
     {
-        c->_render( );
+        c->_render( model_view_matrix );
     }
-    gl::popModelView( );
 }
 bool node::init( )
 {
@@ -626,11 +626,11 @@ cinder::mat3 node::get_world_matrix( )
         p = p.lock( )->_parent;
     }
 
-    mat3 result;
+    mat3 world_matrix;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
-        result *= *itr;
+        world_matrix *= *itr;
     }
 
-    return result;
+    return world_matrix;
 }

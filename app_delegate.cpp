@@ -25,7 +25,7 @@ void app_delegate::update( )
 void app_delegate::draw( )
 {
     cinder::gl::clear( cinder::ColorA( 0.1, 0.1, 0.1, 1.0 ) );
-    safe_top_scene->_render( );
+    safe_top_scene->_render( cinder::mat4( ) );
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {
@@ -51,7 +51,7 @@ void app_delegate::touchesBegan( cinder::app::TouchEvent event )
         {
             return touch.getId( ) == _touch_id;
         } );
-        if ( itr != event.getTouches( ).end( ) ) 
+        if ( itr != event.getTouches( ).end( ) )
             safe_top_scene->_touch_began( *itr );
     }
 
@@ -63,7 +63,7 @@ void app_delegate::touchesMoved( cinder::app::TouchEvent event )
     {
         return touch.getId( ) == _touch_id;
     } );
-    if ( itr != event.getTouches( ).end( ) ) 
+    if ( itr != event.getTouches( ).end( ) )
         safe_top_scene->_touch_moved( *itr );
 
     safe_top_scene->_touches_moved( event );
