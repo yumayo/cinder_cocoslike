@@ -15,7 +15,7 @@ segment::segment( cinder::vec2 start, cinder::vec2 end )
     , end( end )
 { }
 
-bool hit_point_polygon_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 point )
+bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c )
 {
     vec2 AB = b - a;
     vec2 BP = point - b;
@@ -33,7 +33,7 @@ bool hit_point_polygon_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinde
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0;
 }
 
-bool hit_point_plane_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d, cinder::vec2 point )
+bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d )
 {
     vec2 AB = b - a;
     vec2 BP = point - b;
@@ -54,7 +54,7 @@ bool hit_point_plane_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder:
 
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0 && c4 >= 0.0;
 }
-bool hit_point_plane_2d( std::shared_ptr<node> const & object, cinder::vec2 point )
+bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & object )
 {
     auto mat = object->get_world_matrix( );
     auto _content_size = object->get_content_size( );
@@ -78,9 +78,9 @@ bool hit_point_plane_2d( std::shared_ptr<node> const & object, cinder::vec2 poin
     auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
     auto d = vec2( md[2][0], md[2][1] );
 
-    return utility::hit_point_plane_2d( a, b, c, d, point );
+    return utility::hit_point_plane_2d( point, a, b, c, d );
 }
-bool hit_point_plane_2d_default_size( std::shared_ptr<node> const & object, cinder::vec2 point )
+bool hit_point_plane_2d_default_size( cinder::vec2 point, std::shared_ptr<node> const & object )
 {
     auto mat = object->get_world_matrix( );
     auto _content_size = object->get_content_size( );
@@ -104,7 +104,7 @@ bool hit_point_plane_2d_default_size( std::shared_ptr<node> const & object, cind
     auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
     auto d = vec2( md[2][0], md[2][1] );
 
-    return utility::hit_point_plane_2d( a, b, c, d, point );
+    return utility::hit_point_plane_2d( point, a, b, c, d );
 }
 bool hit_segment( cinder::vec2 s1, cinder::vec2 e1, cinder::vec2 s2, cinder::vec2 e2 )
 {
@@ -140,17 +140,34 @@ cinder::vec2 get_hit_segment_intersection( cinder::vec2 s1, cinder::vec2 e1, cin
 
     return vec2( sub_seg1.x * seg1_t + s1.x, sub_seg1.y * seg1_t + s1.y );
 }
+bool hit_point_rect( cinder::vec2 a, cinder::vec2 b, cinder::vec2 b_size )
+{
+    return b.x <= a.x && a.x <= b.x + b_size.x &&
+        b.y <= a.y && a.y <= b.y + b_size.y;
+}
+bool hit_rect_rect( cinder::vec2 a, cinder::vec2 a_size, cinder::vec2 b, cinder::vec2 b_size )
+{
+    float mx1 = a.x;
+    float my1 = a.y;
+    float mx2 = a.x + a_size.x;
+    float my2 = a.y + a_size.y;
+    float ex1 = b.x;
+    float ey1 = b.y;
+    float ex2 = b.x + b_size.x;
+    float ey2 = b.y + b_size.y;
+    return mx1 <= ex2 && ex1 <= mx2 && my1 <= ey2 && ey1 <= my2;
+}
 bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::vec2 d1, cinder::vec2 a2, cinder::vec2 b2, cinder::vec2 c2, cinder::vec2 d2 )
 {
     return
-        utility::hit_point_plane_2d( a1, b1, c1, d1, a2 ) || // ここから
-        utility::hit_point_plane_2d( a1, b1, c1, d1, b2 ) || // a側からbの頂点を見て判断をしていきます。
-        utility::hit_point_plane_2d( a1, b1, c1, d1, c2 ) ||
-        utility::hit_point_plane_2d( a1, b1, c1, d1, d2 ) || // ここまで
-        utility::hit_point_plane_2d( a2, b2, c2, d2, a1 ) || // ここから
-        utility::hit_point_plane_2d( a2, b2, c2, d2, b1 ) || // b側からaの頂点を見て判断をしていきます。
-        utility::hit_point_plane_2d( a2, b2, c2, d2, c1 ) ||
-        utility::hit_point_plane_2d( a2, b2, c2, d2, d1 ) || // ここまで
+        utility::hit_point_plane_2d( a2, a1, b1, c1, d1 ) || // ここから
+        utility::hit_point_plane_2d( b2, a1, b1, c1, d1 ) || // a側からbの頂点を見て判断をしていきます。
+        utility::hit_point_plane_2d( c2, a1, b1, c1, d1 ) ||
+        utility::hit_point_plane_2d( d2, a1, b1, c1, d1 ) || // ここまで
+        utility::hit_point_plane_2d( a1, a2, b2, c2, d2 ) || // ここから
+        utility::hit_point_plane_2d( b1, a2, b2, c2, d2 ) || // b側からaの頂点を見て判断をしていきます。
+        utility::hit_point_plane_2d( c1, a2, b2, c2, d2 ) ||
+        utility::hit_point_plane_2d( d1, a2, b2, c2, d2 ) || // ここまで
         utility::hit_segment( d1, a1, c2, d2 ); // それでも当たらないものは 
                                                 //      ┌------┐
                                                 //  ┌---|------|---┐
@@ -194,8 +211,12 @@ bool hit_window( std::shared_ptr<node> const & object )
     auto md = translate( obj, slide_size + vec2( 0.0F, _content_size.y ) );
     auto d = vec2( md[2][0], md[2][1] );
 
-    auto size = vec2( app::getWindowSize( ) );
-    vec2 e = { 0.0F, 0.0F }, f = { size.x, 0.0F }, g = { size.x, size.y }, h = { 0.0F, size.y };
+    auto win_size = vec2( cinder::app::getWindowSize( ) );
+    vec2 
+        e = { 0.0F, 0.0F }, 
+        f = { win_size.x, 0.0F }, 
+        g = { win_size.x, win_size.y }, 
+        h = { 0.0F, win_size.y };
 
     return hit_quad_quad( a, b, c, d, e, f, g, h );
 }
@@ -224,13 +245,12 @@ bool hit_window_aabb( std::shared_ptr<node> const & object )
     auto d = vec2( md[2][0], md[2][1] );
 
     vec2 win_pos = { 0.0F, 0.0F };
-    vec2 win_size = vec2( app::getWindowSize( ) );
+    vec2 win_size = vec2( cinder::app::getWindowSize( ) );
 
     auto aabb = create_aabb( a, b, c, d );
     vec2 pos = aabb.first, size = aabb.second;
 
-    return pos.x <= win_pos.x + win_size.x && win_pos.x <= pos.x + size.x &&
-        pos.y <= win_pos.y + win_size.y && win_pos.y <= pos.y + size.y;
+    return hit_rect_rect( pos, size, win_pos, win_size );
 }
 float determinant_2d( cinder::vec2 a, cinder::vec2 b )
 {

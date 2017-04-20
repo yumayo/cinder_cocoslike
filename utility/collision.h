@@ -5,16 +5,22 @@
 namespace utility
 {
 // http://www.sousakuba.com/Programming/gs_hittest_point_triangle.html
-bool hit_point_polygon_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 point );
+bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c );
 
 // http://marupeke296.com/COL_2D_No4_SquareToSquare.html
-bool hit_point_plane_2d( cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d, cinder::vec2 point );
-bool hit_point_plane_2d( std::shared_ptr<node> const& object, cinder::vec2 point );
-bool hit_point_plane_2d_default_size( std::shared_ptr<node> const& object, cinder::vec2 point );
+bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d );
+bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const& object );
+bool hit_point_plane_2d_default_size( cinder::vec2 point, std::shared_ptr<node> const& object );
 
 // https://gist.github.com/yoshiki/7702066
 bool hit_segment( cinder::vec2 s1, cinder::vec2 e1, cinder::vec2 s2, cinder::vec2 e2 );
 cinder::vec2 get_hit_segment_intersection( cinder::vec2 s1, cinder::vec2 e1, cinder::vec2 s2, cinder::vec2 e2 );
+
+bool hit_point_rect( cinder::vec2 point, cinder::vec2 b, cinder::vec2 b_size );
+
+// http://gyabo.sakura.ne.jp/tips/rect.html
+bool hit_rect_rect( cinder::vec2 a, cinder::vec2 a_size,
+                    cinder::vec2 b, cinder::vec2 b_size );
 
 // http://marupeke296.com/COL_2D_No4_SquareToSquare.html
 bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::vec2 d1,

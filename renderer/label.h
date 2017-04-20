@@ -23,7 +23,7 @@ private:
     ci::gl::GlslProgRef _font_shader;
     std::string _text;
     std::string _relative_path;
-    float _size = 0.0F;
-    float _height = 0.0F;
+    float _font_size = 0.0F;
+    float _under_height = 0.0F;
 };
 }

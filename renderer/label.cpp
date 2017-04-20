@@ -1,4 +1,5 @@
 ﻿#include "label.h"
+#include "cinder/gl/gl.h"
 #include "cinder/gl/scoped.h"
 #include "utility/assert_log.h"
 #include "utility/utf8.h"
@@ -67,25 +68,25 @@ bool label::init( std::string const& text, std::string const& relative_path, flo
 void label::render( )
 {
     gl::ScopedGlslProg glsl( _font_shader );
-    fonsDrawText( _m->font, 0, -_height, _text.c_str( ), nullptr );
+    fonsDrawText( _m->font, 0, _under_height + _content_size.y, _text.c_str( ), nullptr );
 }
 void label::set_size( float value )
 {
-    _size = value;
-    fonsSetSize( _m->font, _size );
+    _font_size = value;
+    fonsSetSize( _m->font, _font_size );
 }
 float const & label::get_size( )
 {
-    return _size;
+    return _font_size;
 }
 void label::set_text( std::string const & value )
 {
     _text = value;
     float bounds[4];
     fonsTextBounds( _m->font, 0, 0, _text.c_str( ), nullptr, bounds );
-    int w = bounds[2] - bounds[0];
-    int h = bounds[3] - bounds[1];
-    _height = bounds[3] + bounds[1];
+    float w = bounds[2] - bounds[0];
+    float h = bounds[3] - bounds[1];
+    _under_height = -bounds[3];
     _content_size = vec2( w, h );
 }
 std::string const & label::get_text( )
