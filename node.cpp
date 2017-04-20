@@ -611,22 +611,22 @@ bool node::is_running_action( )
     return _action_manager.is_running( );
 }
 
-cinder::mat3 node::get_world_matrix( )
+cinder::mat4 node::get_world_matrix( )
 {
-    std::vector<mat3> mats;
+    std::vector<mat4> mats;
     auto p = _parent;
     while ( p.lock( ) )
     {
-        auto m = translate( mat3( ), p.lock( )->_position );
-        m = scale( m, p.lock( )->_scale );
-        m = rotate( m, p.lock( )->_rotation );
-        m = translate( m, -p.lock( )->_content_size * p.lock( )->_anchor_point );
-        m = translate( m, p.lock( )->_content_size * p.lock( )->_pivot );
+        auto m = translate( mat4( ), vec3( p.lock( )->_position, 0.0F ) );
+        m = scale( m, vec3( p.lock( )->_scale, 0.0F ) );
+        m = rotate( m, p.lock( )->_rotation, vec3( 0, 0, 1 ) );
+        m = translate( m, vec3( -p.lock( )->_content_size * p.lock( )->_anchor_point, 0.0F ) );
+        m = translate( m, vec3( p.lock( )->_content_size * p.lock( )->_pivot, 0.0F ) );
         mats.emplace_back( std::move( m ) );
         p = p.lock( )->_parent;
     }
 
-    mat3 world_matrix;
+    mat4 world_matrix;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
         world_matrix *= *itr;
