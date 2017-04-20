@@ -25,7 +25,7 @@ void app_delegate::update( )
 void app_delegate::draw( )
 {
     cinder::gl::clear( cinder::ColorA( 0.1, 0.1, 0.1, 1.0 ) );
-    safe_top_scene->_render( cinder::mat4( ) );
+    safe_top_scene->_render( cinder::mat3( ) );
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {

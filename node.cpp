@@ -227,15 +227,22 @@ void node::_update( float delta )
     for ( auto const& rem : _remove_signal ) rem( );
     _remove_signal.clear( );
 }
-void node::_render( cinder::mat4 model_view_matrix )
+void node::_render( cinder::mat3 model_view_matrix )
 {
     if ( !_visible ) return;
 
-    model_view_matrix = translate( model_view_matrix, vec3( _position, 0 ) );
-    model_view_matrix = scale( model_view_matrix, vec3( _scale, 0 ) );
-    model_view_matrix = rotate( model_view_matrix, _rotation, vec3( 0, 0, 1 ) );
-    model_view_matrix = translate( model_view_matrix, vec3( -_content_size * _anchor_point, 0 ) );
-    gl::setModelMatrix( model_view_matrix );
+    model_view_matrix = translate( model_view_matrix, _position );
+    model_view_matrix = scale( model_view_matrix, _scale );
+    model_view_matrix = rotate( model_view_matrix, _rotation );
+    model_view_matrix = translate( model_view_matrix, -_content_size * _anchor_point );
+    auto& m = model_view_matrix;
+    // 2次元空間を扱うマトリックスを3次元空間に引き上げる場合、
+    // 回転や、スケーリングを行う行列位置は変わりません。
+    // しかし、平行移動の部分だけは2次元であれば3次元目に、3次元であれば4次元目のマトリックス位置に来ます。
+    gl::setModelMatrix( mat4( m[0][0], m[0][1],       0,      0,
+                              m[1][0], m[1][1],       0,      0,
+                                    0,       0,       1,      0,
+                              m[2][0], m[2][1],       0,      1 ) );
 
     gl::color( _color );
 
@@ -244,7 +251,7 @@ void node::_render( cinder::mat4 model_view_matrix )
         this->render( );
     }
 
-    model_view_matrix = translate( model_view_matrix, vec3( _content_size * _pivot, 0 ) );
+    model_view_matrix = translate( model_view_matrix, _content_size * _pivot );
     for ( auto const& c : _children )
     {
         c->_render( model_view_matrix );
@@ -611,22 +618,22 @@ bool node::is_running_action( )
     return _action_manager.is_running( );
 }
 
-cinder::mat4 node::get_world_matrix( )
+cinder::mat3 node::get_world_matrix( )
 {
-    std::vector<mat4> mats;
+    std::vector<mat3> mats;
     auto p = _parent;
     while ( p.lock( ) )
     {
-        auto m = translate( mat4( ), vec3( p.lock( )->_position, 0.0F ) );
-        m = scale( m, vec3( p.lock( )->_scale, 0.0F ) );
-        m = rotate( m, p.lock( )->_rotation, vec3( 0, 0, 1 ) );
-        m = translate( m, vec3( -p.lock( )->_content_size * p.lock( )->_anchor_point, 0.0F ) );
-        m = translate( m, vec3( p.lock( )->_content_size * p.lock( )->_pivot, 0.0F ) );
+        auto m = translate( mat3( ), p.lock( )->_position );
+        m = scale( m, p.lock( )->_scale );
+        m = rotate( m, p.lock( )->_rotation );
+        m = translate( m, -p.lock( )->_content_size * p.lock( )->_anchor_point );
+        m = translate( m, p.lock( )->_content_size * p.lock( )->_pivot );
         mats.emplace_back( std::move( m ) );
         p = p.lock( )->_parent;
     }
 
-    mat4 world_matrix;
+    mat3 world_matrix;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
         world_matrix *= *itr;
