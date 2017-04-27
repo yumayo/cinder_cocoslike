@@ -41,7 +41,7 @@ void font::update( void * userPtr, int * rect, const unsigned char * data ) noex
 
     gl->atlas->update( data, GL_RED, GL_UNSIGNED_BYTE, 0, w, h, ci::ivec2( rect[0], rect[1] ) );
 
-    // 設定した後はもとに戻さないとその後のテクスチャ達が壊れてしまう。
+    // myTIPS:設定した後はもとに戻さないとその後のテクスチャ達が壊れてしまう。
     glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
     glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
     glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
