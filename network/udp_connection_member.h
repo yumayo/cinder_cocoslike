@@ -52,6 +52,7 @@ public:
     void close( );
     void open( );
 
+    bool destroy_client( network_handle const& handle);
     std::list<std::shared_ptr<network_object>>& get_clients( );
 
     void update( float delta_second );

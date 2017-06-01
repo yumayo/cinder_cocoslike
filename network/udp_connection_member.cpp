@@ -143,6 +143,10 @@ void udp_connection::member::_receive( )
         }
     } );
 }
+bool udp_connection::member::destroy_client( network_handle const & handle )
+{
+    return _network_factory.destroy_client( handle );
+}
 std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients( )
 {
     return _network_factory.get_clients( );
