@@ -18,9 +18,10 @@ void app_delegate::cleanup( )
 }
 void app_delegate::update( )
 {
-    auto delta = (float)getElapsedSeconds( ) - (float)_prev_second;
+    auto elapsed_seconds = getElapsedSeconds( );
+    auto delta = (float)elapsed_seconds - (float)_prev_second;
+    _prev_second = elapsed_seconds;
     scene_manager::get_instans( )->top( )->_update( delta );
-    _prev_second = getElapsedSeconds( );
     scene_manager::get_instans( )->update( );
 }
 void app_delegate::draw( )
