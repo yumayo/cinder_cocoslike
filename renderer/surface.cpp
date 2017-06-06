@@ -30,7 +30,7 @@ void surface::set_pixel( cinder::vec2 pixel, cinder::ColorA color )
 {
     _surface.setPixel( pixel, color );
 
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, _surface.getWidth( ) );
+    glPixelStorei( GL_UNPACK_ROW_LENGTH, _surface.getHeight( ) );
     glPixelStorei( GL_UNPACK_SKIP_PIXELS, pixel.x );
     glPixelStorei( GL_UNPACK_SKIP_ROWS, pixel.y );
     _texture->update( _surface.getData( ), GL_RGBA, GL_UNSIGNED_BYTE, 0, 1, 1, pixel );
