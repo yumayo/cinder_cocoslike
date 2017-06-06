@@ -23,7 +23,7 @@ float base_player::get_gain( )
 {
     return _gain->getValue( );
 }
-void base_player::set_loop( float value )
+void base_player::set_loop( bool value )
 {
     _player_node->setLoopEnabled( value );
 }

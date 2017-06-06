@@ -12,7 +12,7 @@ public:
     void stop( );
     void set_gain( float value );
     float get_gain( );
-    void set_loop( float value );
+    void set_loop( bool value );
     bool get_loop( );
     void set_loop_begin_second( float value );
     float get_loop_begin_second( );

@@ -54,8 +54,8 @@ void udp_connection::member::write( network_handle const & handle, char const * 
                                     boost::lexical_cast<std::string>( handle->port ) );
         _udp_socket.send_to( asio::buffer( send_data, send_data_byte ),
                              resolver.resolve( query )->endpoint( ) );
-        utility::log_network( handle->ip_address, handle->port,
-                              "データを送信しました。" );
+        //utility::log_network( handle->ip_address, handle->port,
+        //                      "データを送信しました。" );
         if ( _connection.on_sended )_connection.on_sended( );
     }
     catch ( asio::error_code& error )
@@ -95,8 +95,8 @@ void udp_connection::member::update( float delta_second )
 
     for ( auto& data : _receive_deque )
     {
-        utility::log_network( data.first.address( ).to_string( ), data.first.port( ),
-                              "データを受信しました。" );
+        //utility::log_network( data.first.address( ).to_string( ), data.first.port( ),
+        //                      "データを受信しました。" );
         auto handle = _network_factory.regist( data.first.address( ).to_string( ),
                                                data.first.port( ) );
         handle->timeout_restart( );
