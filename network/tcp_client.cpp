@@ -101,6 +101,21 @@ void tcp_client::_member::read( )
             log( "【tcp_client】受け取ったデータ: %d byte", bytes_transferred );
             log_data( buffer.data( ), bytes_transferred );
             if ( parent.on_readed ) parent.on_readed( buffer.data( ), bytes_transferred );
+
+            Json::Value root;
+            if ( Json::Reader( ).parse( std::string( buffer.data( ), bytes_transferred ), root ) )
+            {
+                // 通常用のjson関数を呼び出します。
+                if ( parent.on_received_json ) parent.on_received_json( root );
+
+                // map式のjson関数を呼び出します。
+                auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
+                if ( itr != std::end( parent.on_received_named_json ) )
+                {
+                    if ( itr->second ) itr->second( root );
+                }
+            }
+
             std::fill_n( buffer.begin( ), bytes_transferred, 0 );
 
             // エラーじゃない限り無限に受け取りを続けます。

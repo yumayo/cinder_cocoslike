@@ -147,6 +147,10 @@ bool udp_connection::member::destroy_client( network_handle const & handle )
 {
     return _network_factory.destroy_client( handle );
 }
+network_handle udp_connection::member::regist_client( std::string const& ip_address, int const& port )
+{
+    return _network_factory.regist( ip_address, port );
+}
 std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients( )
 {
     return _network_factory.get_clients( );

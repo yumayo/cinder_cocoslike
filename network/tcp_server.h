@@ -2,6 +2,7 @@
 #include "node.h"
 #include "asio/error.hpp"
 #include "client_handle.h"
+#include "jsoncpp/json.h"
 namespace network
 {
 class tcp_server : public node
@@ -24,6 +25,8 @@ public:
     std::function<void( )> on_connections_overflow;
     std::function<void( client_handle const& )> on_send_failed;
     std::function<void( client_handle const&, char const*, size_t )> on_readed;
+    std::function<void( client_handle const&, Json::Value )> on_received_json;
+    std::map<std::string, std::function<void( client_handle const&, Json::Value )>> on_received_named_json;
     std::function<void( client_handle const& )> on_client_disconnected;
     std::function<void( client_handle const&, asio::error_code const& )> on_errored;
 };

@@ -53,6 +53,7 @@ public:
     void open( );
 
     bool destroy_client( network_handle const& handle);
+    network_handle regist_client( std::string const& ip_address, int const& port );
     std::list<std::shared_ptr<network_object>>& get_clients( );
 
     void update( float delta_second );

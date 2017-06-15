@@ -1,6 +1,7 @@
 #pragma once
 #include "node.h"
 #include "asio/error.hpp"
+#include "jsoncpp/json.h"
 namespace network
 {
 class tcp_client : public node
@@ -20,6 +21,10 @@ public:
     std::function<void( )> on_send_failed;
     // データが送られてきたときに呼ばれます。
     std::function<void( char const*, size_t )> on_readed;
+    // 
+    std::function<void( Json::Value root )> on_received_json;
+    // 
+    std::map<std::string, std::function<void( Json::Value root )>> on_received_named_json;
     // 接続できなかったときに呼ばれます。
     std::function<void( )> on_connect_failed;
     // 接続が切れたときに呼ばれます。

@@ -47,7 +47,7 @@ public:
         return buffer.data( );
     }
     tcp::socket socket;
-    boost::array<char, 512> buffer;
+    boost::array<char, 256*32> buffer;
     client_handle handle;
 private: // 以下の値をハンドルに詰め込んで運びます。
     std::string _ip_address;
@@ -147,6 +147,19 @@ void tcp_server::_member::read( socket_object & sock_obj )
             log( "【tcp_server】受け取ったデータ: %d byte", bytes_transferred );
             log_data( sock_obj.buffer.data( ), bytes_transferred );
             if ( parent.on_readed ) parent.on_readed( sock_obj.handle, sock_obj.buffer.data( ), bytes_transferred );
+            Json::Value root;
+            if ( Json::Reader( ).parse( std::string( sock_obj.buffer.data( ), bytes_transferred ), root ) )
+            {
+                // 通常用のjson関数を呼び出します。
+                if ( parent.on_received_json ) parent.on_received_json( sock_obj.handle, root );
+
+                // map式のjson関数を呼び出します。
+                auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
+                if ( itr != std::end( parent.on_received_named_json ) )
+                {
+                    if ( itr->second ) itr->second( sock_obj.handle, root );
+                }
+            }
             std::fill_n( sock_obj.buffer.begin( ), bytes_transferred, 0 );
 
             // クライアントからの接続が切れるまで無限に受け取り続けます。

@@ -42,6 +42,10 @@ bool udp_connection::destroy_client( network_handle const & handle )
 {
     return _m->destroy_client( handle );
 }
+network_handle udp_connection::regist_client( std::string const& ip_address, int const& port )
+{
+    return _m->regist_client( ip_address, port );
+}
 std::list<std::shared_ptr<network_object>>& udp_connection::get_clients( )
 {
     return _m->get_clients( );
