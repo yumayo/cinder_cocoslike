@@ -69,7 +69,6 @@ void tcp_client::_member::write( asio::const_buffers_1 buffer, std::function<voi
         }
         else
         {
-            log( "【tcp_client】送信成功！" );
             if ( on_send ) on_send( );
         }
     } );
@@ -98,9 +97,6 @@ void tcp_client::_member::read( )
         }
         else
         {
-            //log( "【tcp_client】受け取ったデータ: %d byte", bytes_transferred );
-            //log_data( buffer.data( ), bytes_transferred );
-
             if ( parent.on_readed ) parent.on_readed( buffer.data( ), bytes_transferred );
 
             Json::Value root;
@@ -164,7 +160,6 @@ void tcp_client::write( std::string const & message, std::function<void( )> on_s
 }
 void tcp_client::write( char const * message, size_t size, std::function<void( )> on_send )
 {
-    log( "【tcp_client】送信中..." );
     _m->write( asio::buffer( message, size ), on_send );
 }
 }
