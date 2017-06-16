@@ -45,6 +45,12 @@ scene_manager * scene_manager::get_instans( )
 }
 void scene_manager::remove_instans( )
 {
+    while ( !_instans->_stack.empty( ) )
+    {
+        _instans->_stack.top( )->remove_all_children( );
+        _instans->_stack.pop( );
+    }
+    
     delete _instans;
     _instans = nullptr;
 }
