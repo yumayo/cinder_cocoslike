@@ -31,7 +31,7 @@ struct tcp_client::_member
     void error( asio::error_code const& error );
     asio::io_service io;
     tcp::socket socket;
-    boost::array<char, 512> buffer;
+    boost::array<char, 256 * 32> buffer;
     std::string ip_address;
     std::string port;
 };
@@ -98,8 +98,9 @@ void tcp_client::_member::read( )
         }
         else
         {
-            log( "【tcp_client】受け取ったデータ: %d byte", bytes_transferred );
-            log_data( buffer.data( ), bytes_transferred );
+            //log( "【tcp_client】受け取ったデータ: %d byte", bytes_transferred );
+            //log_data( buffer.data( ), bytes_transferred );
+
             if ( parent.on_readed ) parent.on_readed( buffer.data( ), bytes_transferred );
 
             Json::Value root;

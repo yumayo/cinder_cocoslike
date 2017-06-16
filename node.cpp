@@ -224,8 +224,8 @@ void node::_update( float delta )
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
-    for ( auto const& rem : _remove_signal ) rem( );
-    _remove_signal.clear( );
+    for ( auto const& signal : _update_end_signal ) signal( );
+    _update_end_signal.clear( );
 }
 void node::_render( )
 {
@@ -463,7 +463,7 @@ std::shared_ptr<node> node::get_child_by_name( std::string const & name )
 }
 std::shared_ptr<node> node::get_child_by_tag( int tag )
 {
-    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return nullptr );
+    assert_log( tag != node::INVALID_TAG, "無効なタグです。", return nullptr );
 
     auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, tag ] ( std::shared_ptr<node>& n )
     {
@@ -504,7 +504,7 @@ void node::remove_child_by_name( std::string const & name )
 }
 void node::remove_child_by_tag( int tag )
 {
-    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return );
+    assert_log( tag != node::INVALID_TAG, "無効なタグです。", return );
 
     auto child = this->get_child_by_tag( tag );
 
@@ -519,7 +519,7 @@ void node::remove_child_by_tag( int tag )
 }
 void node::remove_all_children( )
 {
-    _remove_signal.emplace_back( [ this ]
+    _update_end_signal.emplace_back( [ this ]
     {
         _children.clear( );
     } );
@@ -531,24 +531,9 @@ void node::remove_from_parent( )
         _own_removing = true;
         if ( _parent.lock( ) )
         {
-            _parent.lock( )->_remove_signal.emplace_back( [ this ]
+            _parent.lock( )->_update_end_signal.emplace_back( [ this ]
             {
                 _parent.lock( )->remove_child( shared_from_this( ) );
-            } );
-        }
-    }
-}
-void node::remove_from_parent_user_function( std::function<void( )> remove_user_function )
-{
-    if ( !_own_removing )
-    {
-        _own_removing = true;
-        if ( _parent.lock( ) )
-        {
-            _parent.lock( )->_remove_signal.emplace_back( [ this, remove_user_function ]
-            {
-                _parent.lock( )->remove_child( shared_from_this( ) );
-                if ( remove_user_function ) remove_user_function( );
             } );
         }
     }

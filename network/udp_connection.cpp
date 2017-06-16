@@ -50,6 +50,10 @@ std::list<std::shared_ptr<network_object>>& udp_connection::get_clients( )
 {
     return _m->get_clients( );
 }
+int udp_connection::get_port( )
+{
+    return _m->get_port( );
+}
 void udp_connection::close( )
 {
     _m->close( );

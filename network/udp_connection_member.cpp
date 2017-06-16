@@ -155,4 +155,8 @@ std::list<std::shared_ptr<network_object>>& udp_connection::member::get_clients(
 {
     return _network_factory.get_clients( );
 }
+int udp_connection::member::get_port( )
+{
+    return _udp_socket.local_endpoint( ).port( );
+}
 }

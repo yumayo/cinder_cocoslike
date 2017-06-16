@@ -56,6 +56,8 @@ public:
     network_handle regist_client( std::string const& ip_address, int const& port );
     std::list<std::shared_ptr<network_object>>& get_clients( );
 
+    int get_port( );
+
     void update( float delta_second );
 private:
     // エントリーポイント
