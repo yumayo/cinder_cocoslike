@@ -16,7 +16,10 @@ public:
 public:
     void write( std::string const& message, std::function<void( )> on_send = nullptr );
     void write( char const* message, size_t size, std::function<void( )> on_send = nullptr );
+    int get_port( );
 public:
+    // 接続が成功したら呼ばれます。
+    std::function<void( )> on_connection;
     // データを送れなかったときに呼ばれます。
     std::function<void( )> on_send_failed;
     // データが送られてきたときに呼ばれます。

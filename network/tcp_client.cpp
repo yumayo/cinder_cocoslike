@@ -17,7 +17,7 @@ struct tcp_client::_member
     _member( tcp_client& parent, std::string const& ip_address, std::string const& port )
         : parent( parent )
         , io( )
-        , socket( io )
+        , socket( io, tcp::endpoint( tcp::v4( ), 0 ) )
         , ip_address( ip_address )
         , port( port )
     {
@@ -29,6 +29,7 @@ struct tcp_client::_member
     void read( );
     void close( );
     void error( asio::error_code const& error );
+    int get_port( );
     asio::io_service io;
     tcp::socket socket;
     boost::array<char, 256 * 32> buffer;
@@ -50,6 +51,7 @@ void tcp_client::_member::connect( )
         else
         {
             log( "【tcp_client】接続成功！" );
+            if ( parent.on_connection ) parent.on_connection( );
             read( );
         }
     } );
@@ -129,6 +131,10 @@ void tcp_client::_member::error( asio::error_code const& e )
 {
     if ( parent.on_errored ) parent.on_errored( e );
 }
+int tcp_client::_member::get_port( )
+{
+    return socket.local_endpoint( ).port( );
+}
 CREATE_CPP( tcp_client, std::string const& ip_address, std::string const& port )
 {
     CREATE( tcp_client, ip_address, port );
@@ -161,5 +167,9 @@ void tcp_client::write( std::string const & message, std::function<void( )> on_s
 void tcp_client::write( char const * message, size_t size, std::function<void( )> on_send )
 {
     _m->write( asio::buffer( message, size ), on_send );
+}
+int tcp_client::get_port( )
+{
+    return _m->get_port( );
 }
 }
