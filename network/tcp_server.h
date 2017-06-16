@@ -21,6 +21,8 @@ public:
     void speech( char const* message, size_t size, std::function<void( )> on_send = nullptr );
     void close( client_handle const& handle );
 public:
+    std::vector<client_handle> get_clients( );
+public:
     std::function<void( )> on_startup_failed;
     std::function<void( )> on_connections_overflow;
     std::function<void( client_handle const& )> on_send_failed;

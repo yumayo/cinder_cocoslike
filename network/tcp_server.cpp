@@ -47,7 +47,7 @@ public:
         return buffer.data( );
     }
     tcp::socket socket;
-    boost::array<char, 256*32> buffer;
+    boost::array<char, 256 * 32> buffer;
     client_handle handle;
 private: // 以下の値をハンドルに詰め込んで運びます。
     std::string _ip_address;
@@ -257,7 +257,11 @@ void tcp_server::speech( char const * message, size_t size, std::function<void( 
 {
     for ( auto& obj : _m->sockets )
     {
-        _m->write( *obj, asio::buffer( message, size ), on_send );
+        if ( !obj->handle.ip_address.empty( ) &&
+             !obj->handle.port.empty( ) )
+        {
+            _m->write( *obj, asio::buffer( message, size ), on_send );
+        }
     }
 }
 void tcp_server::close( client_handle const& handle )
@@ -266,5 +270,18 @@ void tcp_server::close( client_handle const& handle )
     {
         _m->close_with_async( sock_obj );
     } );
+}
+std::vector<client_handle> tcp_server::get_clients( )
+{
+    std::vector<client_handle> clients;
+    for ( auto& obj : _m->sockets )
+    {
+        if ( !obj->handle.ip_address.empty( ) &&
+             !obj->handle.port.empty( ) )
+        {
+            clients.emplace_back( obj->handle );
+        }
+    }
+    return clients;
 }
 }
