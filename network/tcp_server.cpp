@@ -144,8 +144,6 @@ void tcp_server::_member::read( socket_object & sock_obj )
         }
         else
         {
-            log( "【tcp_server】受け取ったデータ: %d byte", bytes_transferred );
-            log_data( sock_obj.buffer.data( ), bytes_transferred );
             if ( parent.on_readed ) parent.on_readed( sock_obj.handle, sock_obj.buffer.data( ), bytes_transferred );
             Json::Value root;
             if ( Json::Reader( ).parse( std::string( sock_obj.buffer.data( ), bytes_transferred ), root ) )
@@ -181,7 +179,6 @@ void tcp_server::_member::write( socket_object& sock_obj, asio::const_buffers_1 
         }
         else
         {
-            log( "【tcp_server】送信成功！" );
             if ( on_send ) on_send( );
         }
     } );
