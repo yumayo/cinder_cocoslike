@@ -32,7 +32,7 @@ struct tcp_client::_member
     int get_port( );
     asio::io_service io;
     tcp::socket socket;
-    boost::array<char, 256 * 32> buffer;
+    boost::array<char, 1024 * 256> buffer;
     std::string ip_address;
     std::string port;
 };

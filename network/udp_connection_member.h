@@ -25,7 +25,7 @@ class udp_connection::member
     asio::io_service _io_service;
     udp::socket _udp_socket;
     udp::endpoint _remote_endpoint;
-    boost::array<char, 2048> _remote_buffer;
+    boost::array<char, 1024 * 256> _remote_buffer;
 
     // 非同期的に受信をしないとプログラムが止まってしまうので。
     std::thread _update_io_service;

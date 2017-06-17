@@ -47,7 +47,7 @@ public:
         return buffer.data( );
     }
     tcp::socket socket;
-    boost::array<char, 256 * 32> buffer;
+    boost::array<char, 1024 * 256> buffer;
     client_handle handle;
 private: // 以下の値をハンドルに詰め込んで運びます。
     std::string _ip_address;
