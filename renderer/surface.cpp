@@ -40,7 +40,7 @@ void surface::set_pixel( cinder::vec2 pixel, cinder::ColorA color )
 }
 void surface::paint_fill_circle( cinder::vec2 pixel, float radius, cinder::ColorA color )
 {
-    pixel.y = _surface.getHeight( ) - pixel.y;
+    auto position = ivec2( pixel );
 
     if ( static_cast<int>( radius ) < 0 ) return;
 
@@ -50,22 +50,40 @@ void surface::paint_fill_circle( cinder::vec2 pixel, float radius, cinder::Color
         {
             if ( radius < length( vec2( x, y ) ) ) continue;
 
-            _surface.setPixel( ivec2( pixel ) + ivec2( x, y ), ColorA8u( color ) );
+            _surface.setPixel( position + ivec2( x, y ), ColorA8u( color ) );
         }
     }
 
-    ivec2 min( ivec2( pixel ) + ivec2( -radius - 1.0F, -radius - 1.0F ) );
-    ivec2 max( ivec2( pixel ) + ivec2( radius + 1.0F, radius + 1.0F ) );
-    min = glm::clamp( min, ivec2( 0 ), _surface.getSize( ) );
-    max = glm::clamp( max, ivec2( 0 ), _surface.getSize( ) );
+    ivec2 min( position + ivec2( -radius ) - ivec2( 1 ) );
+    ivec2 max( position + ivec2( radius ) + ivec2( 1 ) );
+    min = glm::clamp( min, ivec2( 0 ), _surface.getSize( ) - ivec2( 1 ) );
+    max = glm::clamp( max, ivec2( 0 ), _surface.getSize( ) - ivec2( 1 ) );
 
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, _surface.getWidth( ) );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, min.x );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, min.y );
-    _texture->update( _surface.getData( ), GL_RGBA, GL_UNSIGNED_BYTE, 0, max.x - min.x, max.y - min.y, min );
+    auto width = max.x - min.x;
+    auto height = max.y - min.y;
+
+    auto size = sizeof( unsigned char ) * 4 * width * height;
+    unsigned char* data = new unsigned char[size];
+    for ( int y = position.y; y < position.y + height; ++y )
+    {
+        for ( int x = position.x; x < position.x + width; ++x )
+        {
+            auto col = _surface.getPixel( ivec2( x, y ) );
+            ivec2 pos = ivec2( x, y ) - position;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 0] = col.r;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 1] = col.g;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 2] = col.b;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 3] = col.a;
+        }
+    }
+
+    glPixelStorei( GL_UNPACK_ROW_LENGTH, height );
+    _texture->update( data, GL_RGBA, GL_UNSIGNED_BYTE, 0, width, height, ivec2( min.x + width * 0.5F, _surface.getHeight( ) - min.y - height * 1.5F ) );
     glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
+
+    delete data;
+
+    //_texture->update( _surface );
 }
 void surface::paint_fill_rect( cinder::Rectf rect, cinder::ColorA color )
 {
