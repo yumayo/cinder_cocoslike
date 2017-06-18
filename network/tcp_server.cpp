@@ -128,7 +128,7 @@ void tcp_server::_member::read( socket_object & sock_obj )
         asio::transfer_at_least( 1 ), // １バイトでもデータが送られてきたら、読み込みを開始します。
         [ this, &sock_obj ] ( const asio::error_code& e, size_t bytes_transferred )
     {
-        if ( e )
+        if ( e && bytes_transferred == 0 )
         {
             if ( e == asio::error::eof )
             {
@@ -145,6 +145,7 @@ void tcp_server::_member::read( socket_object & sock_obj )
         else
         {
             if ( parent.on_readed ) parent.on_readed( sock_obj.handle, sock_obj.buffer.data( ), bytes_transferred );
+
             Json::Value root;
             if ( Json::Reader( ).parse( std::string( sock_obj.buffer.data( ), bytes_transferred ), root ) )
             {

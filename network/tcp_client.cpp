@@ -83,7 +83,7 @@ void tcp_client::_member::read( )
         asio::transfer_at_least( 1 ),
         [ this ] ( const asio::error_code& e, size_t bytes_transferred )
     {
-        if ( e )
+        if ( e && bytes_transferred == 0 )
         {
             if ( e == asio::error::eof )
             {
