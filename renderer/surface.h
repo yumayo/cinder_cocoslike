@@ -16,6 +16,7 @@ namespace renderer
         void paint_fill_rect( cinder::Rectf rect, cinder::ColorA color );
         cinder::ColorA get_pixel( cinder::vec2 pixel );
     protected:
+        void texture_update( cinder::ivec2 min, cinder::ivec2 max );
         cinder::Surface8u _surface;
         cinder::gl::TextureRef _texture;
     };

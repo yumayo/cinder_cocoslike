@@ -29,66 +29,39 @@ void surface::render( )
 void surface::set_pixel( cinder::vec2 pixel, cinder::ColorA color )
 {
     _surface.setPixel( pixel, color );
-
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, _surface.getHeight( ) );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, pixel.x );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, pixel.y );
-    _texture->update( _surface.getData( ), GL_RGBA, GL_UNSIGNED_BYTE, 0, 1, 1, pixel );
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
+    texture_update( pixel, ivec2( pixel ) + 1 );
 }
 void surface::paint_fill_circle( cinder::vec2 pixel, float radius, cinder::ColorA color )
 {
-    auto position = ivec2( pixel );
+    if ( radius < 0 ) return;
 
-    if ( static_cast<int>( radius ) < 0 ) return;
+    Rectf rect( glm::floor( pixel - radius - 1.0F ), glm::ceil( pixel + radius ) );
 
-    for ( int y = -radius; y <= radius; ++y )
+    for ( int y = rect.y1; y <= rect.y2; ++y )
     {
-        for ( int x = -radius; x <= radius; ++x )
+        for ( int x = rect.x1; x <= rect.x2; ++x )
         {
-            if ( radius < length( vec2( x, y ) ) ) continue;
-
-            _surface.setPixel( position + ivec2( x, y ), ColorA8u( color ) );
+            if ( radius < length( vec2( x, y ) - rect.getCenter( ) ) ) continue;
+            _surface.setPixel( ivec2( x, y ), ColorA8u( color ) );
         }
     }
 
-    ivec2 min( position + ivec2( -radius ) - ivec2( 1 ) );
-    ivec2 max( position + ivec2( radius ) + ivec2( 1 ) );
-    min = glm::clamp( min, ivec2( 0 ), _surface.getSize( ) - ivec2( 1 ) );
-    max = glm::clamp( max, ivec2( 0 ), _surface.getSize( ) - ivec2( 1 ) );
+    ivec2 min( ivec2( rect.x1, rect.y1 ) );
+    min = glm::clamp( min, ivec2( 0 ), _surface.getSize( ) );
+    ivec2 max( ivec2( rect.x2, rect.y2 ) );
+    max = glm::clamp( max, ivec2( 0 ), _surface.getSize( ) );
 
-    auto width = max.x - min.x;
-    auto height = max.y - min.y;
-
-    auto size = sizeof( unsigned char ) * 4 * width * height;
-    unsigned char* data = new unsigned char[size];
-    for ( int y = position.y; y < position.y + height; ++y )
-    {
-        for ( int x = position.x; x < position.x + width; ++x )
-        {
-            auto col = _surface.getPixel( ivec2( x, y ) );
-            ivec2 pos = ivec2( x, y ) - position;
-            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 0] = col.r;
-            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 1] = col.g;
-            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 2] = col.b;
-            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 3] = col.a;
-        }
-    }
-
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, height );
-    _texture->update( data, GL_RGBA, GL_UNSIGNED_BYTE, 0, width, height, ivec2( min.x + width * 0.5F, _surface.getHeight( ) - min.y - height * 1.5F ) );
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
-
-    delete data;
-
-    //_texture->update( _surface );
+    texture_update( min, max );
 }
 void surface::paint_fill_rect( cinder::Rectf rect, cinder::ColorA color )
 {
     if ( rect.x2 < rect.x1 ) std::swap( rect.x1, rect.x2 );
     if ( rect.y2 < rect.y1 ) std::swap( rect.y1, rect.y2 );
+
+    rect.x1 = glm::floor( rect.x1 );
+    rect.y1 = glm::floor( rect.y1 );
+    rect.x2 = glm::ceil( rect.x2 );
+    rect.y2 = glm::ceil( rect.y2 );
 
     for ( int y = rect.y1; y <= rect.y2; ++y )
     {
@@ -99,20 +72,38 @@ void surface::paint_fill_rect( cinder::Rectf rect, cinder::ColorA color )
     }
 
     ivec2 min( ivec2( rect.x1, rect.y1 ) );
-    ivec2 max( ivec2( rect.x2, rect.y2 ) );
     min = glm::clamp( min, ivec2( 0 ), _surface.getSize( ) );
+    ivec2 max( ivec2( rect.x2, rect.y2 ) );
     max = glm::clamp( max, ivec2( 0 ), _surface.getSize( ) );
 
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, _surface.getWidth( ) );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, min.x );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, min.y );
-    _texture->update( _surface.getData( ), GL_RGBA, GL_UNSIGNED_BYTE, 0, max.x - min.x, max.y - min.y, min );
-    glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
-    glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
+    texture_update( min, max );
 }
 cinder::ColorA surface::get_pixel( cinder::vec2 pixel )
 {
     return _surface.getPixel( pixel );
+}
+void surface::texture_update( cinder::ivec2 min, cinder::ivec2 max )
+{
+    auto width = max.x - min.x;
+    auto height = max.y - min.y;
+
+    std::unique_ptr<unsigned char [ ]> data( new unsigned char[sizeof( unsigned char ) * 4 * width * height] );
+
+    for ( int y = min.y; y < max.y; ++y )
+    {
+        for ( int x = min.x; x < max.x; ++x )
+        {
+            auto col = _surface.getPixel( ivec2( x, y ) );
+            ivec2 pos = ivec2( x, y ) - min;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 0] = col.r;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 1] = col.g;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 2] = col.b;
+            data[( height - 1 - pos.y ) * 4 * width + pos.x * 4 + 3] = col.a;
+        }
+    }
+
+    glPixelStorei( GL_UNPACK_ROW_LENGTH, width );
+    _texture->update( data.get( ), GL_RGBA, GL_UNSIGNED_BYTE, 0, width, height, ivec2( min.x, _surface.getHeight( ) - min.y - height ) );
+    glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
 }
 }
