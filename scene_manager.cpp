@@ -3,16 +3,21 @@
 scene_manager* scene_manager::_instans = nullptr;
 void scene_manager::replace( std::shared_ptr<scene> const & scene )
 {
-    _fn.emplace_back( [ this, scene ] { _stack.pop( ); _stack.push( scene ); } );
+    _fn.emplace_back( [ this, scene ]
+    {
+        auto temp = _stack.begin( );
+        _stack.push_front( scene );
+        _stack.erase( temp, _stack.end( ) );
+    } );
 }
 void scene_manager::push( std::shared_ptr<scene> const & scene )
 {
-    _fn.emplace_back( [ this, scene ] { _stack.push( scene ); } );
+    _fn.emplace_back( [ this, scene ] { _stack.push_front( scene ); } );
 }
 void scene_manager::pop( )
 {
     assert_log( 1 <= _stack.size( ), "これ以上ポップできません。", return );
-    _fn.emplace_back( [ this ] { _stack.pop( ); } );
+    _fn.emplace_back( [ this ] { _stack.pop_front( ); } );
 }
 size_t scene_manager::size( )
 {
@@ -24,7 +29,7 @@ bool scene_manager::empty( )
 }
 std::shared_ptr<scene>& scene_manager::top( )
 {
-    return _stack.top( );
+    return _stack.front( );
 }
 void scene_manager::update( )
 {
@@ -47,10 +52,10 @@ void scene_manager::remove_instans( )
 {
     while ( !_instans->_stack.empty( ) )
     {
-        _instans->_stack.top( )->remove_all_children( );
-        _instans->_stack.pop( );
+        _instans->_stack.front( )->remove_all_children( );
+        _instans->_stack.pop_front( );
     }
-    
+
     delete _instans;
     _instans = nullptr;
 }
