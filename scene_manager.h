@@ -14,7 +14,7 @@ public:
     std::weak_ptr<node> get_dont_destroy_node( );
 private:
     std::vector<std::function<void( )>> _fn;
-    std::deque<std::shared_ptr<scene>> _stack;
+    std::list<std::shared_ptr<scene>> _stack;
     std::shared_ptr<node> _root;
 public:
     static scene_manager* get_instans( );

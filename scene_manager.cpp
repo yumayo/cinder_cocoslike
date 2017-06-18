@@ -5,9 +5,9 @@ void scene_manager::replace( std::shared_ptr<scene> const & scene )
 {
     _fn.emplace_back( [ this, scene ]
     {
-        auto temp = _stack.begin( );
+        auto& temp = _stack.begin( );
         _stack.push_front( scene );
-        _stack.erase( temp, _stack.end( ) );
+        _stack.erase( temp );
     } );
 }
 void scene_manager::push( std::shared_ptr<scene> const & scene )
