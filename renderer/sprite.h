@@ -7,9 +7,10 @@ namespace renderer
     {
     public:
         CREATE_H( sprite, std::string const& relative_path );
+        virtual ~sprite( ) { }
         bool init( std::string const& relative_path );
-        void render( ) override;
-    private:
+        virtual void render( ) override;
+    protected:
         cinder::gl::TextureRef _texture;
     };
 }

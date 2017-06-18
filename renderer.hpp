@@ -7,3 +7,4 @@
 #include "renderer/sprite.h"
 #include "renderer/sprite_animation.h"
 #include "renderer/surface.h"
+#include "renderer/sprite_cubic.h"
