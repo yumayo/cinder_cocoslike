@@ -10,6 +10,7 @@
 class node : public std::enable_shared_from_this<node>
 {
     friend class app_delegate;
+    friend class scene_manager;
 public:
     static const int INVALID_TAG = -1;
 

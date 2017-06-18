@@ -9,7 +9,11 @@ void app_delegate::setup( )
 {
     utility::log( "stand by ready!" );
     entry_point( );
-    scene_manager::get_instans( )->update( );
+
+    auto elapsed_seconds = getElapsedSeconds( );
+    auto delta = (float)elapsed_seconds - (float)_prev_second;
+    _prev_second = elapsed_seconds;
+    scene_manager::get_instans( )->update( delta );
 }
 void app_delegate::cleanup( )
 {
@@ -23,7 +27,7 @@ void app_delegate::update( )
     _prev_second = elapsed_seconds;
     scene_manager::get_instans( )->top( )->_update( delta );
     scene_manager::get_instans( )->get_dont_destroy_node( ).lock( )->_update( delta );
-    scene_manager::get_instans( )->update( );
+    scene_manager::get_instans( )->update( delta );
 }
 void app_delegate::draw( )
 {

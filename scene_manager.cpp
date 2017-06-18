@@ -8,6 +8,7 @@ void scene_manager::replace( std::shared_ptr<scene> const & scene )
         auto& temp = _stack.begin( );
         _stack.push_front( scene );
         _stack.erase( temp );
+        top( )->_update( _delta );
     } );
 }
 void scene_manager::push( std::shared_ptr<scene> const & scene )
@@ -31,8 +32,9 @@ std::shared_ptr<scene>& scene_manager::top( )
 {
     return _stack.front( );
 }
-void scene_manager::update( )
+void scene_manager::update( float delta )
 {
+    _delta = delta;
     for ( auto& fn : _fn )
     {
         fn( );
