@@ -11,14 +11,23 @@ void scene_manager::replace( std::shared_ptr<scene> const & scene )
         top( )->_update( _delta );
     } );
 }
-void scene_manager::push( std::shared_ptr<scene> const & scene )
+void scene_manager::push_front( std::shared_ptr<scene> const & scene )
 {
     _fn.emplace_back( [ this, scene ] { _stack.push_front( scene ); } );
 }
-void scene_manager::pop( )
+void scene_manager::pop_front( )
 {
     assert_log( 1 <= _stack.size( ), "これ以上ポップできません。", return );
     _fn.emplace_back( [ this ] { _stack.pop_front( ); } );
+}
+void scene_manager::push_back( std::shared_ptr<scene> const & scene )
+{
+    _stack.push_back( scene );
+}
+void scene_manager::pop_back( )
+{
+    assert_log( 1 <= _stack.size( ), "これ以上ポップできません。", return );
+    _stack.pop_back( );
 }
 size_t scene_manager::size( )
 {
