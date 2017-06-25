@@ -15,7 +15,7 @@ bool circle::init( float radius, float segments )
     set_anchor_point( { 0.5F, 0.5F } );
     set_pivot( { 0.5F, 0.5F } );
     set_radius( radius );
-    _segments = segments;
+    set_segments( segments );
     return true;
 }
 void circle::render( )
