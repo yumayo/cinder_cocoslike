@@ -87,3 +87,11 @@ void app_delegate::touchesEnded( cinder::app::TouchEvent event )
 
     scene_manager::get_instans( )->top( )->_touches_ended( event );
 }
+void app_delegate::keyDown( cinder::app::KeyEvent event )
+{
+    scene_manager::get_instans( )->top( )->_key_down( event );
+}
+void app_delegate::keyUp( cinder::app::KeyEvent event )
+{
+    scene_manager::get_instans( )->top( )->_key_up( event );
+}

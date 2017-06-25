@@ -12,41 +12,6 @@ node::~node( )
 {
     if ( !_name.empty( ) ) log( "Destroy node: [%s]", _name.c_str( ) );
 }
-bool node::mouse_began( cinder::app::MouseEvent event )
-{
-    return false;
-}
-void node::mouse_moved( cinder::app::MouseEvent event )
-{
-}
-void node::mouse_ended( cinder::app::MouseEvent event )
-{
-}
-bool node::touch_began( cinder::app::TouchEvent::Touch event )
-{
-    return false;
-}
-void node::touch_moved( cinder::app::TouchEvent::Touch event )
-{
-}
-void node::touch_ended( cinder::app::TouchEvent::Touch event )
-{
-}
-void node::touches_began( cinder::app::TouchEvent event )
-{
-}
-void node::touches_moved( cinder::app::TouchEvent event )
-{
-}
-void node::touches_ended( cinder::app::TouchEvent event )
-{
-}
-void node::update( float delta )
-{
-}
-void node::render( )
-{
-}
 bool node::_mouse_began( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
@@ -207,6 +172,30 @@ void node::_touches_ended( cinder::app::TouchEvent event )
         touches_ended( event );
     }
 }
+void node::_key_down( cinder::app::KeyEvent event )
+{
+    if ( !_block_schedule_event )
+        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+        {
+            ( *itr )->_key_down( event );
+        }
+    if ( _schedule_key_event )
+    {
+        key_down( event );
+    }
+}
+void node::_key_up( cinder::app::KeyEvent event )
+{
+    if ( !_block_schedule_event )
+        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+        {
+            ( *itr )->_key_up( event );
+        }
+    if ( _schedule_key_event )
+    {
+        key_up( event );
+    }
+}
 void node::_update( float delta )
 {
     // 途中でaddがあるため、コンテナをバックアップします。
@@ -294,12 +283,21 @@ bool node::get_schedule_touches_event( )
 {
     return _schedule_touches_event;
 }
+void node::set_schedule_key_event( bool value )
+{
+    _schedule_key_event = value;
+}
+bool node::get_schedule_key_event( )
+{
+    return _schedule_key_event;
+}
 void node::set_schedule_all( bool value )
 {
     _schedule_update = value;
     _schedule_mouse_event = value;
     _schedule_touch_event = value;
     _schedule_touches_event = value;
+    _schedule_key_event = value;
 }
 void node::set_block_schedule_event( bool value )
 {
