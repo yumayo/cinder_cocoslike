@@ -6,3 +6,4 @@
 #include "utility/user_pointer.hpp"
 #include "utility/utf8.h"
 #include "utility/write_file_on_destroyed.h"
+#include "utility/file_system.h"
