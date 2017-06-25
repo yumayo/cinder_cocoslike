@@ -96,6 +96,10 @@ void tcp_server::_member::read( socket_object & sock_obj )
                 {
                     if ( itr->second ) itr->second( sock_obj.handle, root );
                 }
+                else
+                {
+                    log( "【tcp_server】名前に一致するjsonデータが見つかりませんでした。" );
+                }
             }
             std::fill_n( sock_obj.buffer.begin( ), bytes_transferred, 0 );
 

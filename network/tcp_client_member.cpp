@@ -83,6 +83,10 @@ void tcp_client::_member::read( )
                 {
                     if ( itr->second ) itr->second( root );
                 }
+                else
+                {
+                    log( "【tcp_client】名前に一致するjsonデータが見つかりませんでした。" );
+                }
             }
 
             std::fill_n( buffer.begin( ), bytes_transferred, 0 );
