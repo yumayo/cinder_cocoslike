@@ -42,6 +42,7 @@ void surface::paint_fill_circle( cinder::vec2 pixel, float radius, cinder::Color
         for ( int x = rect.x1; x <= rect.x2; ++x )
         {
             if ( radius < length( vec2( x, y ) - rect.getCenter( ) ) ) continue;
+            if ( x < 0 || y < 0 || x >= _surface.getWidth( ) || y >= _surface.getHeight( ) ) continue;
             _surface.setPixel( ivec2( x, y ), ColorA8u( color ) );
         }
     }

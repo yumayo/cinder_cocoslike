@@ -436,11 +436,6 @@ bool node::get_visible( )
 {
     return _visible;
 }
-void node::add_child( std::shared_ptr<node> const& value )
-{
-    value->_parent = shared_from_this( );
-    _children.emplace_back( std::move( value ) );
-}
 std::shared_ptr<node> node::get_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return nullptr );

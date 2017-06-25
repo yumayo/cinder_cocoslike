@@ -31,4 +31,12 @@ float circle::get_radius( )
 {
     return _radius;
 }
+void circle::set_segments( float value )
+{
+    _segments = value;
+}
+float circle::get_segments( )
+{
+    return _segments;
+}
 }

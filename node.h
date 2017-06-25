@@ -185,7 +185,13 @@ public:
     bool get_visible( );
 
 public:
-    void add_child( std::shared_ptr<node> const& value );
+    template<class ty>
+    std::shared_ptr<ty> add_child( std::shared_ptr<ty> const& value )
+    {
+        value->_parent = shared_from_this( );
+        _children.emplace_back( value );
+        return value;
+    }
     std::shared_ptr<node> get_child_by_name( std::string const& name );
     std::shared_ptr<node> get_child_by_tag( int tag );
     void remove_child( std::shared_ptr<node> const& child );
