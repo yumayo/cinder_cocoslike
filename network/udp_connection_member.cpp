@@ -93,34 +93,34 @@ void udp_connection::member::update( float delta_second )
 
     _network_factory.update( delta_second );
 
-    for ( auto& data : _receive_buffers )
+    for ( auto& receive_buffer : _receive_buffers )
     {
-        auto handle = _network_factory.regist( data.first.address( ).to_string( ),
-                                               data.first.port( ) );
+        auto handle = _network_factory.regist( receive_buffer.first.address( ).to_string( ),
+                                               receive_buffer.first.port( ) );
         handle->timeout_restart( );
 
-        while ( !data.second.empty( ) )
+        while ( !receive_buffer.second.empty( ) )
         {
-            auto begin_position = data.second.find( "#B#G#I#N#E#" );
+            auto begin_position = receive_buffer.second.find( "#B#G#I#N#E#" );
             if ( begin_position != 0 ) // 自作プロトコルではないもの。
             {
                 utility::log( "自作プロトコルではない情報を受信しました。" );
-                data.second.clear( );
+                receive_buffer.second.clear( );
             }
             else
             {
-                auto end_position = data.second.find( "#E#N#D#" );
+                auto end_position = receive_buffer.second.find( "#E#N#D#" );
                 if ( end_position != std::string::npos ) // 見つかったら
                 {
-                    auto str = data.second.substr( begin_position + sizeof( "#B#G#I#N#E#" ) - 1, end_position - ( begin_position + sizeof( "#B#G#I#N#E#" ) - 1 ) ); // 見つかった場所までを切り取ります。
-                    data.second = data.second.substr( end_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
+                    auto str = receive_buffer.second.substr( begin_position + sizeof( "#B#G#I#N#E#" ) - 1, end_position - ( begin_position + sizeof( "#B#G#I#N#E#" ) - 1 ) ); // 見つかった場所までを切り取ります。
+                    receive_buffer.second = receive_buffer.second.substr( end_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
                     try // base64でデコードします。
                     {
                         auto receive_data = utility::base64_decode( str );
                         if ( _connection.on_received ) _connection.on_received( handle,
-                                                                                data.second.data( ), data.second.size( ) );
+                                                                                receive_data.first.get( ), receive_data.second );
                         Json::Value root;
-                        if ( Json::Reader( ).parse( std::string( data.second.data( ), data.second.size( ) ), root ) )
+                        if ( Json::Reader( ).parse( std::string( receive_data.first.get( ), receive_data.second ), root ) )
                         {
                             if ( _connection.on_received_json )_connection.on_received_json( handle, root );
                             auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
@@ -155,7 +155,7 @@ void udp_connection::member::_receive( )
         {
             utility::scoped_mutex m( _mutex );
 
-            _receive_buffers[_remote_endpoint] += std::string( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred );
+            _receive_buffers[_remote_endpoint] += std::string( _remote_buffer.data( ), bytes_transferred );
 
             std::fill_n( _remote_buffer.begin( ), bytes_transferred, 0 );
         }
