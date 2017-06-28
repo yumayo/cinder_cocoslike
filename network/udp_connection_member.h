@@ -35,7 +35,7 @@ class udp_connection::member
     // 繋がったオブジェクトたちを保存しておきます。
     network_factory _network_factory;
 
-    std::deque<std::pair<udp::endpoint, std::vector<char>>> _receive_deque;
+    std::map<udp::endpoint, std::string> _receive_buffers;
 private:
     member( udp_connection& server, udp::endpoint const& end_point );
 public:

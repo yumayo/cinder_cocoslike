@@ -1,6 +1,7 @@
 ﻿#include "udp_connection_member.h"
 #include "jsoncpp/json.h"
 #include "utility/string_utility.h"
+#include "utility/base64.h"
 namespace network
 {
 udp_connection::member::member( udp_connection & server, udp::endpoint const & end_point )
@@ -52,7 +53,8 @@ void udp_connection::member::write( network_handle const & handle, char const * 
         udp::resolver::query query( udp::v4( ),
                                     handle->ip_address,
                                     boost::lexical_cast<std::string>( handle->port ) );
-        _udp_socket.send_to( asio::buffer( send_data, send_data_byte ),
+        auto writable_string = std::string( "#B#G#I#N#E#" ) + utility::base64_encode( send_data, send_data_byte ) + std::string( "#E#N#D#" );
+        _udp_socket.send_to( asio::buffer( writable_string.data( ), writable_string.size( ) ),
                              resolver.resolve( query )->endpoint( ) );
         if ( _connection.on_sended )_connection.on_sended( );
     }
@@ -91,31 +93,51 @@ void udp_connection::member::update( float delta_second )
 
     _network_factory.update( delta_second );
 
-    for ( auto& data : _receive_deque )
+    for ( auto& data : _receive_buffers )
     {
         auto handle = _network_factory.regist( data.first.address( ).to_string( ),
                                                data.first.port( ) );
         handle->timeout_restart( );
 
-        // データを受け取ったら呼び出されます。
-        if ( _connection.on_received ) _connection.on_received( handle,
-                                                                data.second.data( ), data.second.size( ) );
-
-        Json::Value root;
-        if ( Json::Reader( ).parse( std::string( data.second.data( ), data.second.size( ) ), root ) )
+        while ( !data.second.empty( ) )
         {
-            // 通常用のjson関数を呼び出します。
-            if ( _connection.on_received_json )_connection.on_received_json( handle, root );
-
-            // map式のjson関数を呼び出します。
-            auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
-            if ( itr != std::end( _connection.on_received_named_json ) )
+            auto begin_position = data.second.find( "#B#G#I#N#E#" );
+            if ( begin_position != 0 ) // 自作プロトコルではないもの。
             {
-                if ( itr->second ) itr->second( handle, root );
+                utility::log( "自作プロトコルではない情報を受信しました。" );
+                data.second.clear( );
+            }
+            else
+            {
+                auto end_position = data.second.find( "#E#N#D#" );
+                if ( end_position != std::string::npos ) // 見つかったら
+                {
+                    auto str = data.second.substr( begin_position + sizeof( "#B#G#I#N#E#" ) - 1, end_position - ( begin_position + sizeof( "#B#G#I#N#E#" ) - 1 ) ); // 見つかった場所までを切り取ります。
+                    data.second = data.second.substr( end_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
+                    try // base64でデコードします。
+                    {
+                        auto receive_data = utility::base64_decode( str );
+                        if ( _connection.on_received ) _connection.on_received( handle,
+                                                                                data.second.data( ), data.second.size( ) );
+                        Json::Value root;
+                        if ( Json::Reader( ).parse( std::string( data.second.data( ), data.second.size( ) ), root ) )
+                        {
+                            if ( _connection.on_received_json )_connection.on_received_json( handle, root );
+                            auto itr = _connection.on_received_named_json.find( root["name"].asString( ) );
+                            if ( itr != std::end( _connection.on_received_named_json ) )
+                            {
+                                if ( itr->second ) itr->second( handle, root );
+                            }
+                        }
+                    }
+                    catch ( std::exception& e )
+                    {
+                        utility::log( "base64でエンコードされていないデータを受信しました。" );
+                    }
+                }
             }
         }
     }
-    _receive_deque.clear( );
 }
 void udp_connection::member::_receive( )
 {
@@ -133,7 +155,7 @@ void udp_connection::member::_receive( )
         {
             utility::scoped_mutex m( _mutex );
 
-            _receive_deque.emplace_back( std::make_pair( _remote_endpoint, std::vector<char>( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred ) ) );
+            _receive_buffers[_remote_endpoint] += std::string( _remote_buffer.begin( ), _remote_buffer.begin( ) + bytes_transferred );
 
             std::fill_n( _remote_buffer.begin( ), bytes_transferred, 0 );
         }
