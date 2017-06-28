@@ -2,6 +2,7 @@
 #include "boost/lexical_cast.hpp"
 #include "boost/bind.hpp"
 #include "utility/assert_log.h"
+#include "utility/base64.h"
 using namespace utility;
 using tcp = asio::ip::tcp;
 namespace network
@@ -26,12 +27,13 @@ void tcp_client::_member::connect( )
         }
     } );
 }
-void tcp_client::_member::write( asio::const_buffers_1 buffer, std::function<void( )> on_send )
+void tcp_client::_member::write( char const* begin, size_t byte, std::function<void( )> on_send )
 {
+    auto writable_string = std::string( "#B#G#I#N#E#" ) + utility::base64_encode( begin, byte ) + std::string( "#E#N#D#" );
     asio::async_write(
         socket,
-        buffer,
-        [ this, on_send, buffer ] ( const asio::error_code& e, size_t bytes_transferred )
+        asio::buffer( writable_string.data( ), writable_string.size( ) ),
+        [ this, on_send ] ( const asio::error_code& e, size_t bytes_transferred )
     {
         if ( e )
         {
@@ -69,29 +71,8 @@ void tcp_client::_member::read( )
         }
         else
         {
-            if ( parent.on_readed ) parent.on_readed( buffer.data( ), bytes_transferred );
-
-            Json::Value root;
-            if ( Json::Reader( ).parse( std::string( buffer.data( ), bytes_transferred ), root ) )
-            {
-                // 通常用のjson関数を呼び出します。
-                if ( parent.on_received_json ) parent.on_received_json( root );
-
-                // map式のjson関数を呼び出します。
-                auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
-                if ( itr != std::end( parent.on_received_named_json ) )
-                {
-                    if ( itr->second ) itr->second( root );
-                }
-                else
-                {
-                    log( "【tcp_client】名前に一致するjsonデータが見つかりませんでした。" );
-                }
-            }
-
+            receive_buffer += std::string( buffer.data( ), bytes_transferred );
             std::fill_n( buffer.begin( ), bytes_transferred, 0 );
-
-            // エラーじゃない限り無限に受け取りを続けます。
             read( );
         }
     } );
@@ -108,5 +89,50 @@ void tcp_client::_member::error( asio::error_code const& e )
 int tcp_client::_member::get_port( )
 {
     return socket.local_endpoint( ).port( );
+}
+void tcp_client::_member::update( )
+{
+    while ( !receive_buffer.empty( ) )
+    {
+        auto find_position = receive_buffer.find( "#B#G#I#N#E#" );
+        if ( find_position == std::string::npos ) // 自作プロトコルではないもの。
+        {
+            utility::log( "自作プロトコルではない情報を受信しました。" );
+            receive_buffer.clear( );
+        }
+        else
+        {
+            receive_buffer = receive_buffer.substr( find_position + sizeof( "#B#G#I#N#E#" ) - 1 );
+            find_position = receive_buffer.find( "#E#N#D#" );
+            if ( find_position != std::string::npos ) // 見つかったら
+            {
+                auto str = receive_buffer.substr( 0, find_position ); // 見つかった場所までを切り取ります。
+                receive_buffer = receive_buffer.substr( find_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
+                try // base64でデコードします。
+                {
+                    auto receive_data = utility::base64_decode( str );
+                    if ( parent.on_readed ) parent.on_readed( receive_data.first.get( ), receive_data.second );
+                    Json::Value root;
+                    if ( Json::Reader( ).parse( std::string( receive_data.first.get( ), receive_data.second ), root ) )
+                    {
+                        if ( parent.on_received_json ) parent.on_received_json( root );
+                        auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
+                        if ( itr != std::end( parent.on_received_named_json ) )
+                        {
+                            if ( itr->second ) itr->second( root );
+                        }
+                    }
+                }
+                catch ( std::exception& e )
+                {
+                    utility::log( "base64でエンコードされていないデータを受信しました。" );
+                }
+            }
+            else // 見つからない場合まだデータが途中ということになります。
+            {
+                return;
+            }
+        }
+    }
 }
 }

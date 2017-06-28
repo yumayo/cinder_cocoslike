@@ -22,7 +22,8 @@ struct tcp_client::_member
     }
     tcp_client& parent;
     void connect( );
-    void write( asio::const_buffers_1 buffer, std::function<void( )> on_send );
+    void write( char const* begin, size_t byte, std::function<void( )> on_send );
+    void update( );
     void read( );
     void close( );
     void error( asio::error_code const& error );
@@ -30,6 +31,7 @@ struct tcp_client::_member
     asio::io_service io;
     asio::ip::tcp::socket socket;
     boost::array<char, 1024 * 256> buffer;
+    std::string receive_buffer;
     std::string ip_address;
     std::string port;
 };

@@ -26,6 +26,7 @@ void tcp_client::update( float delta )
 {
     _m->io.reset( );
     _m->io.poll( );
+    _m->update( );
 }
 void tcp_client::write( std::string const & message, std::function<void( )> on_send )
 {
@@ -33,7 +34,7 @@ void tcp_client::write( std::string const & message, std::function<void( )> on_s
 }
 void tcp_client::write( char const * message, size_t size, std::function<void( )> on_send )
 {
-    _m->write( asio::buffer( message, size ), on_send );
+    _m->write( message, size, on_send );
 }
 int tcp_client::get_port( )
 {

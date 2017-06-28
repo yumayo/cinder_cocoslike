@@ -2,6 +2,7 @@
 #include "boost/lexical_cast.hpp"
 #include "boost/bind.hpp"
 #include "utility/assert_log.h"
+#include "utility/base64.h"
 using namespace utility;
 using tcp = asio::ip::tcp;
 namespace network
@@ -58,6 +59,25 @@ bool tcp_server::_member::is_max( )
     }
     return sockets.size( ) == num;
 }
+void tcp_server::_member::write( socket_object & sock_obj, char const* begin, size_t byte, std::function<void( )> on_send )
+{
+    auto writable_string = std::string( "#B#G#I#N#E#" ) + utility::base64_encode( begin, byte ) + std::string( "#E#N#D#" );
+    asio::async_write(
+        sock_obj.socket,
+        asio::buffer( writable_string.data( ), writable_string.size( ) ),
+        [ this, &sock_obj, on_send ] ( const asio::error_code& e, size_t bytes_transferred )
+    {
+        if ( e )
+        {
+            log( "【tcp_server】送信できませんでした。: %s", e.message( ).c_str( ) );
+            if ( parent.on_send_failed ) parent.on_send_failed( sock_obj.handle );
+        }
+        else
+        {
+            if ( on_send ) on_send( );
+        }
+    } );
+}
 void tcp_server::_member::read( socket_object & sock_obj )
 {
     asio::async_read(
@@ -82,47 +102,9 @@ void tcp_server::_member::read( socket_object & sock_obj )
         }
         else
         {
-            if ( parent.on_readed ) parent.on_readed( sock_obj.handle, sock_obj.buffer.data( ), bytes_transferred );
-
-            Json::Value root;
-            if ( Json::Reader( ).parse( std::string( sock_obj.buffer.data( ), bytes_transferred ), root ) )
-            {
-                // 通常用のjson関数を呼び出します。
-                if ( parent.on_received_json ) parent.on_received_json( sock_obj.handle, root );
-
-                // map式のjson関数を呼び出します。
-                auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
-                if ( itr != std::end( parent.on_received_named_json ) )
-                {
-                    if ( itr->second ) itr->second( sock_obj.handle, root );
-                }
-                else
-                {
-                    log( "【tcp_server】名前に一致するjsonデータが見つかりませんでした。" );
-                }
-            }
+            sock_obj.receive_buffer += std::string( sock_obj.buffer.data( ), bytes_transferred );
             std::fill_n( sock_obj.buffer.begin( ), bytes_transferred, 0 );
-
-            // クライアントからの接続が切れるまで無限に受け取り続けます。
             read( sock_obj );
-        }
-    } );
-}
-void tcp_server::_member::write( socket_object& sock_obj, asio::const_buffers_1 buffer, std::function<void( )> on_send )
-{
-    asio::async_write(
-        sock_obj.socket,
-        buffer,
-        [ this, &sock_obj, on_send, buffer ] ( const asio::error_code& e, size_t bytes_transferred )
-    {
-        if ( e )
-        {
-            log( "【tcp_server】送信できませんでした。: %s", e.message( ).c_str( ) );
-            if ( parent.on_send_failed ) parent.on_send_failed( sock_obj.handle );
-        }
-        else
-        {
-            if ( on_send ) on_send( );
         }
     } );
 }
@@ -149,6 +131,54 @@ void tcp_server::_member::find_run( client_handle const& handle, std::function<v
     else
     {
         log( "【tcp_server】名前と一致するクライアントが見つかりませんでした。" );
+    }
+}
+void tcp_server::_member::update( )
+{
+    for ( auto& socket : sockets )
+    {
+        while ( !socket->receive_buffer.empty( ) )
+        {
+            auto find_position = socket->receive_buffer.find( "#B#G#I#N#E#" );
+            if ( find_position == std::string::npos ) // 自作プロトコルではないもの。
+            {
+                utility::log( "自作プロトコルではない情報を受信しました。" );
+                socket->receive_buffer.clear( );
+            }
+            else
+            {
+                socket->receive_buffer = socket->receive_buffer.substr( find_position + sizeof( "#B#G#I#N#E#" ) - 1 );
+                find_position = socket->receive_buffer.find( "#E#N#D#" );
+                if ( find_position != std::string::npos )
+                {
+                    auto str = socket->receive_buffer.substr( 0, find_position );
+                    socket->receive_buffer = socket->receive_buffer.substr( find_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。
+                    try
+                    {
+                        auto receive_data = utility::base64_decode( str );
+                        if ( parent.on_readed ) parent.on_readed( socket->handle, receive_data.first.get( ), receive_data.second );
+                        Json::Value root;
+                        if ( Json::Reader( ).parse( std::string( receive_data.first.get( ), receive_data.second ), root ) )
+                        {
+                            if ( parent.on_received_json ) parent.on_received_json( socket->handle, root );
+                            auto itr = parent.on_received_named_json.find( root["name"].asString( ) );
+                            if ( itr != std::end( parent.on_received_named_json ) )
+                            {
+                                if ( itr->second ) itr->second( socket->handle, root );
+                            }
+                        }
+                    }
+                    catch ( std::exception& e )
+                    {
+                        utility::log( "base64でエンコードされていないデータを受信しました。" );
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 }
 }

@@ -28,6 +28,7 @@ void tcp_server::update( float delta )
 {
     _m->io.reset( );
     _m->io.poll( );
+    _m->update( );
 }
 void tcp_server::write( client_handle const& handle, std::string const & message, std::function<void( )> on_send )
 {
@@ -37,7 +38,7 @@ void tcp_server::write( client_handle const& handle, char const * message, size_
 {
     _m->find_run( handle, [ this, message, size, on_send ] ( socket_object& sock_obj )
     {
-        _m->write( sock_obj, asio::buffer( message, size ), on_send );
+        _m->write( sock_obj, message, size, on_send );
     } );
 }
 void tcp_server::speech( std::string const & message, std::function<void( )> on_send )
@@ -51,7 +52,7 @@ void tcp_server::speech( char const * message, size_t size, std::function<void( 
         if ( !obj->handle.ip_address.empty( ) &&
              !obj->handle.port.empty( ) )
         {
-            _m->write( *obj, asio::buffer( message, size ), on_send );
+            _m->write( *obj, message, size, on_send );
         }
     }
 }

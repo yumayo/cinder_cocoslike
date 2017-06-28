@@ -43,6 +43,7 @@ public:
     }
     asio::ip::tcp::socket socket;
     boost::array<char, 1024 * 256> buffer;
+    std::string receive_buffer;
     client_handle handle;
 private: // 以下の値をハンドルに詰め込んで運びます。
     std::string _ip_address;
@@ -53,11 +54,12 @@ struct tcp_server::_member
     _member( tcp_server& parent, std::string const& port, int num_of_client );
     void async_accept( socket_object& sock_obj );
     bool is_max( );
-    void write( socket_object& sock_obj, asio::const_buffers_1 buffer, std::function<void( )> on_send );
+    void write( socket_object& sock_obj, char const* begin, size_t byte, std::function<void( )> on_send );
     void read( socket_object& sock_obj );
     void on_errored( socket_object& sock_obj, asio::error_code const& e );
     void close_with_async( socket_object& sock_obj );
     void find_run( client_handle const& handle, std::function<void( socket_object& )> call );
+    void update( );
     tcp_server& parent;
     asio::io_service io;
     std::unique_ptr<asio::ip::tcp::acceptor> acceptor;
