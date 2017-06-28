@@ -139,20 +139,19 @@ void tcp_server::_member::update( )
     {
         while ( !socket->receive_buffer.empty( ) )
         {
-            auto find_position = socket->receive_buffer.find( "#B#G#I#N#E#" );
-            if ( find_position != 0 ) // 自作プロトコルではないもの。
+            auto begin_position = socket->receive_buffer.find( "#B#G#I#N#E#" );
+            if ( begin_position != 0 ) // 自作プロトコルではないもの。
             {
                 utility::log( "自作プロトコルではない情報を受信しました。" );
                 socket->receive_buffer.clear( );
             }
             else
             {
-                socket->receive_buffer = socket->receive_buffer.substr( find_position + sizeof( "#B#G#I#N#E#" ) - 1 );
-                find_position = socket->receive_buffer.find( "#E#N#D#" );
-                if ( find_position != std::string::npos )
+                auto end_position = socket->receive_buffer.find( "#E#N#D#" );
+                if ( end_position != std::string::npos )
                 {
-                    auto str = socket->receive_buffer.substr( 0, find_position );
-                    socket->receive_buffer = socket->receive_buffer.substr( find_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。
+                    auto str = socket->receive_buffer.substr( begin_position + sizeof( "#B#G#I#N#E#" ) - 1, end_position - ( begin_position + sizeof( "#B#G#I#N#E#" ) - 1 ) );
+                    socket->receive_buffer = socket->receive_buffer.substr( end_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。
                     try
                     {
                         auto receive_data = utility::base64_decode( str );

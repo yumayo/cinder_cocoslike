@@ -94,20 +94,19 @@ void tcp_client::_member::update( )
 {
     while ( !receive_buffer.empty( ) )
     {
-        auto find_position = receive_buffer.find( "#B#G#I#N#E#" );
-        if ( find_position != 0 ) // 自作プロトコルではないもの。
+        auto begin_position = receive_buffer.find( "#B#G#I#N#E#" );
+        if ( begin_position != 0 ) // 自作プロトコルではないもの。
         {
             utility::log( "自作プロトコルではない情報を受信しました。" );
             receive_buffer.clear( );
         }
         else
         {
-            receive_buffer = receive_buffer.substr( find_position + sizeof( "#B#G#I#N#E#" ) - 1 );
-            find_position = receive_buffer.find( "#E#N#D#" );
-            if ( find_position != std::string::npos ) // 見つかったら
+            auto end_position = receive_buffer.find( "#E#N#D#" );
+            if ( end_position != std::string::npos ) // 見つかったら
             {
-                auto str = receive_buffer.substr( 0, find_position ); // 見つかった場所までを切り取ります。
-                receive_buffer = receive_buffer.substr( find_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
+                auto str = receive_buffer.substr( begin_position + sizeof( "#B#G#I#N#E#" ) - 1, end_position - ( begin_position + sizeof( "#B#G#I#N#E#" ) - 1 ) ); // 見つかった場所までを切り取ります。
+                receive_buffer = receive_buffer.substr( end_position + sizeof( "#E#N#D#" ) - 1 ); // 残りを詰め直す。この時点でendまでが切り取られ次のデータになる。
                 try // base64でデコードします。
                 {
                     auto receive_data = utility::base64_decode( str );
