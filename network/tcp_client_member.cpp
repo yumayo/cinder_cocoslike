@@ -95,7 +95,7 @@ void tcp_client::_member::update( )
     while ( !receive_buffer.empty( ) )
     {
         auto find_position = receive_buffer.find( "#B#G#I#N#E#" );
-        if ( find_position == std::string::npos ) // 自作プロトコルではないもの。
+        if ( find_position != 0 ) // 自作プロトコルではないもの。
         {
             utility::log( "自作プロトコルではない情報を受信しました。" );
             receive_buffer.clear( );
