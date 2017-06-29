@@ -220,14 +220,14 @@ void node::_render( )
 {
     if ( !_visible ) return;
 
-    gl::pushModelView( );
+    gl::pushMatrices( );
     gl::translate( _position );
     gl::scale( _scale );
     gl::rotate( _rotation );
     gl::translate( -_content_size * _anchor_point );
     gl::color( _color );
 
-    if ( utility::hit_window_aabb( shared_from_this( ) ) )
+    if ( /*utility::hit_window_aabb(*/ shared_from_this( ) /*)*/ )
     {
         this->render( );
     }
@@ -237,7 +237,7 @@ void node::_render( )
     {
         c->_render( );
     }
-    gl::popModelView( );
+    gl::popMatrices( );
 }
 bool node::init( )
 {
