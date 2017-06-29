@@ -45,7 +45,9 @@ void tcp_client::_member::write( char const* begin, size_t byte, std::function<v
         {
             writable_string += std::string( "#B#G#I#N#E#" );
         }
-        writable_string += utility::base64_encode( begin + sub[i], sub[i + 1] );
+        int offset = 0;
+        for ( int j = 0; j <= i; ++j ) offset += sub[j];
+        writable_string += utility::base64_encode( begin + offset, sub[i + 1] );
         if ( i == sub.size( ) - 1 - 1 )
         {
             writable_string += std::string( "#E#N#D#" );

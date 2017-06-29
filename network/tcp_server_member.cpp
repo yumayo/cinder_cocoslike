@@ -77,7 +77,9 @@ void tcp_server::_member::write( socket_object & sock_obj, char const* begin, si
         {
             writable_string += std::string( "#B#G#I#N#E#" );
         }
-        writable_string += utility::base64_encode( begin + sub[i], sub[i + 1] );
+        int offset = 0;
+        for ( int j = 0; j <= i; ++j ) offset += sub[j];
+        writable_string += utility::base64_encode( begin + offset, sub[i + 1] );
         if ( i == sub.size( ) - 1 - 1 )
         {
             writable_string += std::string( "#E#N#D#" );
