@@ -5,6 +5,7 @@
 #include "renderer/rect.h"
 #include "renderer/rect_edge.h"
 #include "renderer/sprite.h"
+#include "renderer/sprite_cubic.h"
 #include "renderer/sprite_animation.h"
 #include "renderer/surface.h"
-#include "renderer/sprite_cubic.h"
+#include "renderer/surface_cubic.h"
