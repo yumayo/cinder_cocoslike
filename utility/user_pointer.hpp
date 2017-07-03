@@ -71,6 +71,14 @@ public:
     {
         return this->lock( ) != right;
     }
+    bool operator<( soft_pointer<T> const& right ) const noexcept // ポインタ同士を比較します。
+    {
+        return this->lock( ) < right.lock( );
+    }
+    bool operator<( hard_pointer<T> const& right ) const noexcept
+    {
+        return this->lock( ) < right;
+    }
     operator T( ) const noexcept // 自動的にポインタの実態を返します。
     {
         return *this->lock( );

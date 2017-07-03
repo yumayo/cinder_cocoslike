@@ -20,7 +20,10 @@ public:
     void write( network_handle const& handle, std::string const& send_data );
     void write( network_handle const& handle, char const* send_data );
     void write( network_handle const& handle, char const* send_data, size_t send_data_byte );
+    bool destroy_client( network_handle const& handle );
+    network_handle regist_client( std::string const& ip_address, int const& port );
     std::list<std::shared_ptr<network_object>>& get_clients( );
+    int get_port( );
     void close( );
     void open( );
 public:

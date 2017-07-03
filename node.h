@@ -10,6 +10,7 @@
 class node : public std::enable_shared_from_this<node>
 {
     friend class app_delegate;
+    friend class scene_manager;
 public:
     static const int INVALID_TAG = -1;
 
@@ -18,17 +19,19 @@ public:
 public:
     virtual ~node( );
 public:
-    virtual bool mouse_began( cinder::app::MouseEvent event );
-    virtual void mouse_moved( cinder::app::MouseEvent event );
-    virtual void mouse_ended( cinder::app::MouseEvent event );
-    virtual bool touch_began( cinder::app::TouchEvent::Touch event );
-    virtual void touch_moved( cinder::app::TouchEvent::Touch event );
-    virtual void touch_ended( cinder::app::TouchEvent::Touch event );
-    virtual void touches_began( cinder::app::TouchEvent event );
-    virtual void touches_moved( cinder::app::TouchEvent event );
-    virtual void touches_ended( cinder::app::TouchEvent event );
-    virtual void update( float delta );
-    virtual void render( );
+    virtual bool mouse_began( cinder::app::MouseEvent event ) { return false; }
+    virtual void mouse_moved( cinder::app::MouseEvent event ) {}
+    virtual void mouse_ended( cinder::app::MouseEvent event ) {}
+    virtual bool touch_began( cinder::app::TouchEvent::Touch event ) { return false; }
+    virtual void touch_moved( cinder::app::TouchEvent::Touch event ) {}
+    virtual void touch_ended( cinder::app::TouchEvent::Touch event ) {}
+    virtual void touches_began( cinder::app::TouchEvent event ) {}
+    virtual void touches_moved( cinder::app::TouchEvent event ) {}
+    virtual void touches_ended( cinder::app::TouchEvent event ) {}
+    virtual void key_down( cinder::app::KeyEvent event ) {}
+    virtual void key_up( cinder::app::KeyEvent event ) {}
+    virtual void update( float delta ) {}
+    virtual void render( ) {}
 private:
     // à»â∫ÇÃä÷êîÇ≈ÉmÅ[Éhä‘ÇâÒÇµÇ‹Ç∑ÅB
     bool _mouse_began( cinder::app::MouseEvent event );
@@ -40,6 +43,8 @@ private:
     void _touches_began( cinder::app::TouchEvent event );
     void _touches_moved( cinder::app::TouchEvent event );
     void _touches_ended( cinder::app::TouchEvent event );
+    void _key_down( cinder::app::KeyEvent event );
+    void _key_up( cinder::app::KeyEvent event );
     void _update( float delta );
     void _render( cinder::mat3 model_view_matrix );
 
@@ -75,6 +80,12 @@ protected:
 public:
     virtual void set_schedule_touches_event( bool value = true );
     bool get_schedule_touches_event( );
+
+protected:
+    bool _schedule_key_event = false;
+public:
+    virtual void set_schedule_key_event( bool value = true );
+    bool get_schedule_key_event( );
 
 public:
     virtual void set_schedule_all( bool value = true );
@@ -174,7 +185,13 @@ public:
     bool get_visible( );
 
 public:
-    void add_child( std::shared_ptr<node> const& value );
+    template<class ty>
+    std::shared_ptr<ty> add_child( std::shared_ptr<ty> const& value )
+    {
+        value->_parent = shared_from_this( );
+        _children.emplace_back( value );
+        return value;
+    }
     std::shared_ptr<node> get_child_by_name( std::string const& name );
     std::shared_ptr<node> get_child_by_tag( int tag );
     void remove_child( std::shared_ptr<node> const& child );
@@ -182,10 +199,9 @@ public:
     void remove_child_by_tag( int tag );
     void remove_all_children( );
     void remove_from_parent( );
-    void remove_from_parent_user_function( std::function<void( )> remove_user_function );
 private:
     bool _own_removing = false;
-    std::vector<std::function<void( )>> _remove_signal;
+    std::vector<std::function<void( )>> _update_end_signal;
 
 protected:
     bool _swallow = false;

@@ -1,20 +1,11 @@
 #pragma once
-#include "node.h"
-#include <cinder/audio/audio.h>
+#include "base_player.h"
 namespace audio
 {
-class buffer_player : public node
+class buffer_player : public base_player
 {
 public:
-    CREATE_H( buffer_player, std::string const& );
-    ~buffer_player( );
-    bool init( std::string const& relative_path );
-    void play( );
-    void stop( );
-    void set_gain( float value );
-    float get_gain( );
-private:
-    cinder::audio::GainNodeRef _gain;
-    cinder::audio::BufferPlayerNodeRef _buffer_player_node;
+    CREATE_H( buffer_player, std::string const& relative_path );
+    bool init( std::string const& relative_path ) final override;
 };
 }

@@ -20,6 +20,21 @@ network_handle network_factory::regist( std::string const & ip_address, int cons
         return ( *itr );
     }
 }
+bool network_factory::destroy_client( network_handle handle )
+{
+    if ( _network_objects.empty( ) ) return false;
+    auto remove_itr = std::remove_if( std::begin( _network_objects ), std::end( _network_objects ),
+                                      [ handle ] ( std::shared_ptr<network_object>& objects )
+    {
+        if ( *objects == **handle )
+        {
+            utility::log_network( objects->ip_address, objects->port,
+                                  "このオブジェクトは削除されました。" );
+        }
+        return *objects == **handle;
+    } );
+    return _network_objects.erase( remove_itr, std::end( _network_objects ) ) != std::end( _network_objects );
+}
 std::list<std::shared_ptr<network_object>>::iterator network_factory::find_network_object( network_handle handle )
 {
     auto itr = std::find_if( std::begin( _network_objects ), std::end( _network_objects ),

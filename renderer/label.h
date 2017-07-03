@@ -8,8 +8,8 @@ class label : public node
     struct member;
     std::shared_ptr<member> _m;
 public:
-    CREATE_H( label, std::string const& relative_path, float size );
-    bool init( std::string const& relative_path, float size );
+    CREATE_H( label, std::string const& text, std::string const& relative_path, float size );
+    bool init( std::string const& text, std::string const& relative_path, float size );
     void render( ) override;
 public:
     void set_size( float value );
@@ -23,7 +23,7 @@ private:
     ci::gl::GlslProgRef _font_shader;
     std::string _text;
     std::string _relative_path;
-    float _font_size = 0.0F;
-    float _under_height = 0.0F;
+    float _size = 0.0F;
+    float _height = 0.0F;
 };
 }

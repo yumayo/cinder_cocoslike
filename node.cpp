@@ -12,41 +12,6 @@ node::~node( )
 {
     if ( !_name.empty( ) ) log( "Destroy node: [%s]", _name.c_str( ) );
 }
-bool node::mouse_began( cinder::app::MouseEvent event )
-{
-    return false;
-}
-void node::mouse_moved( cinder::app::MouseEvent event )
-{
-}
-void node::mouse_ended( cinder::app::MouseEvent event )
-{
-}
-bool node::touch_began( cinder::app::TouchEvent::Touch event )
-{
-    return false;
-}
-void node::touch_moved( cinder::app::TouchEvent::Touch event )
-{
-}
-void node::touch_ended( cinder::app::TouchEvent::Touch event )
-{
-}
-void node::touches_began( cinder::app::TouchEvent event )
-{
-}
-void node::touches_moved( cinder::app::TouchEvent event )
-{
-}
-void node::touches_ended( cinder::app::TouchEvent event )
-{
-}
-void node::update( float delta )
-{
-}
-void node::render( )
-{
-}
 bool node::_mouse_began( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
@@ -207,6 +172,30 @@ void node::_touches_ended( cinder::app::TouchEvent event )
         touches_ended( event );
     }
 }
+void node::_key_down( cinder::app::KeyEvent event )
+{
+    if ( !_block_schedule_event )
+        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+        {
+            ( *itr )->_key_down( event );
+        }
+    if ( _schedule_key_event )
+    {
+        key_down( event );
+    }
+}
+void node::_key_up( cinder::app::KeyEvent event )
+{
+    if ( !_block_schedule_event )
+        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+        {
+            ( *itr )->_key_up( event );
+        }
+    if ( _schedule_key_event )
+    {
+        key_up( event );
+    }
+}
 void node::_update( float delta )
 {
     // 途中でaddがあるため、コンテナをバックアップします。
@@ -224,8 +213,8 @@ void node::_update( float delta )
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
-    for ( auto const& rem : _remove_signal ) rem( );
-    _remove_signal.clear( );
+    for ( auto const& signal : _update_end_signal ) signal( );
+    _update_end_signal.clear( );
 }
 void node::_render( cinder::mat3 model_view_matrix )
 {
@@ -240,10 +229,10 @@ void node::_render( cinder::mat3 model_view_matrix )
     // 回転や、スケーリングを行う行列位置は変わりません。
     // しかし、平行移動の部分は2次元であれば3次元目に、3次元であれば4次元目のマトリックス位置に来ます。
     // 2次元空間マトリックスにおいて3次元目は必ず0になるのでm[*][2]は0で決め打ちしています。
-    gl::setModelMatrix( mat4( m[0][0], m[0][1],       0,      0,
-                              m[1][0], m[1][1],       0,      0,
-                                    0,       0,       1,      0,
-                              m[2][0], m[2][1],       0,      1 ) );
+    gl::setModelMatrix( mat4( m[0][0], m[0][1], 0, 0,
+                              m[1][0], m[1][1], 0, 0,
+                              0, 0, 1, 0,
+                              m[2][0], m[2][1], 0, 1 ) );
 
     gl::color( _color );
 
@@ -302,12 +291,21 @@ bool node::get_schedule_touches_event( )
 {
     return _schedule_touches_event;
 }
+void node::set_schedule_key_event( bool value )
+{
+    _schedule_key_event = value;
+}
+bool node::get_schedule_key_event( )
+{
+    return _schedule_key_event;
+}
 void node::set_schedule_all( bool value )
 {
     _schedule_update = value;
     _schedule_mouse_event = value;
     _schedule_touch_event = value;
     _schedule_touches_event = value;
+    _schedule_key_event = value;
 }
 void node::set_block_schedule_event( bool value )
 {
@@ -446,11 +444,6 @@ bool node::get_visible( )
 {
     return _visible;
 }
-void node::add_child( std::shared_ptr<node> const& value )
-{
-    value->_parent = shared_from_this( );
-    _children.emplace_back( std::move( value ) );
-}
 std::shared_ptr<node> node::get_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return nullptr );
@@ -471,7 +464,7 @@ std::shared_ptr<node> node::get_child_by_name( std::string const & name )
 }
 std::shared_ptr<node> node::get_child_by_tag( int tag )
 {
-    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return nullptr );
+    assert_log( tag != node::INVALID_TAG, "無効なタグです。", return nullptr );
 
     auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, tag ] ( std::shared_ptr<node>& n )
     {
@@ -512,7 +505,7 @@ void node::remove_child_by_name( std::string const & name )
 }
 void node::remove_child_by_tag( int tag )
 {
-    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return );
+    assert_log( tag != node::INVALID_TAG, "無効なタグです。", return );
 
     auto child = this->get_child_by_tag( tag );
 
@@ -527,7 +520,7 @@ void node::remove_child_by_tag( int tag )
 }
 void node::remove_all_children( )
 {
-    _remove_signal.emplace_back( [ this ]
+    _update_end_signal.emplace_back( [ this ]
     {
         _children.clear( );
     } );
@@ -539,24 +532,9 @@ void node::remove_from_parent( )
         _own_removing = true;
         if ( _parent.lock( ) )
         {
-            _parent.lock( )->_remove_signal.emplace_back( [ this ]
+            _parent.lock( )->_update_end_signal.emplace_back( [ this ]
             {
                 _parent.lock( )->remove_child( shared_from_this( ) );
-            } );
-        }
-    }
-}
-void node::remove_from_parent_user_function( std::function<void( )> remove_user_function )
-{
-    if ( !_own_removing )
-    {
-        _own_removing = true;
-        if ( _parent.lock( ) )
-        {
-            _parent.lock( )->_remove_signal.emplace_back( [ this, remove_user_function ]
-            {
-                _parent.lock( )->remove_child( shared_from_this( ) );
-                if ( remove_user_function ) remove_user_function( );
             } );
         }
     }
@@ -634,11 +612,11 @@ cinder::mat3 node::get_world_matrix( )
         p = p.lock( )->_parent;
     }
 
-    mat3 world_matrix;
+    mat3 result;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
-        world_matrix *= *itr;
+        result *= *itr;
     }
 
-    return world_matrix;
+    return result;
 }

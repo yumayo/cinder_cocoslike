@@ -1,6 +1,4 @@
 ﻿#pragma once
-// https://github.com/tek-nishi/FontTest.git
-// 上記より参照
 //
 // フォントを扱う
 // SOURCE: fontstash

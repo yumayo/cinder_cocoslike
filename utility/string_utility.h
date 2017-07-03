@@ -13,12 +13,10 @@ namespace cinder
 {
 namespace app
 {
-// データ書き出しのディレクトリを取得
-// ディレクトリ構造には対応していません。
-std::string getWritableDirectry( );
-std::string getWritablePath( std::string const& filename );
+// データ書き出しのパスを取得
+// ファイル書き出し時はこの関数でパスを取得する事
+std::string getWritablePath( );
 std::string loadString( std::string const& relative_path );
 std::string getSystemTimeNamed( );
-void writeFile( std::string const& filename, std::string const& document );
 }
 }

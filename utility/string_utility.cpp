@@ -2,7 +2,6 @@
 #include <stdarg.h>
 #include <time.h>
 #include "scoped_mutex.h"
-#include <boost/filesystem.hpp>
 namespace utility
 {
 static const int max_string_length = ( 256 * 256 );
@@ -87,9 +86,10 @@ namespace cinder
 {
 namespace app
 {
-std::string getWritableDirectry( )
+std::string getWritablePath( )
 {
     #if defined(CINDER_COCOA_TOUCH)
+    // iOS:はアプリごとに用意された場所
     return ci::getDocumentsDirectory( ).string( );
     #elif defined (CINDER_MAC)
     #if defined (DEBUG)
@@ -104,23 +104,9 @@ std::string getWritableDirectry( )
     return ci::app::getAppPath( ).string( );
     #endif
 }
-std::string getWritablePath( std::string const& filename )
-{
-    return getWritableDirectry( ) + filename;
-}
 std::string loadString( std::string const & relative_path )
 {
-    if ( boost::filesystem::exists( getAssetPath( relative_path ).string( ) ) )
-    {
-        return static_cast<char*>( loadAsset( relative_path )->getBuffer( )->getData( ) );
-    }
-    if ( boost::filesystem::exists( getWritablePath( relative_path ) ) )
-    {
-        std::string document;
-        boost::filesystem::load_string_file( getWritablePath( relative_path ), document );
-        return document;
-    }
-    return "";
+    return static_cast<char*>( loadAsset( relative_path )->getBuffer( )->getData( ) );
 }
 std::string getSystemTimeNamed( )
 {
@@ -134,10 +120,6 @@ std::string getSystemTimeNamed( )
                             pnow->tm_hour,
                             pnow->tm_min,
                             pnow->tm_sec );
-}
-void writeFile( std::string const& filename, std::string const & document )
-{
-    boost::filesystem::save_string_file( getWritablePath( filename ), document );
 }
 }
 }

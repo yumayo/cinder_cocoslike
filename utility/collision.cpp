@@ -14,7 +14,6 @@ segment::segment( cinder::vec2 start, cinder::vec2 end )
     : start( start )
     , end( end )
 { }
-
 bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c )
 {
     vec2 AB = b - a;
@@ -32,7 +31,6 @@ bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, c
 
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0;
 }
-
 bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d )
 {
     vec2 AB = b - a;
@@ -66,6 +64,32 @@ bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & objec
     auto obj = mat;
     obj = translate( obj, _position );
     obj = scale( obj, _scale );
+    obj = rotate( obj, _rotation );
+    obj = translate( obj, -_content_size * _anchor_point );
+
+    auto ma = translate( obj, vec2( 0.0F, 0.0F ) );
+    auto a = vec2( ma[2][0], ma[2][1] );
+    auto mb = translate( obj, vec2( _content_size.x, 0.0F ) );
+    auto b = vec2( mb[2][0], mb[2][1] );
+    auto mc = translate( obj, vec2( _content_size.x, _content_size.y ) );
+    auto c = vec2( mc[2][0], mc[2][1] );
+    auto md = translate( obj, vec2( 0.0F, _content_size.y ) );
+    auto d = vec2( md[2][0], md[2][1] );
+
+    return utility::hit_point_plane_2d( point, a, b, c, d );
+}
+bool hit_point_plane_2d_default_size( cinder::vec2 point, std::shared_ptr<node> const & object )
+{
+    auto mat = object->get_world_matrix( );
+    auto _content_size = object->get_content_size( );
+    auto _anchor_point = object->get_anchor_point( );
+    auto _position = object->get_position( );
+    auto _scale = object->get_scale( );
+    auto _rotation = object->get_rotation( );
+
+    auto obj = mat;
+    obj = translate( obj, _position );
+    //obj = scale( obj, _scale ); ボタンの拡大アクション時にスケールごと当たり判定を起こしたくないので。
     obj = rotate( obj, _rotation );
     obj = translate( obj, -_content_size * _anchor_point );
 

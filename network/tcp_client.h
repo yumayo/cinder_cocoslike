@@ -1,6 +1,7 @@
 #pragma once
 #include "node.h"
-#include "boost/system/error_code.hpp"
+#include "asio/error.hpp"
+#include "jsoncpp/json.h"
 namespace network
 {
 class tcp_client : public node
@@ -15,11 +16,18 @@ public:
 public:
     void write( std::string const& message, std::function<void( )> on_send = nullptr );
     void write( char const* message, size_t size, std::function<void( )> on_send = nullptr );
+    int get_port( );
 public:
+    // 接続が成功したら呼ばれます。
+    std::function<void( )> on_connection;
     // データを送れなかったときに呼ばれます。
     std::function<void( )> on_send_failed;
     // データが送られてきたときに呼ばれます。
     std::function<void( char const*, size_t )> on_readed;
+    // 
+    std::function<void( Json::Value root )> on_received_json;
+    // 
+    std::map<std::string, std::function<void( Json::Value root )>> on_received_named_json;
     // 接続できなかったときに呼ばれます。
     std::function<void( )> on_connect_failed;
     // 接続が切れたときに呼ばれます。
@@ -27,6 +35,6 @@ public:
     // ソケットが閉じたときに呼ばれます。
     std::function<void( )> on_closed;
     // その他のエラーが出たときに呼ばれます。
-    std::function<void( boost::system::error_code const& )> on_errored;
+    std::function<void( asio::error_code const& )> on_errored;
 };
 }

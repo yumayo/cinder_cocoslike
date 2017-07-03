@@ -10,7 +10,6 @@ network_object::network_object( std::string ip_address, int port )
 }
 network_object::~network_object( )
 {
-    
 }
 void network_object::update( float delta_second ) const
 {

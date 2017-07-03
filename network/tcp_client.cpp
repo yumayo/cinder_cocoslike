@@ -1,117 +1,7 @@
 ﻿#include "tcp_client.h"
-#include "boost/asio.hpp"
-using boost::asio::ip::tcp;
-#include "boost/lexical_cast.hpp"
-#include "boost/bind.hpp"
-#include "utility/assert_log.h"
-using namespace utility;
+#include "tcp_client_member.h"
 namespace network
 {
-struct tcp_client::_member
-{
-    _member( tcp_client& parent, std::string const& ip_address, std::string const& port )
-        : parent( parent )
-        , io( )
-        , socket( io )
-        , ip_address( ip_address )
-        , port( port )
-    {
-        buffer.fill( 0 );
-    }
-    tcp_client& parent;
-    void connect( );
-    void write( boost::asio::const_buffers_1 buffer, std::function<void( )> on_send );
-    void read( );
-    void close( );
-    void error( boost::system::error_code const& error );
-    boost::asio::io_service io;
-    tcp::socket socket;
-    boost::array<char, 512> buffer;
-    std::string ip_address;
-    std::string port;
-};
-void tcp_client::_member::connect( )
-{
-    socket.async_connect(
-        tcp::endpoint( boost::asio::ip::address::from_string( ip_address ), boost::lexical_cast<int>( port ) ),
-        [ this ] ( const boost::system::error_code& e )
-    {
-        if ( e )
-        {
-            log( "【tcp_client】接続できませんでした。: %s", e.message( ).c_str( ) );
-            if ( parent.on_connect_failed ) parent.on_connect_failed( );
-            close( );
-        }
-        else
-        {
-            log( "【tcp_client】接続成功！" );
-            read( );
-        }
-    } );
-}
-void tcp_client::_member::write( boost::asio::const_buffers_1 buffer, std::function<void( )> on_send )
-{
-    boost::asio::async_write(
-        socket,
-        buffer,
-        [ this, on_send, buffer ] ( const boost::system::error_code& e, size_t bytes_transferred )
-    {
-        if ( e )
-        {
-            log( "【tcp_client】送信できませんでした。: %s", e.message( ).c_str( ) );
-            if ( parent.on_send_failed ) parent.on_send_failed( );
-            close( );
-        }
-        else
-        {
-            log( "【tcp_client】送信成功！" );
-            if ( on_send ) on_send( );
-        }
-    } );
-}
-void tcp_client::_member::read( )
-{
-    boost::asio::async_read(
-        socket,
-        boost::asio::buffer( buffer ),
-        boost::asio::transfer_at_least( 1 ),
-        [ this ] ( const boost::system::error_code& e, size_t bytes_transferred )
-    {
-        if ( e )
-        {
-            if ( e == boost::asio::error::eof )
-            {
-                log( "【tcp_client】サーバーが接続を切りました。: %s", e.message( ).c_str( ) );
-                if ( parent.on_disconnected ) parent.on_disconnected( );
-            }
-            else
-            {
-                log( "【tcp_client】無効なアクセスです。: %s", e.message( ).c_str( ) );
-                error( e );
-            }
-            close( );
-        }
-        else
-        {
-            log( "【tcp_client】受け取ったデータ: %d byte", bytes_transferred );
-            log_data( buffer.data( ), bytes_transferred );
-            if ( parent.on_readed ) parent.on_readed( buffer.data( ), bytes_transferred );
-            std::fill_n( buffer.begin( ), bytes_transferred, 0 );
-
-            // エラーじゃない限り無限に受け取りを続けます。
-            read( );
-        }
-    } );
-}
-void tcp_client::_member::close( )
-{
-    if ( parent.on_closed ) parent.on_closed( );
-    socket.close( );
-}
-void tcp_client::_member::error( boost::system::error_code const& e )
-{
-    if ( parent.on_errored ) parent.on_errored( e );
-}
 CREATE_CPP( tcp_client, std::string const& ip_address, std::string const& port )
 {
     CREATE( tcp_client, ip_address, port );
@@ -136,6 +26,7 @@ void tcp_client::update( float delta )
 {
     _m->io.reset( );
     _m->io.poll( );
+    _m->update( );
 }
 void tcp_client::write( std::string const & message, std::function<void( )> on_send )
 {
@@ -143,7 +34,10 @@ void tcp_client::write( std::string const & message, std::function<void( )> on_s
 }
 void tcp_client::write( char const * message, size_t size, std::function<void( )> on_send )
 {
-    log( "【tcp_client】送信中..." );
-    _m->write( boost::asio::buffer( message, size ), on_send );
+    _m->write( message, size, on_send );
+}
+int tcp_client::get_port( )
+{
+    return _m->get_port( );
 }
 }
