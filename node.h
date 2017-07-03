@@ -46,7 +46,7 @@ private:
     void _key_down( cinder::app::KeyEvent event );
     void _key_up( cinder::app::KeyEvent event );
     void _update( float delta );
-    void _render( );
+    void _render( cinder::mat3 model_view_matrix );
 
 protected:
     bool init( );

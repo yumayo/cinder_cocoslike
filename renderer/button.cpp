@@ -69,14 +69,14 @@ void button::render( )
 }
 bool button::mouse_began( cinder::app::MouseEvent event )
 {
-    _touch = utility::hit_point_plane_2d( shared_from_this( ), event.getPos( ) );
+    _touch = utility::hit_point_plane_2d( event.getPos( ), shared_from_this( ) );
     if ( _touch && on_began ) on_began( );
     _render_texture = _touch ? _swallow_texture : _normal_texture;
     return _touch;
 }
 void button::mouse_moved( cinder::app::MouseEvent event )
 {
-    _touch = utility::hit_point_plane_2d( shared_from_this( ), event.getPos( ) );
+    _touch = utility::hit_point_plane_2d( event.getPos( ), shared_from_this( ) );
     _render_texture = _touch ? _swallow_texture : _normal_texture;
 }
 void button::mouse_ended( cinder::app::MouseEvent event )
@@ -87,14 +87,14 @@ void button::mouse_ended( cinder::app::MouseEvent event )
 }
 bool button::touch_began( cinder::app::TouchEvent::Touch event )
 {
-    _touch = utility::hit_point_plane_2d( shared_from_this( ), event.getPos( ) );
+    _touch = utility::hit_point_plane_2d( event.getPos( ), shared_from_this( ) );
     if ( _touch && on_began ) on_began( );
     _render_texture = _touch ? _swallow_texture : _normal_texture;
     return _touch;
 }
 void button::touch_moved( cinder::app::TouchEvent::Touch event )
 {
-    _touch = utility::hit_point_plane_2d( shared_from_this( ), event.getPos( ) );
+    _touch = utility::hit_point_plane_2d( event.getPos( ), shared_from_this( ) );
     _render_texture = _touch ? _swallow_texture : _normal_texture;
 }
 void button::touch_ended( cinder::app::TouchEvent::Touch event )

@@ -216,28 +216,36 @@ void node::_update( float delta )
     for ( auto const& signal : _update_end_signal ) signal( );
     _update_end_signal.clear( );
 }
-void node::_render( )
+void node::_render( cinder::mat3 model_view_matrix )
 {
     if ( !_visible ) return;
 
-    gl::pushMatrices( );
-    gl::translate( _position );
-    gl::scale( _scale );
-    gl::rotate( _rotation );
-    gl::translate( -_content_size * _anchor_point );
+    model_view_matrix = translate( model_view_matrix, _position );
+    model_view_matrix = scale( model_view_matrix, _scale );
+    model_view_matrix = rotate( model_view_matrix, _rotation );
+    model_view_matrix = translate( model_view_matrix, -_content_size * _anchor_point );
+    auto& m = model_view_matrix;
+    // 2次元空間を扱うマトリックスを3次元空間に引き上げる場合、
+    // 回転や、スケーリングを行う行列位置は変わりません。
+    // しかし、平行移動の部分は2次元であれば3次元目に、3次元であれば4次元目のマトリックス位置に来ます。
+    // 2次元空間マトリックスにおいて3次元目は必ず0になるのでm[*][2]は0で決め打ちしています。
+    gl::setModelMatrix( mat4( m[0][0], m[0][1], 0, 0,
+                              m[1][0], m[1][1], 0, 0,
+                              0, 0, 1, 0,
+                              m[2][0], m[2][1], 0, 1 ) );
+
     gl::color( _color );
 
-    if ( /*utility::hit_window_aabb(*/ shared_from_this( ) /*)*/ )
+    if ( utility::hit_window_aabb( model_view_matrix, shared_from_this( ) ) )
     {
         this->render( );
     }
 
-    gl::translate( _content_size * _pivot );
+    model_view_matrix = translate( model_view_matrix, _content_size * _pivot );
     for ( auto const& c : _children )
     {
-        c->_render( );
+        c->_render( model_view_matrix );
     }
-    gl::popMatrices( );
 }
 bool node::init( )
 {
