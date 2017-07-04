@@ -12,8 +12,7 @@ write_file_on_destroyed::write_file_on_destroyed( std::string const & filename )
 }
 write_file_on_destroyed::~write_file_on_destroyed( )
 {
-    auto writable_path = cinder::app::getWritablePath( );
-    std::ofstream output( writable_path + _filename );
+    std::ofstream output( cinder::app::getWritablePath( _filename ) );
     output << *this;
 }
 void write_file_on_destroyed::operator()( char const * str, ... )

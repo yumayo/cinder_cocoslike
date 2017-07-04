@@ -89,22 +89,22 @@ namespace cinder
 {
 namespace app
 {
-std::string getWritablePath( )
+std::string getWritablePath( std::string const& file_name )
 {
     #if defined(CINDER_COCOA_TOUCH)
     // iOS:はアプリごとに用意された場所
-    return ci::getDocumentsDirectory( ).string( );
+    return ci::getDocumentsDirectory( ).string( ) + file_name;
     #elif defined (CINDER_MAC)
     #if defined (DEBUG)
     // OSX:Debug時はプロジェクトの場所へ書き出す
-    return ci::fs::path( PREPRO_TO_STR( SRCROOT ) ).string( );
+    return ci::fs::path( PREPRO_TO_STR( SRCROOT ) ).string( ) + file_name;
     #else
     // OSX:Release時はアプリコンテンツ内
-    return ci::app::Platform::get( )->getResourceDirectory( ).string( );
+    return ci::app::Platform::get( )->getResourceDirectory( ).string( ) + file_name;
     #endif
     #else
     // Widnows:実行ファイルと同じ場所
-    return ci::app::getAppPath( ).string( );
+    return ci::app::getAppPath( ).string( ) + file_name;
     #endif
 }
 std::string loadString( std::string const & relative_path )

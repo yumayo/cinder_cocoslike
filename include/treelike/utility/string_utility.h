@@ -18,7 +18,7 @@ namespace app
 {
 // データ書き出しのパスを取得
 // ファイル書き出し時はこの関数でパスを取得する事
-std::string getWritablePath( );
+std::string getWritablePath( std::string const& file_name );
 std::string loadString( std::string const& relative_path );
 std::string getSystemTimeNamed( );
 }

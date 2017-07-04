@@ -18,7 +18,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6F08A99E-663D-4710-9C72-4FBAD30F0590}</ProjectGuid>
+    <ProjectGuid>{80BEB4C0-BCB8-41BA-878A-85F3E331342D}</ProjectGuid>
     <RootNamespace>treelike</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -73,23 +73,23 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\intermediate\</IntDir>
+    <OutDir>$(ProjectDir)\..\lib\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</OutDir>
+    <IntDir>$(ProjectDir)build\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</IntDir>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\intermediate\</IntDir>
+    <OutDir>$(ProjectDir)\..\lib\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</OutDir>
+    <IntDir>$(ProjectDir)build\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</IntDir>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\intermediate\</IntDir>
+    <OutDir>$(ProjectDir)\..\lib\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</OutDir>
+    <IntDir>$(ProjectDir)build\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</IntDir>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\intermediate\</IntDir>
+    <OutDir>$(ProjectDir)\..\lib\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</OutDir>
+    <IntDir>$(ProjectDir)build\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\</IntDir>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,6 +117,9 @@
       <DataExecutionPrevention />
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCPMT</IgnoreSpecificDefaultLibraries>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>F:\library\cinder\lib\msw\$(PlatformTarget);F:\library\cinder\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset);F:\library\boost\lib\$(PlatformTarget)\$(PlatformToolset)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -145,6 +148,9 @@
       </DataExecutionPrevention>
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCPMT</IgnoreSpecificDefaultLibraries>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>F:\library\cinder\lib\msw\$(PlatformTarget);F:\library\cinder\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset);F:\library\boost\lib\$(PlatformTarget)\$(PlatformToolset)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -173,6 +179,9 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>F:\library\cinder\lib\msw\$(PlatformTarget);F:\library\cinder\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset);F:\library\boost\lib\$(PlatformTarget)\$(PlatformToolset)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -204,10 +213,10 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>F:\library\cinder\lib\msw\$(PlatformTarget);F:\library\cinder\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset);F:\library\boost\lib\$(PlatformTarget)\$(PlatformToolset)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resources.rc" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\treelike\action\action.cpp" />
     <ClCompile Include="..\src\treelike\action\action_manager.cpp" />
@@ -230,6 +239,7 @@
     <ClCompile Include="..\src\treelike\action\sequence.cpp" />
     <ClCompile Include="..\src\treelike\action\spawn.cpp" />
     <ClCompile Include="..\src\treelike\action\timeline.cpp" />
+    <ClCompile Include="..\src\treelike\app_delegate.cpp" />
     <ClCompile Include="..\src\treelike\audio\base_player.cpp" />
     <ClCompile Include="..\src\treelike\audio\buffer_player.cpp" />
     <ClCompile Include="..\src\treelike\audio\file_player.cpp" />
@@ -270,7 +280,6 @@
     <ClCompile Include="..\src\treelike\utility\write_file_on_destroyed.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\include\treelike\action.hpp" />
     <ClInclude Include="..\include\treelike\action\action.h" />
     <ClInclude Include="..\include\treelike\action\action_manager.h" />
@@ -294,6 +303,7 @@
     <ClInclude Include="..\include\treelike\action\sequence.h" />
     <ClInclude Include="..\include\treelike\action\spawn.h" />
     <ClInclude Include="..\include\treelike\action\timeline.h" />
+    <ClInclude Include="..\include\treelike\app_delegate.h" />
     <ClInclude Include="..\include\treelike\audio.hpp" />
     <ClInclude Include="..\include\treelike\audio\base_player.h" />
     <ClInclude Include="..\include\treelike\audio\buffer_player.h" />
@@ -341,6 +351,11 @@
     <ClInclude Include="..\include\treelike\utility\user_pointer.hpp" />
     <ClInclude Include="..\include\treelike\utility\utf8.h" />
     <ClInclude Include="..\include\treelike\utility\write_file_on_destroyed.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cinder\proj\vc2017\cinder.vcxproj">
+      <Project>{92b5be70-dcaa-40e4-92d8-cc2b95aa28be}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
