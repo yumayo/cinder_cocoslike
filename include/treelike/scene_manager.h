@@ -19,7 +19,7 @@ public:
 private:
     std::vector<std::function<void( )>> _fn;
     std::list<hardptr<scene>> _stack;
-    hardptr<node> _root;
+    hardptr<node> _dont_destroy_node;
     float _delta;
 public:
     static scene_manager* get_instans( );

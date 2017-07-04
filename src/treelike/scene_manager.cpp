@@ -54,7 +54,7 @@ void scene_manager::update( float delta )
 }
 softptr<node> scene_manager::get_dont_destroy_node( )
 {
-    return _root;
+    return _dont_destroy_node;
 }
 scene_manager * scene_manager::get_instans( )
 {
@@ -74,7 +74,7 @@ void scene_manager::remove_instans( )
 }
 scene_manager::scene_manager( )
 {
-    _root = node::create( );
+    _dont_destroy_node = node::create( );
 }
 
 }
