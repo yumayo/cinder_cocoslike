@@ -33,25 +33,21 @@ void app_delegate::draw( )
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {
-    if ( isMultiTouchEnabled( ) ) return;
     treelike::scene_manager::get_instans( )->top( )->_mouse_began( event );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( ).lock( )->_mouse_began( event );
 }
 void app_delegate::mouseMove( cinder::app::MouseEvent event )
 {
-    if ( isMultiTouchEnabled( ) ) return;
     treelike::scene_manager::get_instans( )->top( )->_mouse_moved( event );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( ).lock( )->_mouse_moved( event );
 }
 void app_delegate::mouseDrag( cinder::app::MouseEvent event )
 {
-    if ( isMultiTouchEnabled( ) ) return;
     treelike::scene_manager::get_instans( )->top( )->_mouse_moved( event );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( ).lock( )->_mouse_moved( event );
 }
 void app_delegate::mouseUp( cinder::app::MouseEvent event )
 {
-    if ( isMultiTouchEnabled( ) ) return;
     treelike::scene_manager::get_instans( )->top( )->_mouse_ended( event );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( ).lock( )->_mouse_ended( event );
 }
