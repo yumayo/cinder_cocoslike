@@ -145,10 +145,10 @@ unsigned int font::color( cinder::ColorA value ) noexcept
 }
 unsigned int font::color( const float r, const float g, const float b, const float a ) noexcept
 {
-    unsigned char r8 = r * 255.0f;
-    unsigned char g8 = g * 255.0f;
-    unsigned char b8 = b * 255.0f;
-    unsigned char a8 = a * 255.0f;
+    unsigned char r8 = (unsigned char)(r * 255.0f);
+    unsigned char g8 = (unsigned char)(g * 255.0f);
+    unsigned char b8 = (unsigned char)(b * 255.0f);
+    unsigned char a8 = (unsigned char)(a * 255.0f);
 
     return color( r8, g8, b8, a8 );
 }

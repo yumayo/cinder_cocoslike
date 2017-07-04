@@ -16,12 +16,12 @@ public:
     float get_gain( );
     void set_loop( bool value );
     bool get_loop( );
-    void set_loop_begin_second( float value );
-    float get_loop_begin_second( );
-    void set_loop_end_second( float value );
-    float set_loop_end_second( );
-    float get_current_play_second( );
-    float get_total_second( );
+    void set_loop_begin_second( double value );
+    double get_loop_begin_second( );
+    void set_loop_end_second( double value );
+    double set_loop_end_second( );
+    double get_current_play_second( );
+    double get_total_second( );
 protected:
     cinder::audio::GainNodeRef _gain;
     cinder::audio::SamplePlayerNodeRef _player_node;

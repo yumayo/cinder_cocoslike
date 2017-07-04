@@ -85,8 +85,8 @@ void label::set_text( std::string const & value )
     _text = value;
     float bounds[4];
     fonsTextBounds( _m->font, 0, 0, _text.c_str( ), nullptr, bounds );
-    int w = bounds[2] - bounds[0];
-    int h = bounds[3] - bounds[1];
+    int w = (int)(bounds[2] - bounds[0]);
+    int h = (int)(bounds[3] - bounds[1]);
     _height = bounds[3] + bounds[1];
     _content_size = vec2( w, h );
 }

@@ -32,7 +32,7 @@ std::pair<std::unique_ptr<char [ ]>, size_t> base64_decode( std::string const & 
     }
     if ( string_byte == 0 ) return std::pair<std::unique_ptr<char [ ]>, size_t>( );
 
-    size_t binary_byte = string_byte * ( 6.0F / 8.0F );
+    size_t binary_byte = (size_t)( string_byte * ( 6.0F / 8.0F ) );
 
     std::unique_ptr<char [ ]> binary( new char[binary_byte] );
 

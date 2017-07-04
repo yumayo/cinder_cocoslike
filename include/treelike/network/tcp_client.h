@@ -1,6 +1,6 @@
 #pragma once
 #include <treelike/node.h>
-#include "asio/error.hpp"
+#include <boost/system/error_code.hpp>
 #include <jsoncpp/json.h>
 namespace treelike
 {
@@ -37,7 +37,7 @@ public:
     // ソケットが閉じたときに呼ばれます。
     std::function<void( )> on_closed;
     // その他のエラーが出たときに呼ばれます。
-    std::function<void( asio::error_code const& )> on_errored;
+    std::function<void( boost::system::error_code const& )> on_errored;
 };
 }
 }

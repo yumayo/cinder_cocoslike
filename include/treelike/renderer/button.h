@@ -1,6 +1,6 @@
 #pragma once
-#include "node.h"
-#include "cinder/gl/Texture.h"
+#include <treelike/node.h>
+#include <cinder/gl/Texture.h>
 namespace treelike
 {
 namespace renderer

@@ -31,7 +31,7 @@ void sprite_animation::update( float delta )
 }
 void sprite_animation::render( )
 {
-    int animation_index = std::fmodf( _animation_time, _cut_x * _cut_y );
+    int animation_index = (int)std::fmodf( _animation_time, (float)( _cut_x * _cut_y ) );
     float x_offset = ( animation_index % _cut_x ) * _cut_size.x;
     float y_offset = ( animation_index / _cut_x ) * _cut_size.y;
     gl::draw( _texture, Area( vec2( x_offset, y_offset ), vec2( x_offset, y_offset ) + _cut_size ), Rectf( vec2( 0 ), _content_size ) );

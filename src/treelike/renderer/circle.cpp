@@ -5,14 +5,14 @@ namespace treelike
 {
 namespace renderer
 {
-CREATE_CPP( circle, float radius, float segments )
+CREATE_CPP( circle, float radius, int segments )
 {
     CREATE( circle, radius, segments );
 }
 circle::~circle( )
 {
 }
-bool circle::init( float radius, float segments )
+bool circle::init( float radius, int segments )
 {
     set_anchor_point( { 0.5F, 0.5F } );
     set_pivot( { 0.5F, 0.5F } );
@@ -33,11 +33,11 @@ float circle::get_radius( )
 {
     return _radius;
 }
-void circle::set_segments( float value )
+void circle::set_segments( int value )
 {
     _segments = value;
 }
-float circle::get_segments( )
+int circle::get_segments( )
 {
     return _segments;
 }

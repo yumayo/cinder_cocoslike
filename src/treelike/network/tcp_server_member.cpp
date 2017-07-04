@@ -4,7 +4,7 @@
 #include <treelike/utility/assert_log.h>
 #include <treelike/utility/base64.h>
 using namespace treelike::utility;
-using tcp = asio::ip::tcp;
+using tcp = boost::asio::ip::tcp;
 namespace treelike
 {
 namespace network
@@ -17,7 +17,7 @@ tcp_server::_member::_member( tcp_server & parent, std::string const & port, int
     , port( port )
 {
     assert_log( 1 <= num_of_client, "クライアントの数は一つ以上でないといけません。", return );
-    acceptor = std::make_unique<asio::ip::tcp::acceptor>( io, asio::ip::tcp::endpoint( asio::ip::tcp::v4( ), boost::lexical_cast<int>( port ) ) );
+    acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>( io, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4( ), boost::lexical_cast<int>( port ) ) );
     // 一つはクライアントの接続を切る役割を持たせています。
     for ( int i = 0; i < num_of_client + 1; ++i )
     {
@@ -28,7 +28,7 @@ tcp_server::_member::_member( tcp_server & parent, std::string const & port, int
 void tcp_server::_member::async_accept( socket_object& sock_obj )
 {
     log( "【tcp_server】ソケットの準備" );
-    acceptor->async_accept( sock_obj.socket, [ this, &sock_obj ] ( asio::error_code const& e )
+    acceptor->async_accept( sock_obj.socket, [ this, &sock_obj ] ( boost::system::error_code const& e )
     {
         if ( e )
         {
@@ -63,16 +63,16 @@ bool tcp_server::_member::is_max( )
 }
 void tcp_server::_member::write( socket_object & sock_obj, char const* begin, size_t byte, std::function<void( )> on_send )
 {
-    auto num = byte / ( 256 * 48 );
+    size_t num = byte / ( 256 * 48 );
     std::vector<int> sub;
     sub.emplace_back( 0 );
-    for ( int i = 0; i < num; ++i )
+    for ( size_t i = 0; i < num; ++i )
     {
         sub.emplace_back( 256 * 48 );
     }
     sub.emplace_back( byte - ( 256 * 48 ) * num );
 
-    for ( int i = 0; i < sub.size( ) - 1; ++i )
+    for ( size_t i = 0; i < sub.size( ) - 1; ++i )
     {
         std::string writable_string;
         if ( i == 0 )
@@ -80,16 +80,16 @@ void tcp_server::_member::write( socket_object & sock_obj, char const* begin, si
             writable_string += std::string( "#B#G#I#N#E#" );
         }
         int offset = 0;
-        for ( int j = 0; j <= i; ++j ) offset += sub[j];
+        for ( size_t j = 0; j <= i; ++j ) offset += sub[j];
         writable_string += utility::base64_encode( begin + offset, sub[i + 1] );
         if ( i == sub.size( ) - 1 - 1 )
         {
             writable_string += std::string( "#E#N#D#" );
         }
-        asio::async_write(
+        boost::asio::async_write(
             sock_obj.socket,
-            asio::buffer( writable_string.data( ), writable_string.size( ) ),
-            [ this, &sock_obj, on_send ] ( const asio::error_code& e, size_t bytes_transferred )
+            boost::asio::buffer( writable_string.data( ), writable_string.size( ) ),
+            [ this, &sock_obj, on_send ] ( const boost::system::error_code& e, size_t bytes_transferred )
         {
             if ( e )
             {
@@ -105,15 +105,15 @@ void tcp_server::_member::write( socket_object & sock_obj, char const* begin, si
 }
 void tcp_server::_member::read( socket_object & sock_obj )
 {
-    asio::async_read(
+    boost::asio::async_read(
         sock_obj.socket,
-        asio::buffer( sock_obj.buffer ),
-        asio::transfer_at_least( 1 ), // １バイトでもデータが送られてきたら、読み込みを開始します。
-        [ this, &sock_obj ] ( const asio::error_code& e, size_t bytes_transferred )
+        boost::asio::buffer( sock_obj.buffer ),
+        boost::asio::transfer_at_least( 1 ), // １バイトでもデータが送られてきたら、読み込みを開始します。
+        [ this, &sock_obj ] ( const boost::system::error_code& e, size_t bytes_transferred )
     {
         if ( e && bytes_transferred == 0 )
         {
-            if ( e == asio::error::eof )
+            if ( e == boost::asio::error::eof )
             {
                 log( "【tcp_server】クライアントが接続を切りました。: %s", e.message( ).c_str( ) );
                 if ( parent.on_client_disconnected ) parent.on_client_disconnected( sock_obj.handle );
@@ -133,7 +133,7 @@ void tcp_server::_member::read( socket_object & sock_obj )
         }
     } );
 }
-void tcp_server::_member::on_errored( socket_object& sock_obj, asio::error_code const & e )
+void tcp_server::_member::on_errored( socket_object& sock_obj, boost::system::error_code const & e )
 {
     if ( parent.on_errored ) parent.on_errored( sock_obj.handle, e );
 }
@@ -192,7 +192,7 @@ void tcp_server::_member::update( )
                             }
                         }
                     }
-                    catch ( std::exception& e )
+                    catch ( std::exception& )
                     {
                         utility::log( "base64でエンコードされていないデータを受信しました。" );
                     }

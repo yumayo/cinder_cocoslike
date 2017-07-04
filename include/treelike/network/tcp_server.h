@@ -1,6 +1,7 @@
 #pragma once
 #include <treelike/node.h>
-#include "asio/error.hpp"
+#include <boost/asio.hpp>
+#include <boost/system/error_code.hpp>
 #include <treelike/network/client_handle.h>
 #include <jsoncpp/json.h>
 namespace treelike
@@ -32,7 +33,7 @@ public:
     std::function<void( client_handle const&, Json::Value )> on_received_json;
     std::map<std::string, std::function<void( client_handle const&, Json::Value )>> on_received_named_json;
     std::function<void( client_handle const& )> on_client_disconnected;
-    std::function<void( client_handle const&, asio::error_code const& )> on_errored;
+    std::function<void( client_handle const&, boost::system::error_code const& )> on_errored;
 };
 }
 }

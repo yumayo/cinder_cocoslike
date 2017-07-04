@@ -84,6 +84,7 @@ void log_data( char const * data, size_t size )
     log( "%s ]", output.c_str( ) );
 }
 }
+}
 namespace cinder
 {
 namespace app
@@ -113,17 +114,15 @@ std::string loadString( std::string const & relative_path )
 std::string getSystemTimeNamed( )
 {
     // http://blog.livedoor.jp/live_mu/archives/1015582783.html
-    time_t now = time( nullptr );
-    struct tm *pnow = localtime( &now );
-    return utility::format( "%04d/%02d/%02d %02d:%02d:%02d",
-                            pnow->tm_year + 1900,
-                            pnow->tm_mon + 1,
-                            pnow->tm_mday,
-                            pnow->tm_hour,
-                            pnow->tm_min,
-                            pnow->tm_sec );
+    std::time_t now = std::time( nullptr );
+    struct tm *pnow = std::localtime( &now );
+    return treelike::utility::format( "%04d/%02d/%02d %02d:%02d:%02d",
+                                      pnow->tm_year + 1900,
+                                      pnow->tm_mon + 1,
+                                      pnow->tm_mday,
+                                      pnow->tm_hour,
+                                      pnow->tm_min,
+                                      pnow->tm_sec );
 }
 }
-}
-
 }

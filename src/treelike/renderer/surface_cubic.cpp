@@ -12,7 +12,7 @@ CREATE_CPP( surface_cubic, cinder::vec2 size, cinder::ColorA color )
 }
 bool surface_cubic::init( cinder::vec2 size, cinder::ColorA color )
 {
-    _surface = Surface8u( size.x, size.y, true );
+    _surface = Surface8u( (int32_t)size.x, (int32_t)size.y, true );
     for ( int y = 0; y < _surface.getHeight( ); ++y )
     {
         for ( int x = 0; x < _surface.getWidth( ); ++x )
@@ -42,9 +42,9 @@ void surface_cubic::paint_fill_circle( cinder::vec2 pixel, float radius, cinder:
 
     Rectf rect( glm::floor( pixel - radius - 1.0F ), glm::ceil( pixel + radius ) );
 
-    for ( int y = rect.y1; y <= rect.y2; ++y )
+    for ( int y = (int)rect.y1; y <= (int)rect.y2; ++y )
     {
-        for ( int x = rect.x1; x <= rect.x2; ++x )
+        for ( int x = (int)rect.x1; x <= (int)rect.x2; ++x )
         {
             if ( radius < length( vec2( x, y ) - rect.getCenter( ) ) ) continue;
             if ( x < 0 || y < 0 || x >= _surface.getWidth( ) || y >= _surface.getHeight( ) ) continue;
@@ -69,9 +69,9 @@ void surface_cubic::paint_fill_rect( cinder::Rectf rect, cinder::ColorA color )
     rect.x2 = glm::ceil( rect.x2 );
     rect.y2 = glm::ceil( rect.y2 );
 
-    for ( int y = rect.y1; y <= rect.y2; ++y )
+    for ( int y = (int)rect.y1; y <= (int)rect.y2; ++y )
     {
-        for ( int x = rect.x1; x <= rect.x2; ++x )
+        for ( int x = (int)rect.x1; x <= (int)rect.x2; ++x )
         {
             _surface.setPixel( ivec2( x, y ), ColorA8u( color ) );
         }

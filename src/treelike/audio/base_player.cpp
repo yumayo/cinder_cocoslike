@@ -33,27 +33,27 @@ bool base_player::get_loop( )
 {
     return _player_node->isLoopEnabled( );
 }
-void base_player::set_loop_begin_second( float value )
+void base_player::set_loop_begin_second( double value )
 {
     _player_node->setLoopBeginTime( value );
 }
-float base_player::get_loop_begin_second( )
+double base_player::get_loop_begin_second( )
 {
     return _player_node->getLoopBeginTime( );
 }
-void base_player::set_loop_end_second( float value )
+void base_player::set_loop_end_second( double value )
 {
     _player_node->setLoopEndTime( value );
 }
-float base_player::set_loop_end_second( )
+double base_player::set_loop_end_second( )
 {
     return _player_node->getLoopEndTime( );
 }
-float base_player::get_current_play_second( )
+double base_player::get_current_play_second( )
 {
     return _player_node->getReadPositionTime( );
 }
-float base_player::get_total_second( )
+double base_player::get_total_second( )
 {
     return _player_node->getNumSeconds( );
 }
