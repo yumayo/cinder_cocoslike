@@ -1,0 +1,5 @@
+vc2017/*
+!vc2017/*.rc
+!vc2017/*.sln
+!vc2017/*.vcxproj
+!vc2017/*.vcxproj.filters
