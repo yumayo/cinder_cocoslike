@@ -39,7 +39,7 @@ bool scene_manager::empty( )
 {
     return _stack.empty( );
 }
-hardptr<scene>& scene_manager::top( )
+softptr<scene> scene_manager::top( )
 {
     return _stack.front( );
 }

@@ -42,7 +42,7 @@ void action::set_target( hardptr<node> const& value )
     _target = value;
 }
 
-hardptr<node> action::get_target( )
+softptr<node> action::get_target( )
 {
     return _target;
 }

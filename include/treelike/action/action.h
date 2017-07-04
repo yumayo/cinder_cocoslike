@@ -31,7 +31,7 @@ protected:
     softptr<node> _target;
 public:
     void set_target( hardptr<node> const& value );
-    hardptr<node> get_target( );
+    softptr<node> get_target( );
 
 protected:
     int _tag = action::INVALID_TAG;

@@ -9,7 +9,7 @@ scoped_mutex::scoped_mutex( recursion_usable_mutex & mutex )
     auto& itr = _mutex.emplace( );
     if ( itr.second )
     {
-        _mutex;
+        _mutex.lock( );
     }
     else
     {

@@ -14,39 +14,39 @@ void action_manager::add_action( hardptr<action> const& action, hardptr<node> co
     _actions.emplace_back( action );
 }
 
-hardptr<action> action_manager::get_action_by_name( std::string const & name )
+softptr<action> action_manager::get_action_by_name( std::string const & name ) const
 {
-    assert_log( !name.empty( ), "無効な名前です。", return std::make_shared<action>( ) );
+    assert_log( !name.empty( ), "無効な名前です。", return nullptr );
 
     std::hash<std::string> h;
     size_t hash = h( name );
 
-    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, hash, name ] ( hardptr<action>& act )
+    auto itr = std::find_if( std::cbegin( _actions ), std::cend( _actions ), [ this, hash, name ] ( hardptr<action> const& act )
     {
         return act->_hash == hash && act->_name.compare( name ) == 0;
     } );
 
-    if ( itr != std::end( _actions ) )
+    if ( itr != std::cend( _actions ) )
     {
         return *itr;
     }
-    return std::make_shared<action>( );
+    return nullptr;
 }
 
-hardptr<action> action_manager::get_action_by_tag( int tag )
+softptr<action> action_manager::get_action_by_tag( int tag ) const
 {
-    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return std::make_shared<action>( ) );
+    assert_log( tag == node::INVALID_TAG, "無効なタグです。", return nullptr );
 
-    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, tag ] ( hardptr<action>& act )
+    auto itr = std::find_if( std::cbegin( _actions ), std::cend( _actions ), [ this, tag ] ( hardptr<action> const& act )
     {
         return act->_tag == tag;
     } );
 
-    if ( itr != std::end( _actions ) )
+    if ( itr != std::cend( _actions ) )
     {
         return *itr;
     }
-    return std::make_shared<action>( );
+    return nullptr;
 }
 
 void action_manager::remove_all_actions( )
@@ -98,7 +98,7 @@ void action_manager::remove_action_by_name( std::string const & name )
     }
 }
 
-bool action_manager::is_running( )
+bool action_manager::is_running( ) const
 {
     return !_actions.empty( );
 }

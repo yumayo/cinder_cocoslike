@@ -13,14 +13,14 @@ public:
     void pop_back( );
     size_t size( );
     bool empty( );
-    hardptr<scene>& top( );
+    softptr<scene> top( );
     void update( float delta );
     softptr<node> get_dont_destroy_node( );
 private:
     std::vector<std::function<void( )>> _fn;
     std::list<hardptr<scene>> _stack;
     hardptr<node> _dont_destroy_node;
-    float _delta;
+    float _delta = 0.0F;
 public:
     static scene_manager* get_instans( );
     static void remove_instans( );
