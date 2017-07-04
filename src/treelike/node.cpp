@@ -200,7 +200,6 @@ void node::_key_up( cinder::app::KeyEvent event )
 }
 void node::_update( float delta )
 {
-    // 途中でaddがあるため、コンテナをバックアップします。
     if ( !_block_schedule_update )
         for ( auto const& child : _children )
         {
@@ -213,15 +212,12 @@ void node::_update( float delta )
     for ( auto const& signal : _update_end_signal ) signal( );
     _update_end_signal.clear( );
 }
-void node::_render( cinder::mat3 model_view_matrix )
+void node::_render( cinder::mat3 m )
 {
-    if ( !_visible ) return;
-
-    model_view_matrix = translate( model_view_matrix, _position );
-    model_view_matrix = scale( model_view_matrix, _scale );
-    model_view_matrix = rotate( model_view_matrix, _rotation );
-    model_view_matrix = translate( model_view_matrix, -_content_size * _anchor_point );
-    auto& m = model_view_matrix;
+    m = translate( m, _position );
+    m = scale( m, _scale );
+    m = rotate( m, _rotation );
+    m = translate( m, -_content_size * _anchor_point );
     // 2次元空間を扱うマトリックスを3次元空間に引き上げる場合、
     // 回転や、スケーリングを行う行列位置は変わりません。
     // しかし、平行移動の部分は2次元であれば3次元目に、3次元であれば4次元目のマトリックス位置に来ます。
@@ -231,17 +227,20 @@ void node::_render( cinder::mat3 model_view_matrix )
                               0, 0, 1, 0,
                               m[2][0], m[2][1], 0, 1 ) );
 
-    gl::color( _color );
-
-    if ( utility::hit_window_aabb( model_view_matrix, shared_from_this( ) ) )
+    if ( _visible )
     {
-        this->render( );
+        gl::color( _color );
+
+        if ( utility::hit_window_aabb( m, shared_from_this( ) ) )
+        {
+            this->render( );
+        }
     }
 
-    model_view_matrix = translate( model_view_matrix, _content_size * _pivot );
+    m = translate( m, _content_size * _pivot );
     for ( auto const& c : _children )
     {
-        c->_render( model_view_matrix );
+        c->_render( m );
     }
 }
 bool node::init( )
@@ -500,9 +499,7 @@ void node::remove_child_by_name( std::string const & name )
 
     _update_end_signal.emplace_back( [ this, name ]
     {
-        auto child = this->get_child_by_name( name );
-
-        if ( child )
+        if ( auto child = this->get_child_by_name( name ) )
         {
             remove_child_nonsafe( child );
         }
@@ -518,9 +515,7 @@ void node::remove_child_by_tag( int tag )
 
     _update_end_signal.emplace_back( [ this, tag ]
     {
-        auto child = this->get_child_by_tag( tag );
-
-        if ( child )
+        if ( auto child = this->get_child_by_tag( tag ) )
         {
             remove_child_nonsafe( child );
         }

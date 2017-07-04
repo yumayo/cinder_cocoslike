@@ -4,9 +4,11 @@
 #include <treelike/utility/assert_log.h>
 #include <cinder/gl/gl.h>
 #include <cinder/app/RendererGl.h>
+#include <treelike/utility/time_stamp.h>
 namespace treelike
 {
 int const app_delegate::_INVALID_ID = -1;
+utility::time_stamp stamp;
 void app_delegate::setup( )
 {
     treelike::scene_manager::get_instans( )->push_back( treelike::main( ) );
@@ -18,18 +20,23 @@ void app_delegate::cleanup( )
 }
 void app_delegate::update( )
 {
+    
     auto elapsed_seconds = getElapsedSeconds( );
     auto delta = (float)elapsed_seconds - (float)_prev_second;
     _prev_second = elapsed_seconds;
     treelike::scene_manager::get_instans( )->top( )->_update( delta );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_update( delta );
     treelike::scene_manager::get_instans( )->update( delta );
+    
 }
 void app_delegate::draw( )
 {
+    stamp.start( );
     cinder::gl::clear( cinder::ColorA( 0.1F, 0.1F, 0.1F, 1.0F ) );
     treelike::scene_manager::get_instans( )->top( )->_render( cinder::mat3( ) );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_render( cinder::mat3( ) );
+    stamp.end( );
+    console( ) << stamp.get_elapsed_second( ) << std::endl;
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {

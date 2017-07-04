@@ -7,11 +7,14 @@ namespace treelike
 using namespace treelike::utility;
 namespace action
 {
-void action_manager::add_action( hardptr<action> const& action, hardptr<node> const& target, bool pause )
+void action_manager::add_action( hardptr<action> const& act, hardptr<node> const& target, bool pause )
 {
-    action->set_target( target );
-    action->set_pause( pause );
-    _actions.emplace_back( action );
+    act->set_target( target );
+    act->set_pause( pause );
+    _update_end_signal.emplace_back( [ this, act ]
+    {
+        _actions.emplace_back( act );
+    } );
 }
 
 softptr<action> action_manager::get_action_by_name( std::string const & name ) const
@@ -54,15 +57,26 @@ void action_manager::remove_all_actions( )
     _actions.clear( );
 }
 
-void action_manager::remove_action( hardptr<action> const& act_weak )
+void action_manager::remove_action( hardptr<action> const& remove_act )
 {
     if ( _actions.empty( ) ) return;
-
-    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, act_weak ] ( hardptr<action>& act )
+    _update_end_signal.emplace_back( [ this, remove_act ]
     {
-        return act == act_weak;
+        auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, remove_act ] ( hardptr<action>& act )
+        {
+            return act == remove_act;
+        } );
+        _actions.erase( erase, std::end( _actions ) );
     } );
+}
 
+void action_manager::remove_action_nonsafe( hardptr<action> const & remove_act )
+{
+    if ( _actions.empty( ) ) return;
+    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, remove_act ] ( hardptr<action>& act )
+    {
+        return act == remove_act;
+    } );
     _actions.erase( erase, std::end( _actions ) );
 }
 
@@ -70,32 +84,34 @@ void action_manager::remove_action_by_tag( int tag )
 {
     assert_log( tag == node::INVALID_TAG, "無効なタグです。", return );
 
-    auto act = this->get_action_by_tag( tag );
-
-    if ( act )
+    _update_end_signal.emplace_back( [ this, tag ]
     {
-        this->remove_action( act );
-    }
-    else
-    {
-        log( "remove_action_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
-    }
+        if ( auto act = this->get_action_by_tag( tag ) )
+        {
+            remove_action_nonsafe( act );
+        }
+        else
+        {
+            log( "remove_action_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
+        }
+    } );
 }
 
 void action_manager::remove_action_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return );
 
-    auto act = this->get_action_by_name( name );
-
-    if ( act )
+    _update_end_signal.emplace_back( [ this, name ]
     {
-        this->remove_action( act );
-    }
-    else
-    {
-        log( "remove_action_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
-    }
+        if ( auto act = this->get_action_by_name( name ) )
+        {
+            remove_action_nonsafe( act );
+        }
+        else
+        {
+            log( "remove_action_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
+        }
+    } );
 }
 
 bool action_manager::is_running( ) const
@@ -105,20 +121,20 @@ bool action_manager::is_running( ) const
 
 void action_manager::update( float delta )
 {
-    for ( auto const& obj : _actions ) // ここでエラってる時がある。
+    for ( auto const& obj : _actions )
     {
         // managerまで溢れてくる値はシークエンス系以外なので無視して問題ありません。
         obj->update( delta );
     }
+    
+    for ( auto const& rem : _update_end_signal ) rem( );
+    _update_end_signal.clear( );
+
     auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ ] ( hardptr<action>& act )
     {
         return act->is_done( );
     } );
-
     _actions.erase( erase, std::end( _actions ) );
-
-    for ( auto const& rem : _remove_signal ) rem( );
-    _remove_signal.clear( );
 }
 }
 }

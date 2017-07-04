@@ -1,5 +1,6 @@
 ﻿#include <treelike/renderer/rect.h>
 #include <cinder/gl/gl.h>
+#include <treelike/utility/assert_log.h>
 using namespace cinder;
 namespace treelike
 {
@@ -13,7 +14,7 @@ bool rect::init( cinder::vec2 const& size )
 {
     set_anchor_point( { 0.5F, 0.5F } );
     set_pivot( { 0.5F, 0.5F } );
-    _content_size = size;
+    set_content_size( size );
     return true;
 }
 void rect::render( )

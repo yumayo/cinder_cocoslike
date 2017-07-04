@@ -227,7 +227,7 @@ public:
     void remove_action( hardptr<action::action> const& action );
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );
-    bool is_running_action( )const;
+    bool is_running_action( ) const;
 
 public:
     cinder::mat3 get_world_matrix( )const;

@@ -11,14 +11,17 @@ public:
     softptr<action> get_action_by_name( std::string const& name )const;
     softptr<action> get_action_by_tag( int tag )const;
     void remove_all_actions( );
-    void remove_action( hardptr<action> const& action );
+    void remove_action( hardptr<action> const& remove_act );
+private:
+    void remove_action_nonsafe( hardptr<action> const& remove_act );
+public:
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );
     bool is_running( )const;
     void update( float delta );
 private:
-    std::list<hardptr<action>> _actions;
-    std::vector<std::function<void( )>> _remove_signal;
+    std::vector<hardptr<action>> _actions;
+    std::vector<std::function<void( )>> _update_end_signal;
 };
 }
 }

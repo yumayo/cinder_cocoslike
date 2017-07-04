@@ -276,6 +276,7 @@
     <ClCompile Include="..\src\treelike\utility\recursion_usable_mutex.cpp" />
     <ClCompile Include="..\src\treelike\utility\scoped_mutex.cpp" />
     <ClCompile Include="..\src\treelike\utility\string.cpp" />
+    <ClCompile Include="..\src\treelike\utility\time_stamp.cpp" />
     <ClCompile Include="..\src\treelike\utility\utf8.cpp" />
     <ClCompile Include="..\src\treelike\utility\write_file_on_destroyed.cpp" />
   </ItemGroup>

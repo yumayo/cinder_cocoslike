@@ -456,5 +456,8 @@
     <ClCompile Include="..\src\treelike\utility\string.cpp">
       <Filter>Source Files\treelike\utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\time_stamp.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
