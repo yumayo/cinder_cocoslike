@@ -37,12 +37,12 @@ public:
     // ポインタがnullや期限切れを判断します。
     operator bool( ) const noexcept
     {
-        return this->lock( ) && this->expired( );
+        return this->lock( ) && ( !this->expired( ) );
     }
     // ポインタにnullや期限切れを判断の"not"を与えます。
     bool operator!( ) const noexcept
     {
-        return !( this->lock( ) && this->expired( ) );
+        return !( this->lock( ) && ( !this->expired( ) ) );
     }
     // 実態同士の比較をします。
     bool operator==( soft_pointer<type> const& right ) const noexcept
