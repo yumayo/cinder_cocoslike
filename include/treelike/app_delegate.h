@@ -1,7 +1,10 @@
 #pragma once
 #include <cinder/app/App.h>
+#include <treelike/scene.h>
 namespace treelike
 {
+hardptr<treelike::scene> main( );
+void setting( cinder::app::App::Settings *settings );
 class app_delegate : public cinder::app::App
 {
 private:

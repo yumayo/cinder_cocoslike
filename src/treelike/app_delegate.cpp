@@ -3,13 +3,13 @@
 #include <treelike/user_default.h>
 #include <treelike/utility/assert_log.h>
 #include <cinder/gl/gl.h>
+#include <cinder/app/RendererGl.h>
 namespace treelike
 {
 int const app_delegate::_INVALID_ID = -1;
 void app_delegate::setup( )
 {
-    assert_log( !treelike::scene_manager::get_instans( )->empty( ), "シーンが代入されていません。", return );
-    treelike::utility::log( "stand by ready!" );
+    treelike::scene_manager::get_instans( )->push_back( treelike::main( ) );
 }
 void app_delegate::cleanup( )
 {
@@ -112,3 +112,4 @@ void app_delegate::keyUp( cinder::app::KeyEvent event )
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_key_up( event );
 }
 }
+CINDER_APP( treelike::app_delegate, cinder::app::RendererGl, treelike::setting );

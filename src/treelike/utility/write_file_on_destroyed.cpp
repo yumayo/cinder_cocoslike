@@ -1,5 +1,5 @@
 ﻿#include <treelike/utility/write_file_on_destroyed.h>
-#include <treelike/utility/string_utility.h>
+#include <treelike/utility/string.h>
 #include <stdarg.h>
 #include <fstream>
 namespace treelike

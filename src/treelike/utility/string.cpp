@@ -1,4 +1,4 @@
-﻿#include <treelike/utility/string_utility.h>
+﻿#include <treelike/utility/string.h>
 #include <stdarg.h>
 #include <time.h>
 #include <treelike/utility/scoped_mutex.h>
@@ -6,7 +6,7 @@ namespace treelike
 {
 namespace utility
 {
-static const int max_string_length = ( 256 * 256 );
+static const int max_string_length = 65536;
 static recursion_usable_mutex gloval_app_console_mutex;
 std::string format( char const * str, ... )
 {

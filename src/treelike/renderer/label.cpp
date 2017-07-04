@@ -10,7 +10,7 @@ namespace renderer
 {
 struct label::member
 {
-    font::font font = { 1024, 1024, FONS_ZERO_TOPLEFT };
+    font::font font = { 2048, 2048, FONS_ZERO_TOPLEFT };
     int id = FONS_INVALID;
 };
 const char* label::_vertex_shader =
@@ -45,11 +45,11 @@ const char* label::_fragment_shader =
 "void main( void ) {\n"
 "    oColor = vec4( 1, 1, 1, texture( uTex0, TexCoord0 ).r ) * Color;\n"
 "}\n";
-CREATE_CPP( label, std::string const& text, std::string const& relative_path, float size )
+CREATE_CPP( label, std::string const& relative_path, float size )
 {
-    CREATE( label, text, relative_path, size );
+    CREATE( label, relative_path, size );
 }
-bool label::init( std::string const& text, std::string const& relative_path, float size )
+bool label::init( std::string const& relative_path, float size )
 {
     assert_log( !app::getAssetPath( relative_path ).empty( ), "ファイルが見つかりません。", return false );
 
@@ -62,7 +62,6 @@ bool label::init( std::string const& text, std::string const& relative_path, flo
     _m->id = fonsAddFont( _m->font, relative_path.c_str( ), app::getAssetPath( relative_path ).string( ).c_str( ) );
     set_size( size );
     set_color( _color );
-    set_text( text );
 
     return true;
 }

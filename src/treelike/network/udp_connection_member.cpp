@@ -1,6 +1,6 @@
 ﻿#include <treelike/network/udp_connection_member.h>
 #include <jsoncpp/json.h>
-#include <treelike/utility/string_utility.h>
+#include <treelike/utility/string.h>
 #include <treelike/utility/base64.h>
 namespace treelike
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include <treelike/utility/string_utility.h>
+#include <treelike/utility/string.h>
 #ifdef assert_disable
 #define assert_log(cond, msg, return_value) ((void)0)
 #else

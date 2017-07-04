@@ -1,6 +1,6 @@
 ﻿#include <treelike/network/network_object.h>
 #include <cinder/CinderMath.h>
-#include <treelike/utility/string_utility.h>
+#include <treelike/utility/string.h>
 namespace treelike
 {
 namespace network

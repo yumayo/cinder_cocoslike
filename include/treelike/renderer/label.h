@@ -10,8 +10,8 @@ class label : public node
     struct member;
     hardptr<member> _m;
 public:
-    CREATE_H( label, std::string const& text, std::string const& relative_path, float size );
-    bool init( std::string const& text, std::string const& relative_path, float size );
+    CREATE_H( label, std::string const& relative_path, float size );
+    bool init( std::string const& relative_path, float size );
     void render( ) override;
 public:
     void set_size( float value );
