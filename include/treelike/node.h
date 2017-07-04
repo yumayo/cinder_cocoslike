@@ -142,9 +142,9 @@ public:
     float get_opacity( ) const;
 
 protected:
-    std::list<hardptr<node>> _children;
+    std::vector<hardptr<node>> _children;
 public:
-    std::list<hardptr<node>> const& get_children( ) const;
+    std::vector<hardptr<node>> const& get_children( ) const;
 
 protected:
     softptr<node> _parent;
@@ -189,13 +189,19 @@ public:
     template<class ty>
     softptr<ty> add_child( hardptr<ty> const& value )
     {
-        value->_parent = shared_from_this( );
-        _children.emplace_back( value );
+        _update_end_signal.emplace_back( [ this, value ]
+        {
+            value->_parent = shared_from_this( );
+            _children.emplace_back( value );
+        } );
         return value;
     }
     softptr<node> get_child_by_name( std::string const& name )const;
     softptr<node> get_child_by_tag( int tag )const;
     void remove_child( hardptr<node> const& child );
+private:
+    void remove_child_nonsafe( hardptr<node> const& child );
+public:
     void remove_child_by_name( std::string const& name );
     void remove_child_by_tag( int tag );
     void remove_all_children( );

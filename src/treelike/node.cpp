@@ -201,17 +201,12 @@ void node::_key_up( cinder::app::KeyEvent event )
 void node::_update( float delta )
 {
     // 途中でaddがあるため、コンテナをバックアップします。
-    std::vector<std::list<hardptr<node>>::iterator> update_objects;
     if ( !_block_schedule_update )
-        for ( auto itr = std::begin( _children ); itr != std::end( _children ); ++itr )
+        for ( auto const& child : _children )
         {
-            update_objects.emplace_back( itr );
+            child->_update( delta );
         }
-
-    for ( auto const& c : update_objects )
-    {
-        ( *c )->_update( delta );
-    }
+    
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
@@ -381,7 +376,7 @@ float node::get_opacity( ) const
 {
     return _color.a;
 }
-std::list<hardptr<node>> const& node::get_children( ) const
+std::vector<hardptr<node>> const& node::get_children( ) const
 {
     return _children;
 }
@@ -390,10 +385,11 @@ void node::set_parent( hardptr<node> const& value )
     softptr<node> prev_parent = _parent;
     value->add_child( shared_from_this( ) );
 
-    if ( prev_parent )
+    _update_end_signal.emplace_back( [ this, prev_parent ]
     {
-        prev_parent->remove_child( shared_from_this( ) );
-    }
+        assert_log( !prev_parent, "親が未定義です。", return );
+        prev_parent->remove_child_nonsafe( shared_from_this( ) );
+    } );
 }
 softptr<node> node::get_parent( ) const
 {
@@ -410,9 +406,12 @@ int node::get_tag( ) const
 void node::set_order( int value )
 {
     _order = value;
-    _children.sort( [ ] ( hardptr<node>& a, hardptr<node>& b )
+    _update_end_signal.emplace_back( [ this, value ]
     {
-        return a->_order < b->_order;
+        std::sort( _children.begin( ), _children.end( ), [ ] ( hardptr<node>& a, hardptr<node>& b )
+        {
+            return a->_order < b->_order;
+        } );
     } );
 }
 int node::get_order( ) const
@@ -481,44 +480,55 @@ softptr<node> node::get_child_by_tag( int tag ) const
 }
 void node::remove_child( hardptr<node> const& child )
 {
+    _update_end_signal.emplace_back( [ this, child ]
+    {
+        remove_child_nonsafe( child );
+    } );
+}
+void node::remove_child_nonsafe( hardptr<node> const & child )
+{
     if ( _children.empty( ) ) return;
-
     auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
     {
         return n == child;
     } );
-
     _children.erase( erase, std::end( _children ) );
 }
 void node::remove_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return );
 
-    auto child = this->get_child_by_name( name );
+    _update_end_signal.emplace_back( [ this, name ]
+    {
+        auto child = this->get_child_by_name( name );
 
-    if ( child )
-    {
-        this->remove_child( child );
-    }
-    else
-    {
-        log( "remove_child_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
-    }
+        if ( child )
+        {
+            remove_child_nonsafe( child );
+        }
+        else
+        {
+            log( "remove_child_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
+        }
+    } );
 }
 void node::remove_child_by_tag( int tag )
 {
     assert_log( tag != node::INVALID_TAG, "無効なタグです。", return );
 
-    auto child = this->get_child_by_tag( tag );
+    _update_end_signal.emplace_back( [ this, tag ]
+    {
+        auto child = this->get_child_by_tag( tag );
 
-    if ( child )
-    {
-        this->remove_child( child );
-    }
-    else
-    {
-        log( "remove_child_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
-    }
+        if ( child )
+        {
+            remove_child_nonsafe( child );
+        }
+        else
+        {
+            log( "remove_child_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
+        }
+    } );
 }
 void node::remove_all_children( )
 {
@@ -532,13 +542,12 @@ void node::remove_from_parent( )
     if ( !_own_removing )
     {
         _own_removing = true;
-        if ( _parent )
+
+        assert_log( !_parent, "親が未定義です。", return );
+        _parent->_update_end_signal.emplace_back( [ this ]
         {
-            _parent->_update_end_signal.emplace_back( [ this ]
-            {
-                _parent->remove_child( shared_from_this( ) );
-            } );
-        }
+            _parent->remove_child_nonsafe( shared_from_this( ) );
+        } );
     }
 }
 softptr<node> node::get_root( )
