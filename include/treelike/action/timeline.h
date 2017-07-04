@@ -13,7 +13,7 @@ public:
     bool init( );
 
 protected:
-    std::vector<std::shared_ptr<finite_time_action>> _actions;
+    std::vector<hardptr<finite_time_action>> _actions;
 };
 }
 }

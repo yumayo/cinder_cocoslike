@@ -20,7 +20,7 @@ public:
     float update( float delta ) final override;
     void restart( ) final override;
 private:
-    std::vector<std::shared_ptr<finite_time_action>>::iterator _target_action;
+    std::vector<hardptr<finite_time_action>>::iterator _target_action;
 };
 
 template<class Head, class... Tail>

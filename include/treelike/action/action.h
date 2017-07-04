@@ -3,6 +3,7 @@
 #include <treelike/forward.h>
 namespace treelike
 {
+class node;
 namespace action
 {
 class action
@@ -17,7 +18,7 @@ public:
     CREATE_H( action );
     virtual ~action( ) { }
     bool init( );
-    void setup( std::shared_ptr<node> const& target, bool pause );
+    void setup( hardptr<node> const& target, bool pause );
 public:
     // ターゲットのノードが決定したら呼ばれます。
     virtual void setup( );
@@ -27,10 +28,10 @@ public:
     virtual float update( float delta );
 
 protected:
-    std::weak_ptr<node> _target;
+    softptr<node> _target;
 public:
-    void set_target( std::shared_ptr<node> const& value );
-    std::shared_ptr<node> get_target( );
+    void set_target( hardptr<node> const& value );
+    hardptr<node> get_target( );
 
 protected:
     int _tag = action::INVALID_TAG;

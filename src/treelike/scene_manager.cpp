@@ -3,7 +3,7 @@
 namespace treelike
 {
 scene_manager* scene_manager::_instans = nullptr;
-void scene_manager::replace( std::shared_ptr<scene> const & scene )
+void scene_manager::replace( hardptr<scene> const & scene )
 {
     _fn.emplace_back( [ this, scene ]
     {
@@ -13,7 +13,7 @@ void scene_manager::replace( std::shared_ptr<scene> const & scene )
         top( )->_update( _delta );
     } );
 }
-void scene_manager::push_front( std::shared_ptr<scene> const & scene )
+void scene_manager::push_front( hardptr<scene> const & scene )
 {
     _fn.emplace_back( [ this, scene ] { _stack.push_front( scene ); } );
 }
@@ -22,7 +22,7 @@ void scene_manager::pop_front( )
     assert_log( 1 <= _stack.size( ), "これ以上ポップできません。", return );
     _fn.emplace_back( [ this ] { _stack.pop_front( ); } );
 }
-void scene_manager::push_back( std::shared_ptr<scene> const & scene )
+void scene_manager::push_back( hardptr<scene> const & scene )
 {
     _stack.push_back( scene );
 }
@@ -39,7 +39,7 @@ bool scene_manager::empty( )
 {
     return _stack.empty( );
 }
-std::shared_ptr<scene>& scene_manager::top( )
+hardptr<scene>& scene_manager::top( )
 {
     return _stack.front( );
 }
@@ -52,7 +52,7 @@ void scene_manager::update( float delta )
     }
     _fn.clear( );
 }
-std::weak_ptr<node> scene_manager::get_dont_destroy_node( )
+softptr<node> scene_manager::get_dont_destroy_node( )
 {
     return _root;
 }

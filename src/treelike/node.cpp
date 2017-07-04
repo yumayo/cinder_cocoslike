@@ -201,7 +201,7 @@ void node::_key_up( cinder::app::KeyEvent event )
 void node::_update( float delta )
 {
     // 途中でaddがあるため、コンテナをバックアップします。
-    std::vector<std::list<std::shared_ptr<node>>::iterator> update_objects;
+    std::vector<std::list<hardptr<node>>::iterator> update_objects;
     if ( !_block_schedule_update )
         for ( auto itr = std::begin( _children ); itr != std::end( _children ); ++itr )
         {
@@ -381,23 +381,23 @@ float node::get_opacity( )
 {
     return _color.a;
 }
-std::list<std::shared_ptr<node>>& node::get_children( )
+std::list<hardptr<node>>& node::get_children( )
 {
     return _children;
 }
-void node::set_parent( std::shared_ptr<node> const& value )
+void node::set_parent( hardptr<node> const& value )
 {
-    std::weak_ptr<node> prev_parent = _parent;
+    softptr<node> prev_parent = _parent;
     value->add_child( shared_from_this( ) );
 
-    if ( prev_parent.lock( ) )
+    if ( prev_parent )
     {
-        prev_parent.lock( )->remove_child( shared_from_this( ) );
+        prev_parent->remove_child( shared_from_this( ) );
     }
 }
-std::shared_ptr<node> node::get_parent( )
+softptr<node> node::get_parent( )
 {
-    return _parent.lock( );
+    return _parent;
 }
 void node::set_tag( int value )
 {
@@ -410,7 +410,7 @@ int node::get_tag( )
 void node::set_order( int value )
 {
     _order = value;
-    _children.sort( [ ] ( std::shared_ptr<node>& a, std::shared_ptr<node>& b )
+    _children.sort( [ ] ( hardptr<node>& a, hardptr<node>& b )
     {
         return a->_order < b->_order;
     } );
@@ -446,14 +446,14 @@ bool node::get_visible( )
 {
     return _visible;
 }
-std::shared_ptr<node> node::get_child_by_name( std::string const & name )
+softptr<node> node::get_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return nullptr );
 
     std::hash<std::string> h;
     size_t hash = h( name );
 
-    auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, hash, name ] ( std::shared_ptr<node>& child )
+    auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, hash, name ] ( hardptr<node>& child )
     {
         return child->_hash == hash && child->_name.compare( name ) == 0;
     } );
@@ -464,11 +464,11 @@ std::shared_ptr<node> node::get_child_by_name( std::string const & name )
     }
     return nullptr;
 }
-std::shared_ptr<node> node::get_child_by_tag( int tag )
+softptr<node> node::get_child_by_tag( int tag )
 {
     assert_log( tag != node::INVALID_TAG, "無効なタグです。", return nullptr );
 
-    auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, tag ] ( std::shared_ptr<node>& n )
+    auto itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, tag ] ( hardptr<node>& n )
     {
         return n->_tag == tag;
     } );
@@ -479,11 +479,11 @@ std::shared_ptr<node> node::get_child_by_tag( int tag )
     }
     return nullptr;
 }
-void node::remove_child( std::shared_ptr<node> const& child )
+void node::remove_child( hardptr<node> const& child )
 {
     if ( _children.empty( ) ) return;
 
-    auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( std::shared_ptr<node>& n )
+    auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
     {
         return n == child;
     } );
@@ -532,25 +532,25 @@ void node::remove_from_parent( )
     if ( !_own_removing )
     {
         _own_removing = true;
-        if ( _parent.lock( ) )
+        if ( _parent )
         {
-            _parent.lock( )->_update_end_signal.emplace_back( [ this ]
+            _parent->_update_end_signal.emplace_back( [ this ]
             {
-                _parent.lock( )->remove_child( shared_from_this( ) );
+                _parent->remove_child( shared_from_this( ) );
             } );
         }
     }
 }
-std::shared_ptr<node> node::get_root( )
+softptr<node> node::get_root( )
 {
     return _get_root( );
 }
 
-std::shared_ptr<node> node::_get_root( )
+softptr<node> node::_get_root( )
 {
-    if ( _parent.lock( ) )
+    if ( _parent )
     {
-        return _parent.lock( )->_get_root( );
+        return _parent->_get_root( );
     }
     else
     {
@@ -558,18 +558,18 @@ std::shared_ptr<node> node::_get_root( )
     }
 }
 
-void node::run_action( std::shared_ptr<action::action> const & action )
+void node::run_action( hardptr<action::action> const & action )
 {
     _action_manager.add_action( action, shared_from_this( ), !_running );
     action->setup( );
 }
 
-std::shared_ptr<action::action> node::get_action_by_name( std::string const & name )
+softptr<action::action> node::get_action_by_name( std::string const & name )
 {
     return _action_manager.get_action_by_name( name );
 }
 
-std::shared_ptr<action::action> node::get_action_by_tag( int tag )
+softptr<action::action> node::get_action_by_tag( int tag )
 {
     return _action_manager.get_action_by_tag( tag );
 }
@@ -579,7 +579,7 @@ void node::remove_all_actions( )
     _action_manager.remove_all_actions( );
 }
 
-void node::remove_action( std::shared_ptr<action::action> const & action )
+void node::remove_action( hardptr<action::action> const & action )
 {
     _action_manager.remove_action( action );
 }
@@ -603,15 +603,15 @@ cinder::mat3 node::get_world_matrix( )
 {
     std::vector<mat3> mats;
     auto p = _parent;
-    while ( p.lock( ) )
+    while ( p )
     {
-        auto m = translate( mat3( ), p.lock( )->_position );
-        m = scale( m, p.lock( )->_scale );
-        m = rotate( m, p.lock( )->_rotation );
-        m = translate( m, -p.lock( )->_content_size * p.lock( )->_anchor_point );
-        m = translate( m, p.lock( )->_content_size * p.lock( )->_pivot );
+        auto m = translate( mat3( ), p->_position );
+        m = scale( m, p->_scale );
+        m = rotate( m, p->_rotation );
+        m = translate( m, -p->_content_size * p->_anchor_point );
+        m = translate( m, p->_content_size * p->_pivot );
         mats.emplace_back( std::move( m ) );
-        p = p.lock( )->_parent;
+        p = p->_parent;
     }
 
     mat3 result;

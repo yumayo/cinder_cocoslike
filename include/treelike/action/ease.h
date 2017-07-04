@@ -9,8 +9,8 @@ template<typename ease_type>
 class ease : public finite_time_action
 {
 public:
-    CREATE_H( ease<ease_type>, std::shared_ptr<finite_time_action> const& time_action );
-    bool init( std::shared_ptr<finite_time_action> const& time_action );
+    CREATE_H( ease<ease_type>, hardptr<finite_time_action> const& time_action );
+    bool init( hardptr<finite_time_action> const& time_action );
 public:
     virtual void setup( ) override;
     virtual bool is_done( ) override;
@@ -18,16 +18,16 @@ public:
     virtual void restart( ) override;
 protected:
     ease_type ease_object;
-    std::shared_ptr<finite_time_action> _time_action;
+    hardptr<finite_time_action> _time_action;
 };
 
 template<typename ease_type>
-inline CREATE_CPP( ease<ease_type>, std::shared_ptr<finite_time_action> const & time_action )
+inline CREATE_CPP( ease<ease_type>, hardptr<finite_time_action> const & time_action )
 {
     CREATE( ease<ease_type>, time_action );
 }
 template<typename ease_type>
-inline bool ease<ease_type>::init( std::shared_ptr<finite_time_action> const & time_action )
+inline bool ease<ease_type>::init( hardptr<finite_time_action> const & time_action )
 {
     _time_action = time_action;
     return true;
@@ -35,7 +35,7 @@ inline bool ease<ease_type>::init( std::shared_ptr<finite_time_action> const & t
 template<typename ease_type>
 inline void ease<ease_type>::setup( )
 {
-    _time_action->setup( _target.lock( ), _pause );
+    _time_action->setup( _target, _pause );
 }
 template<typename ease_type>
 inline bool ease<ease_type>::is_done( )

@@ -17,7 +17,7 @@ bool move_by::init( float duration, cinder::vec2 position )
 }
 void move_by::setup( )
 {
-    _start_position = _target.lock( )->get_position( );
+    _start_position = _target->get_position( );
     _position = _init_position + _start_position;
 }
 }

@@ -8,7 +8,7 @@ namespace renderer
 class label : public node
 {
     struct member;
-    std::shared_ptr<member> _m;
+    hardptr<member> _m;
 public:
     CREATE_H( label, std::string const& text, std::string const& relative_path, float size );
     bool init( std::string const& text, std::string const& relative_path, float size );

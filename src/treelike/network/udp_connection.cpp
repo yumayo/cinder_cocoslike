@@ -48,7 +48,7 @@ network_handle udp_connection::regist_client( std::string const& ip_address, int
 {
     return _m->regist_client( ip_address, port );
 }
-std::list<std::shared_ptr<network_object>>& udp_connection::get_clients( )
+std::list<hardptr<network_object>>& udp_connection::get_clients( )
 {
     return _m->get_clients( );
 }

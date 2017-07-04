@@ -7,21 +7,21 @@ namespace treelike
 using namespace treelike::utility;
 namespace action
 {
-void action_manager::add_action( std::shared_ptr<action> const& action, std::shared_ptr<node> const& target, bool pause )
+void action_manager::add_action( hardptr<action> const& action, hardptr<node> const& target, bool pause )
 {
     action->set_target( target );
     action->set_pause( pause );
     _actions.emplace_back( action );
 }
 
-std::shared_ptr<action> action_manager::get_action_by_name( std::string const & name )
+hardptr<action> action_manager::get_action_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return std::make_shared<action>( ) );
 
     std::hash<std::string> h;
     size_t hash = h( name );
 
-    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, hash, name ] ( std::shared_ptr<action>& act )
+    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, hash, name ] ( hardptr<action>& act )
     {
         return act->_hash == hash && act->_name.compare( name ) == 0;
     } );
@@ -33,11 +33,11 @@ std::shared_ptr<action> action_manager::get_action_by_name( std::string const & 
     return std::make_shared<action>( );
 }
 
-std::shared_ptr<action> action_manager::get_action_by_tag( int tag )
+hardptr<action> action_manager::get_action_by_tag( int tag )
 {
     assert_log( tag == node::INVALID_TAG, "無効なタグです。", return std::make_shared<action>( ) );
 
-    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, tag ] ( std::shared_ptr<action>& act )
+    auto itr = std::find_if( std::begin( _actions ), std::end( _actions ), [ this, tag ] ( hardptr<action>& act )
     {
         return act->_tag == tag;
     } );
@@ -54,11 +54,11 @@ void action_manager::remove_all_actions( )
     _actions.clear( );
 }
 
-void action_manager::remove_action( std::shared_ptr<action> const& act_weak )
+void action_manager::remove_action( hardptr<action> const& act_weak )
 {
     if ( _actions.empty( ) ) return;
 
-    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, act_weak ] ( std::shared_ptr<action>& act )
+    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, act_weak ] ( hardptr<action>& act )
     {
         return act == act_weak;
     } );
@@ -110,7 +110,7 @@ void action_manager::update( float delta )
         // managerまで溢れてくる値はシークエンス系以外なので無視して問題ありません。
         obj->update( delta );
     }
-    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ ] ( std::shared_ptr<action>& act )
+    auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ ] ( hardptr<action>& act )
     {
         return act->is_done( );
     } );

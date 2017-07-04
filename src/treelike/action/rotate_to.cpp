@@ -17,7 +17,7 @@ bool rotate_to::init( float duration, float rotation )
 }
 void rotate_to::setup( )
 {
-    _start_rotation = _target.lock( )->get_rotation( );
+    _start_rotation = _target->get_rotation( );
 }
 void rotate_to::step( float t )
 {
@@ -26,7 +26,7 @@ void rotate_to::step( float t )
     auto const to = _rotation;
     auto const from = _start_rotation;
     auto const temp = ease_liner( t, from, to );
-    _target.lock( )->set_rotation( temp );
+    _target->set_rotation( temp );
 }
 }
 }

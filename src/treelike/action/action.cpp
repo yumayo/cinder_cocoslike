@@ -12,7 +12,7 @@ bool action::init( )
 {
     return true;
 }
-void action::setup( std::shared_ptr<node> const& target, bool pause )
+void action::setup( hardptr<node> const& target, bool pause )
 {
     _target = target;
     _pause = pause;
@@ -37,14 +37,14 @@ void action::step( float t )
 {
 }
 
-void action::set_target( std::shared_ptr<node> const& value )
+void action::set_target( hardptr<node> const& value )
 {
     _target = value;
 }
 
-std::shared_ptr<node> action::get_target( )
+hardptr<node> action::get_target( )
 {
-    return _target.lock( );
+    return _target;
 }
 
 void action::set_tag( int value )

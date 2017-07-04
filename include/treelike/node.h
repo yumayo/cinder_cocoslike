@@ -142,15 +142,15 @@ public:
     float get_opacity( );
 
 protected:
-    std::list<std::shared_ptr<node>> _children;
+    std::list<hardptr<node>> _children;
 public:
-    std::list<std::shared_ptr<node>>& get_children( );
+    std::list<hardptr<node>>& get_children( );
 
 protected:
-    std::weak_ptr<node> _parent;
+    softptr<node> _parent;
 public:
-    virtual void set_parent( std::shared_ptr<node> const& value );
-    std::shared_ptr<node> get_parent( );
+    virtual void set_parent( hardptr<node> const& value );
+    softptr<node> get_parent( );
 
 protected:
     int _tag = node::INVALID_TAG;
@@ -187,15 +187,15 @@ public:
 
 public:
     template<class ty>
-    std::shared_ptr<ty> add_child( std::shared_ptr<ty> const& value )
+    softptr<ty> add_child( hardptr<ty> const& value )
     {
         value->_parent = shared_from_this( );
         _children.emplace_back( value );
         return value;
     }
-    std::shared_ptr<node> get_child_by_name( std::string const& name );
-    std::shared_ptr<node> get_child_by_tag( int tag );
-    void remove_child( std::shared_ptr<node> const& child );
+    softptr<node> get_child_by_name( std::string const& name );
+    softptr<node> get_child_by_tag( int tag );
+    void remove_child( hardptr<node> const& child );
     void remove_child_by_name( std::string const& name );
     void remove_child_by_tag( int tag );
     void remove_all_children( );
@@ -208,17 +208,17 @@ protected:
     bool _swallow = false;
 
 public:
-    std::shared_ptr<node> get_root( );
-    std::shared_ptr<node> _get_root( );
+    softptr<node> get_root( );
+    softptr<node> _get_root( );
 
 protected:
     action::action_manager _action_manager;
 public:
-    void run_action( std::shared_ptr<action::action> const& action );
-    std::shared_ptr<action::action> get_action_by_name( std::string const& name );
-    std::shared_ptr<action::action> get_action_by_tag( int tag );
+    void run_action( hardptr<action::action> const& action );
+    softptr<action::action> get_action_by_name( std::string const& name );
+    softptr<action::action> get_action_by_tag( int tag );
     void remove_all_actions( );
-    void remove_action( std::shared_ptr<action::action> const& action );
+    void remove_action( hardptr<action::action> const& action );
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );
     bool is_running_action( );

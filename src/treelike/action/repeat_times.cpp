@@ -3,11 +3,11 @@ namespace treelike
 {
 namespace action
 {
-CREATE_CPP( repeat_times, std::shared_ptr<finite_time_action> const& time_action, int number_of_times )
+CREATE_CPP( repeat_times, hardptr<finite_time_action> const& time_action, int number_of_times )
 {
     CREATE( repeat_times, time_action, number_of_times );
 }
-bool repeat_times::init( std::shared_ptr<finite_time_action> const& time_action, int number_of_times )
+bool repeat_times::init( hardptr<finite_time_action> const& time_action, int number_of_times )
 {
     _time_action = time_action;
     _init_number_of_times = number_of_times;

@@ -14,7 +14,7 @@ bool remove_self::init( )
 }
 float remove_self::update( float delta )
 {
-    _target.lock( )->remove_from_parent( );
+    _target->remove_from_parent( );
     return delta;
 }
 }

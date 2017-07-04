@@ -17,7 +17,7 @@ bool scale_to::init( float duration, cinder::vec2 scale )
 }
 void scale_to::setup( )
 {
-    _start_scale = _target.lock( )->get_scale( );
+    _start_scale = _target->get_scale( );
 }
 void scale_to::step( float t )
 {
@@ -26,7 +26,7 @@ void scale_to::step( float t )
     auto const to = _scale;
     auto const from = _start_scale;
     auto const temp = vec2( ease_liner( t, from.x, to.x ), ease_liner( t, from.y, to.y ) );
-    _target.lock( )->set_scale( temp );
+    _target->set_scale( temp );
 }
 }
 }

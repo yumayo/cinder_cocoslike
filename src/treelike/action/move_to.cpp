@@ -17,7 +17,7 @@ bool move_to::init( float duration, cinder::vec2 position )
 }
 void move_to::setup( )
 {
-    _start_position = _target.lock( )->get_position( );
+    _start_position = _target->get_position( );
 }
 void move_to::step( float t )
 {
@@ -26,7 +26,7 @@ void move_to::step( float t )
     auto const to = _position;
     auto const from = _start_position;
     auto const temp = vec2( ease_liner( t, from.x, to.x ), ease_liner( t, from.y, to.y ) );
-    _target.lock( )->set_position( temp );
+    _target->set_position( temp );
 }
 }
 }

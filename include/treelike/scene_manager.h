@@ -6,20 +6,20 @@ namespace treelike
 class scene_manager
 {
 public:
-    void replace( std::shared_ptr<scene> const& scene );
-    void push_front( std::shared_ptr<scene> const& scene );
+    void replace( hardptr<scene> const& scene );
+    void push_front( hardptr<scene> const& scene );
     void pop_front( );
-    void push_back( std::shared_ptr<scene> const& scene );
+    void push_back( hardptr<scene> const& scene );
     void pop_back( );
     size_t size( );
     bool empty( );
-    std::shared_ptr<scene>& top( );
+    hardptr<scene>& top( );
     void update( float delta );
-    std::weak_ptr<node> get_dont_destroy_node( );
+    softptr<node> get_dont_destroy_node( );
 private:
     std::vector<std::function<void( )>> _fn;
-    std::list<std::shared_ptr<scene>> _stack;
-    std::shared_ptr<node> _root;
+    std::list<hardptr<scene>> _stack;
+    hardptr<node> _root;
     float _delta;
 public:
     static scene_manager* get_instans( );

@@ -17,7 +17,7 @@ bool rotate_by::init( float duration, float rotation )
 }
 void rotate_by::setup( )
 {
-    _start_rotation = _target.lock( )->get_rotation( );
+    _start_rotation = _target->get_rotation( );
     _rotation = _init_rotation + _start_rotation;
 }
 }

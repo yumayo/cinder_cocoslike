@@ -17,7 +17,7 @@ bool scale_by::init( float duration, cinder::vec2 scale )
 }
 void scale_by::setup( )
 {
-    _start_scale = _target.lock( )->get_scale( );
+    _start_scale = _target->get_scale( );
     _scale = _init_scale + _start_scale;
 }
 }

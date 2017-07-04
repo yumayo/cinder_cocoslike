@@ -11,7 +11,7 @@ bool sequence::init( )
 void sequence::setup( )
 {
     if ( is_done( ) ) return;
-    ( *_target_action )->setup( _target.lock( ), _pause );
+    ( *_target_action )->setup( _target, _pause );
 }
 bool sequence::is_done( )
 {

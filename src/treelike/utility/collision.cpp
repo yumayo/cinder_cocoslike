@@ -54,7 +54,7 @@ bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cin
 
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0 && c4 >= 0.0;
 }
-bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & object )
+bool hit_point_plane_2d( cinder::vec2 point, hardptr<node> const & object )
 {
     auto mat = object->get_world_matrix( );
     auto _content_size = object->get_content_size( );
@@ -80,7 +80,7 @@ bool hit_point_plane_2d( cinder::vec2 point, std::shared_ptr<node> const & objec
 
     return utility::hit_point_plane_2d( point, a, b, c, d );
 }
-bool hit_point_plane_2d_default_size( cinder::vec2 point, std::shared_ptr<node> const & object )
+bool hit_point_plane_2d_default_size( cinder::vec2 point, hardptr<node> const & object )
 {
     auto mat = object->get_world_matrix( );
     auto _content_size = object->get_content_size( );
@@ -187,7 +187,7 @@ bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::v
                                                 // というように線分で当たり判定を取ります。
                                                 // それでも当たらない場合は、windowの範囲外です。
 }
-bool hit_window_aabb( cinder::mat3 model_view_matrix, std::shared_ptr<node> const & object )
+bool hit_window_aabb( cinder::mat3 model_view_matrix, hardptr<node> const & object )
 {
     auto _content_size = object->get_content_size( );
     auto ma = translate( model_view_matrix, vec2( 0.0F ) );
