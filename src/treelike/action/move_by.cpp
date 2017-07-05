@@ -12,13 +12,28 @@ CREATE_CPP( move_by, float duration, cinder::vec2 position )
 bool move_by::init( float duration, cinder::vec2 position )
 {
     _duration = duration;
-    _init_position = position;
+    _init_position = vec3( position, 0.0F );
+    return true;
+}
+CREATE_CPP( move_by, float duration, cinder::vec3 position_3d )
+{
+    CREATE( move_by, duration, position_3d );
+}
+bool move_by::init( float duration, cinder::vec3 position_3d )
+{
+    _duration = duration;
+    _init_position = position_3d;
     return true;
 }
 void move_by::setup( )
 {
-    _start_position = _target->get_position( );
+    move_to::setup( );
     _position = _init_position + _start_position;
+}
+void move_by::restart( )
+{
+    move_to::restart( );
+    setup( );
 }
 }
 }

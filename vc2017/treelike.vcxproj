@@ -254,6 +254,7 @@
     <ClCompile Include="..\src\treelike\node.cpp" />
     <ClCompile Include="..\src\treelike\renderer\button.cpp" />
     <ClCompile Include="..\src\treelike\renderer\circle.cpp" />
+    <ClCompile Include="..\src\treelike\renderer\cube.cpp" />
     <ClCompile Include="..\src\treelike\renderer\font.cpp" />
     <ClCompile Include="..\src\treelike\renderer\label.cpp" />
     <ClCompile Include="..\src\treelike\renderer\letter.cpp" />
@@ -323,6 +324,7 @@
     <ClInclude Include="..\include\treelike\renderer.hpp" />
     <ClInclude Include="..\include\treelike\renderer\button.h" />
     <ClInclude Include="..\include\treelike\renderer\circle.h" />
+    <ClInclude Include="..\include\treelike\renderer\cube.h" />
     <ClInclude Include="..\include\treelike\renderer\font.h" />
     <ClInclude Include="..\include\treelike\renderer\label.h" />
     <ClInclude Include="..\include\treelike\renderer\letter.h" />

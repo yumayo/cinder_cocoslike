@@ -33,8 +33,8 @@ void app_delegate::draw( )
 {
     stamp.start( );
     cinder::gl::clear( cinder::ColorA( 0.1F, 0.1F, 0.1F, 1.0F ) );
-    treelike::scene_manager::get_instans( )->top( )->_render( cinder::mat3( ) );
-    treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_render( cinder::mat3( ) );
+    treelike::scene_manager::get_instans( )->top( )->_render( cinder::mat4( ) );
+    treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_render( cinder::mat4( ) );
     stamp.end( );
     console( ) << stamp.get_elapsed_second( ) << std::endl;
 }

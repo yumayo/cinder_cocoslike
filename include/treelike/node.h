@@ -47,7 +47,7 @@ private:
     void _key_down( cinder::app::KeyEvent event );
     void _key_up( cinder::app::KeyEvent event );
     void _update( float delta );
-    void _render( cinder::mat3 model_view_matrix );
+    void _render( cinder::mat4 model_view_matrix );
 protected:
     bool init( );
 protected:
@@ -89,34 +89,52 @@ public:
     inline bool const& get_block_schedule_event( ) const { return _block_schedule_event; }
 protected:
     cinder::vec2 _position = cinder::vec2( 0 );
+    float _position_z = 0.0F;
 public:
     virtual void set_position( cinder::vec2 const& value ) { _position = value; }
     inline cinder::vec2  const& get_position( ) const { return _position; }
+    virtual void set_position_3d( cinder::vec3 const& value ) { memcpy( &_position, &value, sizeof( cinder::vec3 ) ); }
+    inline cinder::vec3 const& get_position_3d( ) const { return *( cinder::vec3* )&_position; }
 protected:
     cinder::vec2 _scale = cinder::vec2( 1 );
+    float _scale_z = 0.0F;
 public:
     virtual void set_scale( cinder::vec2 const& value ) { _scale = value; }
     inline cinder::vec2  const& get_scale( ) const { return _scale; }
+    virtual void set_scale_3d( cinder::vec3 const& value ) { memcpy( &_scale, &value, sizeof( cinder::vec3 ) ); }
+    inline cinder::vec3 const& get_scale_3d( ) const { return *( cinder::vec3* )&_scale; }
 protected:
     cinder::vec2 _content_size = cinder::vec2( 0 );
+    float _content_size_z = 0.0F;
 public:
     virtual void set_content_size( cinder::vec2 const& value ) { _content_size = value; }
     inline cinder::vec2  const& get_content_size( ) const { return _content_size; }
+    virtual void set_content_size_3d( cinder::vec3 const& value ) { memcpy( &_content_size, &value, sizeof( cinder::vec3 ) ); }
+    inline cinder::vec3 const& get_content_size_3d( ) const { return *( cinder::vec3* )&_content_size; }
 protected:
     float _rotation = 0.0F;
+    cinder::vec3 _axis = cinder::vec3( 0, 0, 1 );
 public:
     virtual void set_rotation( float const& value ) { _rotation = value; }
     inline float const& get_rotation( ) const { return _rotation; }
+    virtual void set_axis( cinder::vec3 const& value ) { _axis = value; }
+    inline cinder::vec3 const& get_axis( ) const { return _axis; }
 protected:
     cinder::vec2 _anchor_point = cinder::vec2( 0 );
+    float _anchor_point_z = 0.0F;
 public:
     virtual void set_anchor_point( cinder::vec2 const& value ) { _anchor_point = value; }
     inline cinder::vec2  const& get_anchor_point( ) const { return _anchor_point; }
+    virtual void set_anchor_point_3d( cinder::vec3 const& value ) { memcpy( &_anchor_point, &value, sizeof( cinder::vec3 ) ); }
+    inline cinder::vec3 const& get_anchor_point_3d( ) const { return *( cinder::vec3* )&_anchor_point; }
 protected:
     cinder::vec2 _pivot = cinder::vec2( 0 );
+    float _pivot_z = 0.0F;
 public:
     virtual void set_pivot( cinder::vec2 const& value ) { _pivot = value; }
     inline cinder::vec2  const& get_pivot( ) const { return _pivot; }
+    virtual void set_pivot_3d( cinder::vec3 const& value ) { memcpy( &_pivot, &value, sizeof( cinder::vec3 ) ); }
+    inline cinder::vec3 const& get_pivot_3d( ) const { return *( cinder::vec3* )&_pivot; }
 protected:
     cinder::ColorA _color = cinder::ColorA::white( );
 public:
@@ -202,5 +220,6 @@ public:
     bool is_running_action( ) const;
 public:
     cinder::mat3 get_world_matrix( )const;
+    cinder::mat4 get_world_matrix_3d( )const;
 };
 }

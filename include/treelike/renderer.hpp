@@ -1,5 +1,6 @@
 #include <treelike/renderer/button.h>
 #include <treelike/renderer/circle.h>
+#include <treelike/renderer/cube.h>
 #include <treelike/renderer/label.h>
 #include <treelike/renderer/letter.h>
 #include <treelike/renderer/rect.h>

@@ -211,35 +211,28 @@ void node::_update( float delta )
     for ( auto const& signal : _update_end_signal ) signal( );
     _update_end_signal.clear( );
 }
-void node::_render( cinder::mat3 m )
+void node::_render( cinder::mat4 m )
 {
-    m = translate( m, _position );
-    m = scale( m, _scale );
-    m = rotate( m, _rotation );
-    m = translate( m, -_content_size * _anchor_point );
-    // 2次元空間を扱うマトリックスを3次元空間に引き上げる場合、
-    // 回転や、スケーリングを行う行列位置は変わりません。
-    // しかし、平行移動の部分は2次元であれば3次元目に、3次元であれば4次元目のマトリックス位置に来ます。
-    // 2次元空間マトリックスにおいて3次元目は必ず0になるのでm[*][2]は0で決め打ちしています。
-    gl::setModelMatrix( mat4( m[0][0], m[0][1], 0, 0,
-                              m[1][0], m[1][1], 0, 0,
-                              0, 0, 1, 0,
-                              m[2][0], m[2][1], 0, 1 ) );
+    m = translate( m, get_position_3d( ) );
+    m = scale( m, get_scale_3d( ) );
+    m = rotate( m, get_rotation( ), get_axis( ) );
+    m = translate( m, -get_content_size_3d( ) * get_anchor_point_3d( ) );
+    gl::setModelMatrix( m );
     if ( _visible )
     {
         gl::color( _color );
-        std::pair<vec2, vec2> aabb;
-        if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
+        //std::pair<vec2, vec2> aabb;
+        //if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
         {
             this->render( );
         }
-        #ifdef _DEBUG
-        gl::setModelMatrix( mat4( ) );
-        gl::color( Color::white( ) );
-        gl::drawStrokedRect( Rectf( aabb.first, aabb.second ) );
-        #endif
+        //#ifdef _DEBUG
+        //gl::setModelMatrix( mat4( ) );
+        //gl::color( Color::white( ) );
+        //gl::drawStrokedRect( Rectf( aabb.first, aabb.second ) );
+        //#endif
     }
-    m = translate( m, _content_size * _pivot );
+    m = translate( m, get_content_size_3d( ) * get_pivot_3d( ) );
     for ( auto const& c : _children )
     {
         c->_render( m );
@@ -457,15 +450,36 @@ cinder::mat3 node::get_world_matrix( ) const
     auto p = _parent;
     while ( p )
     {
-        auto m = translate( mat3( ), p->_position );
-        m = scale( m, p->_scale );
-        m = rotate( m, p->_rotation );
-        m = translate( m, -p->_content_size * p->_anchor_point );
-        m = translate( m, p->_content_size * p->_pivot );
+        auto m = translate( mat3( ), p->get_position( ) );
+        m = scale( m, p->get_scale( ) );
+        m = rotate( m, p->get_rotation( ) );
+        m = translate( m, -p->get_content_size( ) * p->get_anchor_point( ) );
+        m = translate( m, p->get_content_size( ) * p->get_pivot( ) );
         mats.emplace_back( std::move( m ) );
         p = p->_parent;
     }
     mat3 result;
+    for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
+    {
+        result *= *itr;
+    }
+    return result;
+}
+cinder::mat4 node::get_world_matrix_3d( ) const
+{
+    std::vector<mat4> mats;
+    auto p = _parent;
+    while ( p )
+    {
+        auto m = translate( mat4( ), p->get_position_3d( ) );
+        m = scale( m, p->get_scale_3d( ) );
+        m = rotate( m, get_rotation( ), get_axis( ) );
+        m = translate( m, -p->get_content_size_3d( ) * p->get_anchor_point_3d( ) );
+        m = translate( m, p->get_content_size_3d( ) * p->get_pivot_3d( ) );
+        mats.emplace_back( std::move( m ) );
+        p = p->_parent;
+    }
+    mat4 result;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
         result *= *itr;

@@ -20,16 +20,16 @@ bool repeat_times::is_done( )
 }
 float repeat_times::update( float delta )
 {
+begin:
     delta = _time_action->update( delta );
-
     if ( _time_action->is_done( ) )
     {
         _number_of_times -= 1;
         if ( !is_done( ) )
         {
+            setup( );
             _time_action->restart( );
-            if ( delta != 0.0F )
-                delta = _time_action->update( delta );
+            goto begin;
         }
     }
     return delta;

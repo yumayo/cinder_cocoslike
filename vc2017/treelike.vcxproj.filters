@@ -263,6 +263,9 @@
     <ClInclude Include="..\include\treelike\network\network_handle.h">
       <Filter>Header Files\treelike\network</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\cube.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\treelike\action\action_manager.cpp">
@@ -441,6 +444,9 @@
     </ClCompile>
     <ClCompile Include="..\src\treelike\network\network_handle.cpp">
       <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\cube.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

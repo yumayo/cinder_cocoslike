@@ -10,12 +10,15 @@ class scale_to : public finite_time_action
 public:
     CREATE_H( scale_to, float duration, cinder::vec2 scale );
     bool init( float duration, cinder::vec2 scale );
-private:
+    CREATE_H( scale_to, float duration, cinder::vec3 scale );
+    bool init( float duration, cinder::vec3 scale );
+protected:
     void setup( ) override;
     void step( float t ) override;
+    void restart( ) override;
 protected:
-    cinder::vec2 _start_scale;
-    cinder::vec2 _scale;
+    cinder::vec3 _start_scale;
+    cinder::vec3 _scale;
 };
 }
 }

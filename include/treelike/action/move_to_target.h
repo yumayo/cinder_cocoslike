@@ -13,8 +13,9 @@ public:
 private:
     void setup( ) override;
     void step( float t ) override;
+    void restart( ) override;
 protected:
-    cinder::vec2 _start_position;
+    cinder::vec3 _start_position;
     softptr<node> _new_target;
 };
 }
