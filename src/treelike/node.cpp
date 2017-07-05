@@ -218,12 +218,13 @@ void node::_render( cinder::mat4 m )
     m = rotate( m, get_rotation( ), get_axis( ) );
     m = translate( m, -get_content_size_3d( ) * get_anchor_point_3d( ) );
     gl::setModelMatrix( m );
+    if ( _shader_program ) gl::context( )->pushGlslProg( _shader_program );
     if ( _visible )
     {
-        gl::color( _color );
         //std::pair<vec2, vec2> aabb;
         //if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
         {
+            gl::color( _color );
             this->render( );
         }
         //#ifdef _DEBUG
@@ -237,6 +238,7 @@ void node::_render( cinder::mat4 m )
     {
         c->_render( m );
     }
+    if ( _shader_program ) gl::context( )->popGlslProg( );
 }
 bool node::init( )
 {

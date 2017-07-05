@@ -3,6 +3,7 @@
 #include <cinder/Quaternion.h>
 #include <cinder/app/App.h>
 #include <cinder/Color.h>
+#include <cinder/gl/GlslProg.h>
 #include <vector>
 #include <string>
 #include <treelike/forward.h>
@@ -97,7 +98,7 @@ public:
     inline cinder::vec3 const& get_position_3d( ) const { return *( cinder::vec3* )&_position; }
 protected:
     cinder::vec2 _scale = cinder::vec2( 1 );
-    float _scale_z = 0.0F;
+    float _scale_z = 1.0F;
 public:
     virtual void set_scale( cinder::vec2 const& value ) { _scale = value; }
     inline cinder::vec2  const& get_scale( ) const { return _scale; }
@@ -142,6 +143,11 @@ public:
     inline cinder::ColorA  const& get_color( ) const { return _color; }
     virtual void set_opacity( float alpha );
     float get_opacity( ) const;
+protected:
+    cinder::gl::GlslProgRef _shader_program;
+public:
+    virtual void set_shader_program( cinder::gl::GlslProgRef const& value ) { _shader_program = value; }
+    inline cinder::gl::GlslProgRef const& get_shader_program( ) const { return _shader_program; }
 protected:
     std::vector<hardptr<node>> _children;
 public:
