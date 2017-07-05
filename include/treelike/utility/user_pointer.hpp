@@ -8,9 +8,7 @@ template<class type>
 using hard_pointer = std::shared_ptr<type>;
 template<class type>
 using hardptr = hard_pointer<type>;
-
 // weak_ptrを使用するときに、いちいち lock とか expired を使うのがだるいのでラッピングします。
-
 template<class type>
 class soft_pointer : protected std::weak_ptr<type>
 {
@@ -39,40 +37,40 @@ public:
     {
         return this->lock( ) && ( !this->expired( ) );
     }
-    // ポインタにnullや期限切れを判断の"not"を与えます。
+    // ポインタにnullや期限切れの判断に"not"を与えます。
     bool operator!( ) const noexcept
     {
         return !( this->lock( ) && ( !this->expired( ) ) );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator==( soft_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) == *right;
+        return this->get( ) == right.get( );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator==( hard_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) == *right;
+        return this->get( ) == right.get( );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator!=( soft_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) != *right;
+        return this->get( ) != right.get( );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator!=( hard_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) != *right;
+        return this->get( ) != right.get( );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator<( soft_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) < *right;
+        return this->get( ) < right.get( );
     }
-    // 実態同士の比較をします。
+    // ポインタ同士の比較をします。
     bool operator<( hard_pointer<type> const& right ) const noexcept
     {
-        return *this->lock( ) < *right;
+        return this->get( ) < right.get( );
     }
     // 自動的にポインタの実態を返します。
     operator type&( ) const noexcept
@@ -87,29 +85,33 @@ public:
     // 自動的にハードポインタにキャストします。
     operator hard_pointer<type>( ) const noexcept
     {
-        return this->lock( );
+        return std::move( this->lock( ) );
+    }
+    // 生のポインターを返します。
+    type* get( ) const noexcept
+    {
+        return this->lock( ).get( );
     }
 };
-// 実態同士の比較をします。
+// ポインタ同士の比較をします。
 template<class type>
 bool operator==( hard_pointer<type> const& left, soft_pointer<type> const& right ) noexcept
 {
-    return *left == *right;
+    return left.get( ) == right.get( );
 }
-// 実態同士の比較をします。
+// ポインタ同士の比較をします。
 template<class type>
 bool operator!=( hard_pointer<type> const& left, soft_pointer<type> const& right ) noexcept
 {
-    return *left != *right;
+    return left.get( ) != right.get( );
 }
-// 実態同士の比較をします。
+// ポインタ同士の比較をします。
 template<class type>
 bool operator<( hard_pointer<type> const& left, soft_pointer<type> const& right ) noexcept
 {
-    return *left < *right;
+    return left.get( ) < right.get( );
 }
 template<class type>
 using softptr = soft_pointer<type>;
 }
-
 }

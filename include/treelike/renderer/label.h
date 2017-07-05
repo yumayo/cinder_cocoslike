@@ -18,7 +18,7 @@ public:
     float const& get_size( );
     void set_text( std::string const& value );
     std::string const& get_text( );
-    void set_color( cinder::ColorA value ) override;
+    void set_color( cinder::ColorA const& value ) override;
 private:
     static const char* _vertex_shader;
     static const char* _fragment_shader;

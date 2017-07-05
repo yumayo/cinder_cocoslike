@@ -205,7 +205,6 @@ void node::_update( float delta )
         {
             child->_update( delta );
         }
-
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
@@ -226,11 +225,9 @@ void node::_render( cinder::mat3 m )
                               m[1][0], m[1][1], 0, 0,
                               0, 0, 1, 0,
                               m[2][0], m[2][1], 0, 1 ) );
-
     if ( _visible )
     {
         gl::color( _color );
-
         std::pair<vec2, vec2> aabb;
         if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
         {
@@ -242,7 +239,6 @@ void node::_render( cinder::mat3 m )
         gl::drawStrokedRect( Rectf( aabb.first, aabb.second ) );
         #endif
     }
-
     m = translate( m, _content_size * _pivot );
     for ( auto const& c : _children )
     {
@@ -253,54 +249,6 @@ bool node::init( )
 {
     return true;
 }
-void node::set_schedule_update( bool value )
-{
-    _schedule_update = value;
-}
-bool node::get_schedule_update( ) const
-{
-    return _schedule_update;
-}
-void node::set_block_schedule_update( bool value )
-{
-    _block_schedule_update = value;
-}
-bool node::get_block_schedule_update( ) const
-{
-    return _block_schedule_update;
-}
-void node::set_schedule_mouse_event( bool value )
-{
-    _schedule_mouse_event = value;
-}
-bool node::get_schedule_mouse_event( ) const
-{
-    return _schedule_mouse_event;
-}
-void node::set_schedule_touch_event( bool value )
-{
-    _schedule_touch_event = value;
-}
-bool node::get_schedule_touch_event( ) const
-{
-    return _schedule_touch_event;
-}
-void node::set_schedule_touches_event( bool value )
-{
-    _schedule_touches_event = value;
-}
-bool node::get_schedule_touches_event( ) const
-{
-    return _schedule_touches_event;
-}
-void node::set_schedule_key_event( bool value )
-{
-    _schedule_key_event = value;
-}
-bool node::get_schedule_key_event( ) const
-{
-    return _schedule_key_event;
-}
 void node::set_schedule_all( bool value )
 {
     _schedule_update = value;
@@ -308,70 +256,6 @@ void node::set_schedule_all( bool value )
     _schedule_touch_event = value;
     _schedule_touches_event = value;
     _schedule_key_event = value;
-}
-void node::set_block_schedule_event( bool value )
-{
-    _block_schedule_event = value;
-}
-bool node::get_block_schedule_event( ) const
-{
-    return _block_schedule_event;
-}
-void node::set_position( cinder::vec2 value )
-{
-    _position = value;
-}
-cinder::vec2 node::get_position( ) const
-{
-    return _position;
-}
-void node::set_scale( cinder::vec2 value )
-{
-    _scale = value;
-}
-cinder::vec2 node::get_scale( ) const
-{
-    return _scale;
-}
-void node::set_content_size( cinder::vec2 value )
-{
-    _content_size = value;
-}
-cinder::vec2 node::get_content_size( ) const
-{
-    return _content_size;
-}
-void node::set_rotation( float value )
-{
-    _rotation = value;
-}
-float node::get_rotation( ) const
-{
-    return _rotation;
-}
-void node::set_anchor_point( cinder::vec2 value )
-{
-    _anchor_point = value;
-}
-cinder::vec2 node::get_anchor_point( ) const
-{
-    return _anchor_point;
-}
-void node::set_pivot( cinder::vec2 value )
-{
-    _pivot = value;
-}
-cinder::vec2 node::get_pivot( ) const
-{
-    return _pivot;
-}
-void node::set_color( cinder::ColorA value )
-{
-    _color = value;
-}
-cinder::ColorA node::get_color( ) const
-{
-    return _color;
 }
 void node::set_opacity( float alpha )
 {
@@ -385,30 +269,21 @@ std::vector<hardptr<node>> const& node::get_children( ) const
 {
     return _children;
 }
-void node::set_parent( hardptr<node> const& value )
+void node::set_parent( softptr<node> const& value )
 {
     softptr<node> prev_parent = _parent;
     value->add_child( shared_from_this( ) );
-
     _update_end_signal.emplace_back( [ this, prev_parent ]
     {
         assert_log( !prev_parent, "親が未定義です。", return );
         prev_parent->remove_child_nonsafe( shared_from_this( ) );
     } );
 }
-softptr<node> node::get_parent( ) const
+softptr<node> const& node::get_parent( ) const
 {
     return _parent;
 }
-void node::set_tag( int value )
-{
-    _tag = value;
-}
-int node::get_tag( ) const
-{
-    return _tag;
-}
-void node::set_order( int value )
+void node::set_order( int const& value )
 {
     _order = value;
     _update_end_signal.emplace_back( [ this, value ]
@@ -419,14 +294,13 @@ void node::set_order( int value )
         } );
     } );
 }
-int node::get_order( ) const
+int const& node::get_order( ) const
 {
     return _order;
 }
 void node::set_name( std::string const& value )
 {
     _name = value;
-
     std::hash<std::string> h;
     _hash = h( value );
 }
@@ -434,34 +308,15 @@ std::string const& node::get_name( ) const
 {
     return _name;
 }
-void node::set_running( bool value )
-{
-    _running = value;
-}
-bool node::get_running( ) const
-{
-    return _running;
-}
-void node::set_visible( bool value )
-{
-    _visible = value;
-}
-bool node::get_visible( ) const
-{
-    return _visible;
-}
 softptr<node> node::get_child_by_name( std::string const & name ) const
 {
     assert_log( !name.empty( ), "無効な名前です。", return nullptr );
-
     std::hash<std::string> h;
     size_t hash = h( name );
-
     auto itr = std::find_if( std::cbegin( _children ), std::cend( _children ), [ this, hash, name ] ( hardptr<node> const& child )
     {
         return child->_hash == hash && child->_name.compare( name ) == 0;
     } );
-
     if ( itr != std::cend( _children ) )
     {
         return *itr;
@@ -471,7 +326,6 @@ softptr<node> node::get_child_by_name( std::string const & name ) const
 softptr<node> node::get_child_by_tag( int tag ) const
 {
     assert_log( tag != node::INVALID_TAG, "無効なタグです。", return nullptr );
-
     auto itr = std::find_if( std::cbegin( _children ), std::cend( _children ), [ this, tag ] ( hardptr<node> const& n )
     {
         return n->_tag == tag;
@@ -483,14 +337,14 @@ softptr<node> node::get_child_by_tag( int tag ) const
     }
     return nullptr;
 }
-void node::remove_child( hardptr<node> const& child )
+void node::remove_child( softptr<node> const& child )
 {
     _update_end_signal.emplace_back( [ this, child ]
     {
         remove_child_nonsafe( child );
     } );
 }
-void node::remove_child_nonsafe( hardptr<node> const & child )
+void node::remove_child_nonsafe( softptr<node> const & child )
 {
     if ( _children.empty( ) ) return;
     auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
@@ -502,7 +356,6 @@ void node::remove_child_nonsafe( hardptr<node> const & child )
 void node::remove_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return );
-
     _update_end_signal.emplace_back( [ this, name ]
     {
         if ( auto child = this->get_child_by_name( name ) )
@@ -518,7 +371,6 @@ void node::remove_child_by_name( std::string const & name )
 void node::remove_child_by_tag( int tag )
 {
     assert_log( tag != node::INVALID_TAG, "無効なタグです。", return );
-
     _update_end_signal.emplace_back( [ this, tag ]
     {
         if ( auto child = this->get_child_by_tag( tag ) )
@@ -555,7 +407,6 @@ softptr<node> node::get_root( )
 {
     return _get_root( );
 }
-
 softptr<node> node::_get_root( )
 {
     if ( _parent )
@@ -567,48 +418,39 @@ softptr<node> node::_get_root( )
         return shared_from_this( );
     }
 }
-
 void node::run_action( hardptr<action::action> const & action )
 {
     _action_manager.add_action( action, shared_from_this( ), !_running );
     action->setup( );
 }
-
 softptr<action::action> node::get_action_by_name( std::string const & name ) const
 {
     return _action_manager.get_action_by_name( name );
 }
-
 softptr<action::action> node::get_action_by_tag( int tag ) const
 {
     return _action_manager.get_action_by_tag( tag );
 }
-
 void node::remove_all_actions( )
 {
     _action_manager.remove_all_actions( );
 }
-
-void node::remove_action( hardptr<action::action> const & action )
+void node::remove_action( softptr<action::action> const & action )
 {
     _action_manager.remove_action( action );
 }
-
 void node::remove_action_by_tag( int tag )
 {
     _action_manager.remove_action_by_tag( tag );
 }
-
 void node::remove_action_by_name( std::string const & name )
 {
     _action_manager.remove_action_by_name( name );
 }
-
 bool node::is_running_action( ) const
 {
     return _action_manager.is_running( );
 }
-
 cinder::mat3 node::get_world_matrix( ) const
 {
     std::vector<mat3> mats;
@@ -623,13 +465,11 @@ cinder::mat3 node::get_world_matrix( ) const
         mats.emplace_back( std::move( m ) );
         p = p->_parent;
     }
-
     mat3 result;
     for ( auto itr = mats.rbegin( ); itr != mats.rend( ); ++itr )
     {
         result *= *itr;
     }
-
     return result;
 }
 }

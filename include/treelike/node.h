@@ -1,5 +1,6 @@
 #pragma once
 #include <cinder/Vector.h>
+#include <cinder/Quaternion.h>
 #include <cinder/app/App.h>
 #include <cinder/Color.h>
 #include <vector>
@@ -14,7 +15,6 @@ class node : public std::enable_shared_from_this<node>
     friend class scene_manager;
 public:
     static const int INVALID_TAG = -1;
-
 public:
     CREATE_H( node );
 public:
@@ -48,143 +48,118 @@ private:
     void _key_up( cinder::app::KeyEvent event );
     void _update( float delta );
     void _render( cinder::mat3 model_view_matrix );
-
 protected:
     bool init( );
-
 protected:
     bool _schedule_update = false;
 public:
-    virtual void set_schedule_update( bool value = true );
-    bool get_schedule_update( )const;
-
+    virtual void set_schedule_update( bool const& value = true ) { _schedule_update = value; }
+    inline bool const& get_schedule_update( ) const { return _schedule_update; }
 protected:
     bool _block_schedule_update = false;
 public:
-    virtual void set_block_schedule_update( bool value = true );
-    bool get_block_schedule_update( )const;
-
+    virtual void set_block_schedule_update( bool const& value = true ) { _block_schedule_update = value; }
+    inline bool const& get_block_schedule_update( ) const { return _block_schedule_update; }
 protected:
     bool _schedule_mouse_event = false;
 public:
-    virtual void set_schedule_mouse_event( bool value = true );
-    bool get_schedule_mouse_event( )const;
-
+    virtual void set_schedule_mouse_event( bool const& value = true ) { _schedule_mouse_event = value; }
+    inline bool const& get_schedule_mouse_event( ) const { return _schedule_mouse_event; }
 protected:
     bool _schedule_touch_event = false;
 public:
-    virtual void set_schedule_touch_event( bool value = true );
-    bool get_schedule_touch_event( )const;
-
+    virtual void set_schedule_touch_event( bool const& value = true ) { _schedule_touch_event = value; }
+    inline bool const& get_schedule_touch_event( ) const { return _schedule_touch_event; }
 protected:
     bool _schedule_touches_event = false;
 public:
-    virtual void set_schedule_touches_event( bool value = true );
-    bool get_schedule_touches_event( )const;
-
+    virtual void set_schedule_touches_event( bool const& value = true ) { _schedule_touches_event = value; }
+    inline bool const& get_schedule_touches_event( ) const { return _schedule_touches_event; }
 protected:
     bool _schedule_key_event = false;
 public:
-    virtual void set_schedule_key_event( bool value = true );
-    bool get_schedule_key_event( )const;
-
+    virtual void set_schedule_key_event( bool const& value = true ) { _schedule_key_event = value; }
+    inline bool const& get_schedule_key_event( ) const { return _schedule_key_event; }
 public:
     virtual void set_schedule_all( bool value = true );
-
 protected:
     bool _block_schedule_event = false;
 public:
-    virtual void set_block_schedule_event( bool value = true );
-    bool get_block_schedule_event( )const;
-
+    virtual void set_block_schedule_event( bool const& value = true ) { _block_schedule_event = value; }
+    inline bool const& get_block_schedule_event( ) const { return _block_schedule_event; }
 protected:
     cinder::vec2 _position = cinder::vec2( 0 );
 public:
-    virtual void set_position( cinder::vec2 value );
-    cinder::vec2 get_position( )const;
-
+    virtual void set_position( cinder::vec2 const& value ) { _position = value; }
+    inline cinder::vec2  const& get_position( ) const { return _position; }
 protected:
     cinder::vec2 _scale = cinder::vec2( 1 );
 public:
-    virtual void set_scale( cinder::vec2 value );
-    cinder::vec2 get_scale( )const;
-
+    virtual void set_scale( cinder::vec2 const& value ) { _scale = value; }
+    inline cinder::vec2  const& get_scale( ) const { return _scale; }
 protected:
     cinder::vec2 _content_size = cinder::vec2( 0 );
 public:
-    virtual void set_content_size( cinder::vec2 value );
-    cinder::vec2 get_content_size( ) const;
-
+    virtual void set_content_size( cinder::vec2 const& value ) { _content_size = value; }
+    inline cinder::vec2  const& get_content_size( ) const { return _content_size; }
 protected:
     float _rotation = 0.0F;
 public:
-    virtual void set_rotation( float value );
-    float get_rotation( ) const;
-
+    virtual void set_rotation( float const& value ) { _rotation = value; }
+    inline float const& get_rotation( ) const { return _rotation; }
 protected:
     cinder::vec2 _anchor_point = cinder::vec2( 0 );
 public:
-    virtual void set_anchor_point( cinder::vec2 value );
-    cinder::vec2 get_anchor_point( )const;
-
+    virtual void set_anchor_point( cinder::vec2 const& value ) { _anchor_point = value; }
+    inline cinder::vec2  const& get_anchor_point( ) const { return _anchor_point; }
 protected:
     cinder::vec2 _pivot = cinder::vec2( 0 );
 public:
-    virtual void set_pivot( cinder::vec2 value );
-    cinder::vec2 get_pivot( ) const;
-
+    virtual void set_pivot( cinder::vec2 const& value ) { _pivot = value; }
+    inline cinder::vec2  const& get_pivot( ) const { return _pivot; }
 protected:
     cinder::ColorA _color = cinder::ColorA::white( );
 public:
-    virtual void set_color( cinder::ColorA value );
-    cinder::ColorA get_color( ) const;
+    virtual void set_color( cinder::ColorA const& value ) { _color = value; }
+    inline cinder::ColorA  const& get_color( ) const { return _color; }
     virtual void set_opacity( float alpha );
     float get_opacity( ) const;
-
 protected:
     std::vector<hardptr<node>> _children;
 public:
     std::vector<hardptr<node>> const& get_children( ) const;
-
 protected:
     softptr<node> _parent;
 public:
-    virtual void set_parent( hardptr<node> const& value );
-    softptr<node> get_parent( ) const;
-
+    virtual void set_parent( softptr<node> const& value );
+    softptr<node> const& get_parent( ) const;
 protected:
     int _tag = node::INVALID_TAG;
 public:
-    virtual void set_tag( int value );
-    int get_tag( ) const;
-
+    virtual void set_tag( int const& value ) { _tag = value; }
+    inline int const& get_tag( ) const { return _tag; }
 private:
     int _order = 0;
 public:
-    virtual void set_order( int value );
-    int get_order( ) const;
-
+    virtual void set_order( int const& value );
+    int const& get_order( ) const;
 protected:
     std::string _name = u8"";
 public:
     virtual void set_name( std::string const& value );
     std::string const& get_name( ) const;
-
 private:
     size_t _hash = 0;
-
 protected:
     bool _running = true;
 public:
-    virtual void set_running( bool value );
-    bool get_running( )const;
-
+    virtual void set_running( int const& value = true ) { _running = value; }
+    inline bool const& get_running( ) const { return _running; }
 protected:
     bool _visible = true;
 public:
-    virtual void set_visible( bool value );
-    bool get_visible( )const;
-
+    virtual void set_visible( int const& value = true ) { _visible = value; }
+    inline bool const& get_visible( ) const { return _visible; }
 public:
     template<class ty>
     softptr<ty> add_child( hardptr<ty> const& value )
@@ -198,9 +173,9 @@ public:
     }
     softptr<node> get_child_by_name( std::string const& name )const;
     softptr<node> get_child_by_tag( int tag )const;
-    void remove_child( hardptr<node> const& child );
+    void remove_child( softptr<node> const& child );
 private:
-    void remove_child_nonsafe( hardptr<node> const& child );
+    void remove_child_nonsafe( softptr<node> const& child );
 public:
     void remove_child_by_name( std::string const& name );
     void remove_child_by_tag( int tag );
@@ -209,14 +184,11 @@ public:
 private:
     bool _own_removing = false;
     std::vector<std::function<void( )>> _update_end_signal;
-
 protected:
     bool _swallow = false;
-
 public:
     softptr<node> get_root( );
     softptr<node> _get_root( );
-
 protected:
     action::action_manager _action_manager;
 public:
@@ -224,13 +196,11 @@ public:
     softptr<action::action> get_action_by_name( std::string const& name )const;
     softptr<action::action> get_action_by_tag( int tag )const;
     void remove_all_actions( );
-    void remove_action( hardptr<action::action> const& action );
+    void remove_action( softptr<action::action> const& action );
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );
     bool is_running_action( ) const;
-
 public:
     cinder::mat3 get_world_matrix( )const;
 };
-
 }

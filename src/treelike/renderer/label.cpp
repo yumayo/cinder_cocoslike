@@ -93,7 +93,7 @@ std::string const & label::get_text( )
 {
     return _text;
 }
-void label::set_color( cinder::ColorA value )
+void label::set_color( cinder::ColorA const& value )
 {
     node::set_color( value );
     fonsSetColor( _m->font, renderer::font::font::color( _color ) );
