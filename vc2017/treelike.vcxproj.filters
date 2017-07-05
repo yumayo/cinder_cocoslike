@@ -137,15 +137,6 @@
     <ClInclude Include="..\include\treelike\library\stb_truetype.h">
       <Filter>Header Files\treelike\library</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\treelike\network\client_handle.h">
-      <Filter>Header Files\treelike\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\treelike\network\network_factory.h">
-      <Filter>Header Files\treelike\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\treelike\network\network_object.h">
-      <Filter>Header Files\treelike\network</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\treelike\network\tcp_client.h">
       <Filter>Header Files\treelike\network</Filter>
     </ClInclude>
@@ -162,9 +153,6 @@
       <Filter>Header Files\treelike\network</Filter>
     </ClInclude>
     <ClInclude Include="..\include\treelike\network\udp_connection_member.h">
-      <Filter>Header Files\treelike\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\treelike\network\use_destroy_object.h">
       <Filter>Header Files\treelike\network</Filter>
     </ClInclude>
     <ClInclude Include="..\include\treelike\utility\base64.h">
@@ -269,10 +257,11 @@
     <ClInclude Include="..\include\treelike\utility\string.h">
       <Filter>Header Files\treelike\utility</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\include\Resources.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\treelike\network\tcp_socket.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\network_handle.h">
+      <Filter>Header Files\treelike\network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -348,15 +337,6 @@
     <ClCompile Include="..\src\treelike\audio\base_player.cpp">
       <Filter>Source Files\treelike\audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\treelike\network\client_handle.cpp">
-      <Filter>Source Files\treelike\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\treelike\network\network_factory.cpp">
-      <Filter>Source Files\treelike\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\treelike\network\network_object.cpp">
-      <Filter>Source Files\treelike\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\treelike\network\tcp_client.cpp">
       <Filter>Source Files\treelike\network</Filter>
     </ClCompile>
@@ -373,9 +353,6 @@
       <Filter>Source Files\treelike\network</Filter>
     </ClCompile>
     <ClCompile Include="..\src\treelike\network\udp_connection_member.cpp">
-      <Filter>Source Files\treelike\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\treelike\network\use_destroy_object.cpp">
       <Filter>Source Files\treelike\network</Filter>
     </ClCompile>
     <ClCompile Include="..\src\treelike\renderer\button.cpp">
@@ -458,6 +435,12 @@
     </ClCompile>
     <ClCompile Include="..\src\treelike\utility\time_stamp.cpp">
       <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_socket.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\network_handle.cpp">
+      <Filter>Source Files\treelike\network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

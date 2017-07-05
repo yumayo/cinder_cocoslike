@@ -7,8 +7,8 @@ namespace action
 class rotate_by : public rotate_to
 {
 public:
-    CREATE_H( rotate_by, float duration, float rotation );
-    bool init( float duration, float rotation );
+    CREATE_H( rotate_by, float duration, float radian );
+    bool init( float duration, float radian );
 private:
     void setup( ) override;
 private:

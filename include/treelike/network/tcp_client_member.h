@@ -8,7 +8,7 @@ namespace network
 {
 struct tcp_client::_member
 {
-    _member( tcp_client& parent, std::string const& ip_address, std::string const& port )
+    _member( tcp_client& parent, std::string const& ip_address, int port )
         : parent( parent )
         , io( )
         , socket( io, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4( ), 0 ) )
@@ -30,7 +30,7 @@ struct tcp_client::_member
     std::array<char, 65536> buffer;
     std::string receive_buffer;
     std::string ip_address;
-    std::string port;
+    int port;
 };
 }
 }

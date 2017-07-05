@@ -11,8 +11,8 @@ class tcp_client : public node
     struct _member;
     hardptr<_member> _m;
 public:
-    CREATE_H( tcp_client, std::string const& ip_address, std::string const& port );
-    bool init( std::string const& ip_address, std::string const& port );
+    CREATE_H( tcp_client, std::string const& ip_address, int port );
+    bool init( std::string const& ip_address, int port );
     ~tcp_client( );
     void update( float delta ) override;
 public:

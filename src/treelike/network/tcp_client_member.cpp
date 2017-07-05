@@ -1,6 +1,5 @@
 ﻿#include <treelike/network/tcp_client_member.h>
 #include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
 #include <treelike/utility/assert_log.h>
 #include <treelike/utility/base64.h>
 using namespace treelike::utility;

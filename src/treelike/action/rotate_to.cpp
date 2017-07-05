@@ -5,14 +5,14 @@ namespace treelike
 {
 namespace action
 {
-CREATE_CPP( rotate_to, float duration, float rotation )
+CREATE_CPP( rotate_to, float duration, float radian )
 {
-    CREATE( rotate_to, duration, rotation );
+    CREATE( rotate_to, duration, radian );
 }
-bool rotate_to::init( float duration, float rotation )
+bool rotate_to::init( float duration, float radian )
 {
     _duration = duration;
-    _rotation = rotation;
+    _rotation = radian;
     return true;
 }
 void rotate_to::setup( )

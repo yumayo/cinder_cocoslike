@@ -1,5 +1,4 @@
 ﻿#include <treelike/network/udp_connection_member.h>
-#include <jsoncpp/json.h>
 #include <treelike/utility/string.h>
 #include <treelike/utility/base64.h>
 namespace treelike
@@ -9,7 +8,6 @@ namespace network
 udp_connection::member::member( udp_connection & server, udp::endpoint const & end_point )
     : _connection( server )
     , _udp_socket( _io_service, end_point )
-    , _network_factory( server )
 {
     _remote_buffer.fill( 0 );
 
@@ -27,7 +25,7 @@ udp_connection::member::member( udp_connection & server )
     : udp_connection::member( server, udp::endpoint( udp::v4( ), 0 ) )
 {
 }
-udp_connection::member::member( udp_connection& server, int const & port_num )
+udp_connection::member::member( udp_connection& server, int port_num )
     : udp_connection::member( server, udp::endpoint( udp::v4( ), port_num ) )
 {
 }
@@ -35,26 +33,26 @@ udp_connection::member::~member( )
 {
     close( );
 }
-void udp_connection::member::write( network_handle const & handle, Json::Value const & send_data )
+void udp_connection::member::write( network_handle handle, Json::Value const & send_data )
 {
     write( handle, Json::FastWriter( ).write( send_data ) );
 }
-void udp_connection::member::write( network_handle const & handle, std::string const & send_data )
+void udp_connection::member::write( network_handle handle, std::string const & send_data )
 {
     write( handle, send_data.c_str( ), send_data.size( ) );
 }
-void udp_connection::member::write( network_handle const & handle, char const * send_data )
+void udp_connection::member::write( network_handle handle, char const * send_data )
 {
     write( handle, std::string( send_data ) );
 }
-void udp_connection::member::write( network_handle const & handle, char const * send_data, size_t const & send_data_byte )
+void udp_connection::member::write( network_handle handle, char const * send_data, size_t const & send_data_byte )
 {
     try
     {
         udp::resolver resolver( _io_service );
         udp::resolver::query query( udp::v4( ),
-                                    handle->ip_address,
-                                    boost::lexical_cast<std::string>( handle->port ) );
+                                    handle.ip_address,
+                                    boost::lexical_cast<std::string>( handle.port ) );
         auto writable_string = std::string( "#B#G#I#N#E#" ) + utility::base64_encode( send_data, send_data_byte ) + std::string( "#E#N#D#" );
         _udp_socket.send_to( boost::asio::buffer( writable_string.data( ), writable_string.size( ) ),
                              resolver.resolve( query )->endpoint( ) );
@@ -62,7 +60,7 @@ void udp_connection::member::write( network_handle const & handle, char const * 
     }
     catch ( boost::system::error_code& error )
     {
-        utility::log_network( handle->ip_address, handle->port,
+        utility::log_network( handle.ip_address, handle.port,
                               "データを送れませんでした。: %s", error.message( ).c_str( ) );
         if ( _connection.on_send_failed )_connection.on_send_failed( );
     }
@@ -92,13 +90,9 @@ void udp_connection::member::update( float delta_second )
 {
     utility::scoped_mutex m( _mutex );
 
-    _network_factory.update( delta_second );
-
     for ( auto& receive_buffer : _receive_buffers )
     {
-        auto handle = _network_factory.regist( receive_buffer.first.address( ).to_string( ),
-                                               receive_buffer.first.port( ) );
-        handle->timeout_restart( );
+        auto handle = network_handle( receive_buffer.first.address( ).to_string( ), receive_buffer.first.port( ) );
 
         while ( !receive_buffer.second.empty( ) )
         {
@@ -161,18 +155,6 @@ void udp_connection::member::_receive( )
             std::fill_n( _remote_buffer.begin( ), bytes_transferred, 0 );
         }
     } );
-}
-bool udp_connection::member::destroy_client( network_handle const & handle )
-{
-    return _network_factory.destroy_client( handle );
-}
-network_handle udp_connection::member::regist_client( std::string const& ip_address, int const& port )
-{
-    return _network_factory.regist( ip_address, port );
-}
-std::list<hardptr<network_object>>& udp_connection::member::get_clients( )
-{
-    return _network_factory.get_clients( );
 }
 int udp_connection::member::get_port( )
 {

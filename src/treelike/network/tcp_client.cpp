@@ -4,11 +4,11 @@ namespace treelike
 {
 namespace network
 {
-CREATE_CPP( tcp_client, std::string const& ip_address, std::string const& port )
+CREATE_CPP( tcp_client, std::string const& ip_address, int port )
 {
     CREATE( tcp_client, ip_address, port );
 }
-bool tcp_client::init( std::string const& ip_address, std::string const& port )
+bool tcp_client::init( std::string const& ip_address, int port )
 {
     _m.reset( );
     _m = std::make_shared<_member>( *this, ip_address, port );

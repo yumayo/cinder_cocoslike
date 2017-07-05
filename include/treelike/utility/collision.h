@@ -70,7 +70,7 @@ inline std::pair<cinder::vec2, cinder::vec2> create_aabb( cinder::vec2 a, cinder
 
     return std::make_pair( cinder::vec2( min_x, min_y ), cinder::vec2( max_x, max_y ) );
 }
-inline bool hit_window_aabb( cinder::mat3 model_view_matrix, hardptr<node> const& object )
+inline bool hit_window_aabb( cinder::mat3 model_view_matrix, hardptr<node> const& object, std::pair<cinder::vec2, cinder::vec2>* aabb_dst = nullptr )
 {
     auto const _content_size = object->get_content_size( );
     auto const ma = translate( model_view_matrix, cinder::vec2( 0.0F ) );
@@ -82,6 +82,7 @@ inline bool hit_window_aabb( cinder::mat3 model_view_matrix, hardptr<node> const
     auto const md = translate( model_view_matrix, cinder::vec2( 0.0F, _content_size.y ) );
     auto const d = cinder::vec2( md[2][0], md[2][1] );
     auto const aabb = create_aabb( a, b, c, d );
+    if( aabb_dst ) *aabb_dst = create_aabb( a, b, c, d );
     return hit_rect_rect( aabb.first, aabb.second - aabb.first, cinder::vec2( 0 ), cinder::vec2( cinder::app::getWindowSize( ) ) );
 }
 }

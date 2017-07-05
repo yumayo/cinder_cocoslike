@@ -205,7 +205,7 @@ void node::_update( float delta )
         {
             child->_update( delta );
         }
-    
+
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
@@ -231,10 +231,16 @@ void node::_render( cinder::mat3 m )
     {
         gl::color( _color );
 
-        if ( utility::hit_window_aabb( m, shared_from_this( ) ) )
+        std::pair<vec2, vec2> aabb;
+        if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
         {
             this->render( );
         }
+        #ifdef _DEBUG
+        gl::setModelMatrix( mat4( ) );
+        gl::color( Color::white( ) );
+        gl::drawStrokedRect( Rectf( aabb.first, aabb.second ) );
+        #endif
     }
 
     m = translate( m, _content_size * _pivot );
