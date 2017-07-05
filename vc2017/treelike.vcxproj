@@ -220,6 +220,8 @@
   <ItemGroup>
     <ClCompile Include="..\src\treelike\action\action.cpp" />
     <ClCompile Include="..\src\treelike\action\action_manager.cpp" />
+    <ClCompile Include="..\src\treelike\action\axis_by.cpp" />
+    <ClCompile Include="..\src\treelike\action\axis_to.cpp" />
     <ClCompile Include="..\src\treelike\action\call_func.cpp" />
     <ClCompile Include="..\src\treelike\action\delay.cpp" />
     <ClCompile Include="..\src\treelike\action\fade_in.cpp" />
@@ -283,6 +285,8 @@
     <ClInclude Include="..\include\treelike\action.hpp" />
     <ClInclude Include="..\include\treelike\action\action.h" />
     <ClInclude Include="..\include\treelike\action\action_manager.h" />
+    <ClInclude Include="..\include\treelike\action\axis_by.h" />
+    <ClInclude Include="..\include\treelike\action\axis_to.h" />
     <ClInclude Include="..\include\treelike\action\call_func.h" />
     <ClInclude Include="..\include\treelike\action\delay.h" />
     <ClInclude Include="..\include\treelike\action\ease.h" />

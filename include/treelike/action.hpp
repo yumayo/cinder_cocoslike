@@ -1,3 +1,5 @@
+#include <treelike/action/axis_by.h>
+#include <treelike/action/axis_to.h>
 #include <treelike/action/call_func.h>
 #include <treelike/action/delay.h>
 #include <treelike/action/ease.h>
