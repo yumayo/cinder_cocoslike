@@ -272,6 +272,12 @@
     <ClInclude Include="..\include\treelike\action\axis_to.h">
       <Filter>Header Files\treelike\action</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\camera_perspective.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\treelike\action\action_manager.cpp">
@@ -459,6 +465,9 @@
     </ClCompile>
     <ClCompile Include="..\src\treelike\action\axis_to.cpp">
       <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\camera_perspective.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

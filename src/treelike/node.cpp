@@ -218,7 +218,6 @@ void node::_render( cinder::mat4 m )
     m = rotate( m, get_rotation( ), get_axis( ) );
     m = translate( m, -get_content_size_3d( ) * get_anchor_point_3d( ) );
     gl::setModelMatrix( m );
-    if ( _shader_program ) gl::context( )->pushGlslProg( _shader_program );
     if ( _visible )
     {
         //std::pair<vec2, vec2> aabb;
@@ -238,7 +237,6 @@ void node::_render( cinder::mat4 m )
     {
         c->_render( m );
     }
-    if ( _shader_program ) gl::context( )->popGlslProg( );
 }
 bool node::init( )
 {
@@ -264,13 +262,17 @@ std::vector<hardptr<node>> const& node::get_children( ) const
 {
     return _children;
 }
-void node::set_parent( softptr<node> const& value )
+void node::sort_children( std::function<bool( hardptr<node>&a, hardptr<node>&b )> const & func )
+{
+    std::sort( _children.begin( ), _children.end( ), func );
+}
+void node::set_parent( softptr<node> value )
 {
     softptr<node> prev_parent = _parent;
     value->add_child( shared_from_this( ) );
     _update_end_signal.emplace_back( [ this, prev_parent ]
     {
-        assert_log( !prev_parent, "親が未定義です。", return );
+        assert_log( prev_parent, "親が未定義です。", return );
         prev_parent->remove_child_nonsafe( shared_from_this( ) );
     } );
 }
@@ -332,14 +334,14 @@ softptr<node> node::get_child_by_tag( int tag ) const
     }
     return nullptr;
 }
-void node::remove_child( softptr<node> const& child )
+void node::remove_child( softptr<node> child )
 {
     _update_end_signal.emplace_back( [ this, child ]
     {
         remove_child_nonsafe( child );
     } );
 }
-void node::remove_child_nonsafe( softptr<node> const & child )
+void node::remove_child_nonsafe( softptr<node> child )
 {
     if ( _children.empty( ) ) return;
     auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
@@ -391,7 +393,7 @@ void node::remove_from_parent( )
     {
         _own_removing = true;
 
-        assert_log( !_parent, "親が未定義です。", return );
+        assert_log( _parent, "親が未定義です。", return );
         _parent->_update_end_signal.emplace_back( [ this ]
         {
             _parent->remove_child_nonsafe( shared_from_this( ) );
@@ -413,7 +415,7 @@ softptr<node> node::_get_root( )
         return shared_from_this( );
     }
 }
-void node::run_action( hardptr<action::action> const & action )
+void node::run_action( hardptr<action::action> action )
 {
     _action_manager.add_action( action, shared_from_this( ), !_running );
     action->setup( );
@@ -430,7 +432,7 @@ void node::remove_all_actions( )
 {
     _action_manager.remove_all_actions( );
 }
-void node::remove_action( softptr<action::action> const & action )
+void node::remove_action( softptr<action::action> action )
 {
     _action_manager.remove_action( action );
 }

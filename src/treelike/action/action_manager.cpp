@@ -7,7 +7,7 @@ namespace treelike
 using namespace treelike::utility;
 namespace action
 {
-void action_manager::add_action( hardptr<action> const& act, hardptr<node> const& target, bool pause )
+void action_manager::add_action( hardptr<action> act, hardptr<node> target, bool pause )
 {
     act->set_target( target );
     act->set_pause( pause );
@@ -16,7 +16,6 @@ void action_manager::add_action( hardptr<action> const& act, hardptr<node> const
         _actions.emplace_back( act );
     } );
 }
-
 softptr<action> action_manager::get_action_by_name( std::string const & name ) const
 {
     assert_log( !name.empty( ), "無効な名前です。", return nullptr );
@@ -35,7 +34,6 @@ softptr<action> action_manager::get_action_by_name( std::string const & name ) c
     }
     return nullptr;
 }
-
 softptr<action> action_manager::get_action_by_tag( int tag ) const
 {
     assert_log( tag == node::INVALID_TAG, "無効なタグです。", return nullptr );
@@ -51,13 +49,11 @@ softptr<action> action_manager::get_action_by_tag( int tag ) const
     }
     return nullptr;
 }
-
 void action_manager::remove_all_actions( )
 {
     _actions.clear( );
 }
-
-void action_manager::remove_action( hardptr<action> const& remove_act )
+void action_manager::remove_action( softptr<action> remove_act )
 {
     if ( _actions.empty( ) ) return;
     _update_end_signal.emplace_back( [ this, remove_act ]
@@ -69,8 +65,7 @@ void action_manager::remove_action( hardptr<action> const& remove_act )
         _actions.erase( erase, std::end( _actions ) );
     } );
 }
-
-void action_manager::remove_action_nonsafe( hardptr<action> const & remove_act )
+void action_manager::remove_action_nonsafe( softptr<action> remove_act )
 {
     if ( _actions.empty( ) ) return;
     auto erase = std::remove_if( std::begin( _actions ), std::end( _actions ), [ this, remove_act ] ( hardptr<action>& act )
@@ -79,7 +74,6 @@ void action_manager::remove_action_nonsafe( hardptr<action> const & remove_act )
     } );
     _actions.erase( erase, std::end( _actions ) );
 }
-
 void action_manager::remove_action_by_tag( int tag )
 {
     assert_log( tag == node::INVALID_TAG, "無効なタグです。", return );
@@ -96,7 +90,6 @@ void action_manager::remove_action_by_tag( int tag )
         }
     } );
 }
-
 void action_manager::remove_action_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return );
@@ -113,12 +106,10 @@ void action_manager::remove_action_by_name( std::string const & name )
         }
     } );
 }
-
 bool action_manager::is_running( ) const
 {
     return !_actions.empty( );
 }
-
 void action_manager::update( float delta )
 {
     for ( auto const& obj : _actions )

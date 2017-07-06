@@ -7,13 +7,13 @@ namespace action
 class action_manager
 {
 public:
-    void add_action( hardptr<action> const& action, hardptr<node> const& target, bool pause );
+    void add_action( hardptr<action> action, hardptr<node> target, bool pause );
     softptr<action> get_action_by_name( std::string const& name )const;
     softptr<action> get_action_by_tag( int tag )const;
     void remove_all_actions( );
-    void remove_action( hardptr<action> const& remove_act );
+    void remove_action( softptr<action> remove_act );
 private:
-    void remove_action_nonsafe( hardptr<action> const& remove_act );
+    void remove_action_nonsafe( softptr<action> remove_act );
 public:
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );

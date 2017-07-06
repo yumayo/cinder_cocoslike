@@ -47,8 +47,10 @@ private:
     void _touches_ended( cinder::app::TouchEvent event );
     void _key_down( cinder::app::KeyEvent event );
     void _key_up( cinder::app::KeyEvent event );
-    void _update( float delta );
-    void _render( cinder::mat4 model_view_matrix );
+protected:
+    // cameraÇ‚shaderÇ»Ç«éqãüÇ…Ç‡âeãøÇó^Ç¶ÇΩÇ¢Ç±Ç∆ÇÇµÇΩÇ¢èÍçáÇÕåpè≥ÇµÇƒí«â¡ÇÃã@î\ÇÇ¬ÇØÇƒÇ≠ÇæÇ≥Ç¢ÅB
+    virtual void _update( float delta );
+    virtual void _render( cinder::mat4 model_view_matrix );
 protected:
     bool init( );
 protected:
@@ -144,18 +146,14 @@ public:
     virtual void set_opacity( float alpha );
     float get_opacity( ) const;
 protected:
-    cinder::gl::GlslProgRef _shader_program;
-public:
-    virtual void set_shader_program( cinder::gl::GlslProgRef const& value ) { _shader_program = value; }
-    inline cinder::gl::GlslProgRef const& get_shader_program( ) const { return _shader_program; }
-protected:
     std::vector<hardptr<node>> _children;
 public:
     std::vector<hardptr<node>> const& get_children( ) const;
+    void sort_children( std::function<bool( hardptr<node>& a, hardptr<node>& b )> const& func );
 protected:
     softptr<node> _parent;
 public:
-    virtual void set_parent( softptr<node> const& value );
+    virtual void set_parent( softptr<node> value );
     softptr<node> const& get_parent( ) const;
 protected:
     int _tag = node::INVALID_TAG;
@@ -186,7 +184,7 @@ public:
     inline bool const& get_visible( ) const { return _visible; }
 public:
     template<class ty>
-    softptr<ty> add_child( hardptr<ty> const& value )
+    softptr<ty> add_child( hardptr<ty> value )
     {
         _update_end_signal.emplace_back( [ this, value ]
         {
@@ -197,9 +195,9 @@ public:
     }
     softptr<node> get_child_by_name( std::string const& name )const;
     softptr<node> get_child_by_tag( int tag )const;
-    void remove_child( softptr<node> const& child );
+    void remove_child( softptr<node> child );
 private:
-    void remove_child_nonsafe( softptr<node> const& child );
+    void remove_child_nonsafe( softptr<node> child );
 public:
     void remove_child_by_name( std::string const& name );
     void remove_child_by_tag( int tag );
@@ -216,11 +214,11 @@ public:
 protected:
     action::action_manager _action_manager;
 public:
-    void run_action( hardptr<action::action> const& action );
+    void run_action( hardptr<action::action> action );
     softptr<action::action> get_action_by_name( std::string const& name )const;
     softptr<action::action> get_action_by_tag( int tag )const;
     void remove_all_actions( );
-    void remove_action( softptr<action::action> const& action );
+    void remove_action( softptr<action::action> action );
     void remove_action_by_tag( int tag );
     void remove_action_by_name( std::string const& name );
     bool is_running_action( ) const;

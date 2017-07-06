@@ -4,26 +4,13 @@
 #include <treelike/utility/assert_log.h>
 #include <cinder/gl/gl.h>
 #include <cinder/app/RendererGl.h>
-#include <treelike/utility/time_stamp.h>
-#include <cinder/gl/GlslProg.h>
-#include <cinder/Camera.h>
-#include <cinder/CinderMath.h>
 namespace treelike
 {
 using namespace cinder;
 int const app_delegate::_INVALID_ID = -1;
-utility::time_stamp stamp;
-cinder::gl::GlslProgRef glsl;
-cinder::CameraPersp cam;
 void app_delegate::setup( )
 {
     treelike::scene_manager::get_instans( )->push_back( treelike::main( ) );
-    glsl = cinder::gl::GlslProg::create( loadAsset( "phone.vert" ), loadAsset( "phone.frag" ) );
-    auto size_h = app::getWindowSize( ) / 2;
-    cam.lookAt( vec3( size_h, -720 ), vec3( size_h, 0 ) );
-    cam.setWorldUp( vec3( 0, -1, 0 ) );
-    cam.setPerspective( 60.0F, app::getWindowAspectRatio( ), 1, 1000 );
-    gl::enableDepth( );
 }
 void app_delegate::cleanup( )
 {
@@ -42,18 +29,8 @@ void app_delegate::update( )
 void app_delegate::draw( )
 {
     cinder::gl::clear( cinder::ColorA( 0.1F, 0.1F, 0.1F, 1.0F ) );
-
-    cinder::gl::ScopedGlslProg glsl_scp( glsl );
-    glsl->uniform( "uEyeDirection", glm::normalize( cinder::vec3( 0, 0, 1.0 ) ) );
-
-    cinder::gl::setMatrices( cam );
-
-    stamp.start( );
     treelike::scene_manager::get_instans( )->top( )->_render( cinder::mat4( ) );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_render( cinder::mat4( ) );
-    stamp.end( );
-
-    console( ) << stamp.get_elapsed_second( ) << std::endl;
 }
 void app_delegate::mouseDown( cinder::app::MouseEvent event )
 {

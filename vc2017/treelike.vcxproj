@@ -255,6 +255,7 @@
     <ClCompile Include="..\src\treelike\network\udp_connection_member.cpp" />
     <ClCompile Include="..\src\treelike\node.cpp" />
     <ClCompile Include="..\src\treelike\renderer\button.cpp" />
+    <ClCompile Include="..\src\treelike\renderer\camera_perspective.cpp" />
     <ClCompile Include="..\src\treelike\renderer\circle.cpp" />
     <ClCompile Include="..\src\treelike\renderer\cube.cpp" />
     <ClCompile Include="..\src\treelike\renderer\font.cpp" />
@@ -282,6 +283,7 @@
     <ClCompile Include="..\src\treelike\utility\write_file_on_destroyed.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\treelike.hpp" />
     <ClInclude Include="..\include\treelike\action.hpp" />
     <ClInclude Include="..\include\treelike\action\action.h" />
     <ClInclude Include="..\include\treelike\action\action_manager.h" />
@@ -327,6 +329,7 @@
     <ClInclude Include="..\include\treelike\node.h" />
     <ClInclude Include="..\include\treelike\renderer.hpp" />
     <ClInclude Include="..\include\treelike\renderer\button.h" />
+    <ClInclude Include="..\include\treelike\renderer\camera_perspective.h" />
     <ClInclude Include="..\include\treelike\renderer\circle.h" />
     <ClInclude Include="..\include\treelike\renderer\cube.h" />
     <ClInclude Include="..\include\treelike\renderer\font.h" />
