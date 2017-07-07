@@ -1,0 +1,476 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source Files\treelike">
+      <UniqueIdentifier>{e3ef66f6-dcc2-4b27-a8b2-ca808eee472f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\action">
+      <UniqueIdentifier>{a007e739-d42f-4f4d-8958-33208038b62f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\audio">
+      <UniqueIdentifier>{65197c05-5bc3-4987-a093-bf0868501b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\library">
+      <UniqueIdentifier>{859c0bd0-77c4-428d-963a-4df596cf17ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\network">
+      <UniqueIdentifier>{9fe48083-8b22-4447-be63-4470667f952e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\renderer">
+      <UniqueIdentifier>{c02b8ef5-04d4-4ef4-ac64-824ffc0c0533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\treelike\utility">
+      <UniqueIdentifier>{fa8ffd2e-355a-4f49-bc62-5d4b46d2f9ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike">
+      <UniqueIdentifier>{f45f3974-2d00-4ec9-994b-d85c3285bd52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\action">
+      <UniqueIdentifier>{6cc094b3-fbb9-4a68-a986-b516938a1b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\audio">
+      <UniqueIdentifier>{4a37a066-6330-4e41-b206-1a736ffda2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\library">
+      <UniqueIdentifier>{631715e5-3335-48fd-b0c4-0934672d84af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\network">
+      <UniqueIdentifier>{91f2d61f-c786-4a02-a73d-e0d437087f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\renderer">
+      <UniqueIdentifier>{c0a3ca2f-6af3-4c21-beed-f4017709b397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\treelike\utility">
+      <UniqueIdentifier>{a243ccd2-ebf5-4d16-a942-75a3ca92b40d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\treelike\action\action_manager.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\call_func.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\timeline.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\spawn.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\sequence.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\scale_to.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\scale_by.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\rotate_to.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\rotate_by.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\repeat_times.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\repeat_forever.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\remove_self.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\move_to_target.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\move_to.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\move_by.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\float_to.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\finite_time_action.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\fade_out.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\fade_in.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\ease.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\delay.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\action.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\audio\file_player.h">
+      <Filter>Header Files\treelike\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\audio\buffer_player.h">
+      <Filter>Header Files\treelike\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\audio\base_player.h">
+      <Filter>Header Files\treelike\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\library\fontstash.h">
+      <Filter>Header Files\treelike\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\library\stb_truetype.h">
+      <Filter>Header Files\treelike\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\tcp_client.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\tcp_client_member.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\tcp_server.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\tcp_server_member.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\udp_connection.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\udp_connection_member.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\base64.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\collision.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\file_system.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\recursion_usable_mutex.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\scoped_mutex.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\user_pointer.hpp">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\utf8.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\write_file_on_destroyed.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\assert_log.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\button.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\circle.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\label.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\letter.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\rect.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\rect_edge.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\sprite.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\sprite_animation.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\sprite_cubic.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\sprite_cubic_animation.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\surface.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\surface_cubic.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\font.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action.hpp">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\audio.hpp">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\forward.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network.hpp">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\node.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer.hpp">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\scene.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\scene_manager.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\user_default.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility.hpp">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\app_delegate.h">
+      <Filter>Header Files\treelike</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\string.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\tcp_socket.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\network\network_handle.h">
+      <Filter>Header Files\treelike\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\cube.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\axis_by.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\action\axis_to.h">
+      <Filter>Header Files\treelike\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\renderer\camera_perspective.h">
+      <Filter>Header Files\treelike\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\time_stamp.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\treelike\action\action_manager.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\call_func.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\timeline.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\spawn.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\sequence.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\scale_to.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\scale_by.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\rotate_to.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\rotate_by.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\repeat_times.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\repeat_forever.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\remove_self.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\move_to_target.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\float_to.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\move_to.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\move_by.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\finite_time_action.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\fade_out.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\fade_in.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\delay.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\action.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\audio\file_player.cpp">
+      <Filter>Source Files\treelike\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\audio\buffer_player.cpp">
+      <Filter>Source Files\treelike\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\audio\base_player.cpp">
+      <Filter>Source Files\treelike\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_client.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_client_member.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_server.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_server_member.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\udp_connection.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\udp_connection_member.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\button.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\circle.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\label.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\letter.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\rect.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\rect_edge.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\sprite.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\sprite_animation.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\sprite_cubic.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\sprite_cubic_animation.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\surface.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\surface_cubic.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\font.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\collision.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\file_system.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\recursion_usable_mutex.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\scoped_mutex.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\utf8.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\write_file_on_destroyed.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\base64.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\node.cpp">
+      <Filter>Source Files\treelike</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\scene.cpp">
+      <Filter>Source Files\treelike</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\scene_manager.cpp">
+      <Filter>Source Files\treelike</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\user_default.cpp">
+      <Filter>Source Files\treelike</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\app_delegate.cpp">
+      <Filter>Source Files\treelike</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\string.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\utility\time_stamp.cpp">
+      <Filter>Source Files\treelike\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\tcp_socket.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\network\network_handle.cpp">
+      <Filter>Source Files\treelike\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\cube.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\axis_by.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\action\axis_to.cpp">
+      <Filter>Source Files\treelike\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\treelike\renderer\camera_perspective.cpp">
+      <Filter>Source Files\treelike\renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
