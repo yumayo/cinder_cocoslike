@@ -12,7 +12,7 @@ CREATE_CPP( scale_by, float duration, cinder::vec2 scale )
 bool scale_by::init( float duration, cinder::vec2 scale )
 {
     _duration = duration;
-    _init_scale = vec3( scale, 1 );
+    _init_scale = vec3( scale, 1.0F );
     return true;
 }
 CREATE_CPP( scale_by, float duration, cinder::vec3 scale )
