@@ -6,6 +6,14 @@ namespace treelike
 {
 using namespace cinder;
 using namespace treelike::utility;
+class exception_remove_self : public std::runtime_error
+{
+public:
+    exception_remove_self( )
+        : std::runtime_error( "自分自身が削除されました。" )
+    {   // construct from message string
+    }
+};
 CREATE_CPP( node )
 {
     CREATE( node );
@@ -17,14 +25,24 @@ node::~node( )
 bool node::_mouse_began( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            // 子供がモーダルオブジェクトだった場合
-            if ( ( *itr )->_mouse_began( event ) )
+            try
             {
-                return true;
+                // 子供がモーダルオブジェクトだった場合
+                if ( _children[_riterator]->_mouse_began( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_mouse_event )
     {
         if ( mouse_began( event ) )
@@ -38,13 +56,23 @@ bool node::_mouse_began( cinder::app::MouseEvent event )
 bool node::_mouse_moved( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            if ( ( *itr )->_mouse_moved( event ) )
+            try
             {
-                return true;
+                if ( _children[_riterator]->_mouse_moved( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_mouse_event )
     {
         if ( _swallow )
@@ -58,13 +86,23 @@ bool node::_mouse_moved( cinder::app::MouseEvent event )
 bool node::_mouse_ended( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            if ( ( *itr )->_mouse_ended( event ) )
+            try
             {
-                return true;
+                if ( _children[_riterator]->_mouse_ended( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_mouse_event )
     {
         if ( _swallow )
@@ -79,14 +117,24 @@ bool node::_mouse_ended( cinder::app::MouseEvent event )
 bool node::_touch_began( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            // 子供がモーダルオブジェクトだった場合
-            if ( ( *itr )->_touch_began( event ) )
+            try
             {
-                return true;
+                // 子供がモーダルオブジェクトだった場合
+                if ( _children[_riterator]->_touch_began( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_touch_event )
     {
         if ( touch_began( event ) )
@@ -100,13 +148,23 @@ bool node::_touch_began( cinder::app::TouchEvent::Touch event )
 bool node::_touch_moved( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            if ( ( *itr )->_touch_moved( event ) )
+            try
             {
-                return true;
+                if ( _children[_riterator]->_touch_moved( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_touch_event )
     {
         if ( _swallow )
@@ -120,13 +178,23 @@ bool node::_touch_moved( cinder::app::TouchEvent::Touch event )
 bool node::_touch_ended( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            if ( ( *itr )->_touch_ended( event ) )
+            try
             {
-                return true;
+                if ( _children[_riterator]->_touch_ended( event ) )
+                {
+                    return true;
+                }
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
             }
         }
+    }
     if ( _schedule_touch_event )
     {
         if ( _swallow )
@@ -141,10 +209,20 @@ bool node::_touch_ended( cinder::app::TouchEvent::Touch event )
 void node::_touches_began( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            ( *itr )->_touches_began( event );
+            try
+            {
+                _children[_riterator]->_touches_began( event );
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
+            }
         }
+    }
     if ( _schedule_touches_event )
     {
         touches_began( event );
@@ -153,10 +231,20 @@ void node::_touches_began( cinder::app::TouchEvent event )
 void node::_touches_moved( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            ( *itr )->_touches_moved( event );
+            try
+            {
+                _children[_riterator]->_touches_moved( event );
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
+            }
         }
+    }
     if ( _schedule_touches_event )
     {
         touches_moved( event );
@@ -165,10 +253,20 @@ void node::_touches_moved( cinder::app::TouchEvent event )
 void node::_touches_ended( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            ( *itr )->_touches_ended( event );
+            try
+            {
+                _children[_riterator]->_touches_ended( event );
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
+            }
         }
+    }
     if ( _schedule_touches_event )
     {
         touches_ended( event );
@@ -177,10 +275,20 @@ void node::_touches_ended( cinder::app::TouchEvent event )
 void node::_key_down( cinder::app::KeyEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            ( *itr )->_key_down( event );
+            try
+            {
+                _children[_riterator]->_key_down( event );
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
+            }
         }
+    }
     if ( _schedule_key_event )
     {
         key_down( event );
@@ -189,10 +297,14 @@ void node::_key_down( cinder::app::KeyEvent event )
 void node::_key_up( cinder::app::KeyEvent event )
 {
     if ( !_block_schedule_event )
-        for ( auto itr = _children.rbegin( ); itr != _children.rend( ); ++itr )
+    {
+        _iterator_direction = true;
+        for ( _riterator = _children.size( ) - 1; _riterator >= 0; --_riterator )
         {
-            ( *itr )->_key_up( event );
+            _children[_riterator]->_key_up( event );
         }
+    }
+
     if ( _schedule_key_event )
     {
         key_up( event );
@@ -201,10 +313,20 @@ void node::_key_up( cinder::app::KeyEvent event )
 void node::_update( float delta )
 {
     if ( !_block_schedule_update )
-        for ( auto const& child : _children )
+    {
+        _iterator_direction = false;
+        for ( _iterator = 0; _iterator < _children.size( ); ++_iterator )
         {
-            child->_update( delta );
+            try
+            {
+                _children[_iterator]->_update( delta );
+            }
+            catch ( exception_remove_self const& e )
+            {
+                log( e.what( ) );
+            }
         }
+    }
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 
@@ -233,9 +355,17 @@ void node::_render( cinder::mat4 m )
         //#endif
     }
     m = translate( m, get_content_size_3d( ) * get_pivot_3d( ) );
-    for ( auto const& c : _children )
+    _iterator_direction = false;
+    for ( _iterator = 0; _iterator < _children.size( ); ++_iterator )
     {
-        c->_render( m );
+        try
+        {
+            _children[_iterator]->_render( m );
+        }
+        catch ( exception_remove_self const& e )
+        {
+            log( e.what( ) );
+        }
     }
 }
 bool node::init( )
@@ -268,13 +398,10 @@ void node::sort_children( std::function<bool( hardptr<node>&a, hardptr<node>&b )
 }
 void node::set_parent( softptr<node> value )
 {
+    assert_log( _parent, "親が未定義です。", return );
     softptr<node> prev_parent = _parent;
     value->add_child( shared_from_this( ) );
-    _update_end_signal.emplace_back( [ this, prev_parent ]
-    {
-        assert_log( prev_parent, "親が未定義です。", return );
-        prev_parent->remove_child_nonsafe( shared_from_this( ) );
-    } );
+    prev_parent->remove_child( shared_from_this( ) );
 }
 softptr<node> const& node::get_parent( ) const
 {
@@ -336,69 +463,55 @@ softptr<node> node::get_child_by_tag( int tag ) const
 }
 void node::remove_child( softptr<node> child )
 {
-    _update_end_signal.emplace_back( [ this, child ]
-    {
-        remove_child_nonsafe( child );
-    } );
-}
-void node::remove_child_nonsafe( softptr<node> child )
-{
     if ( _children.empty( ) ) return;
-    auto erase = std::remove_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
+    auto erase_itr = std::find_if( std::begin( _children ), std::end( _children ), [ this, child ] ( hardptr<node>& n )
     {
         return n == child;
     } );
-    _children.erase( erase, std::end( _children ) );
+    auto index = std::distance( std::begin( _children ), erase_itr );
+    if ( !_iterator_direction ) // コピペしまくってるのは、自分自身を削除した後にthisにアクセスしてしまうと、エラーになる可能性が高いので。
+    {
+        if ( index == _iterator ) { _children.erase( std::begin( _children ) + index ); _iterator--; throw exception_remove_self( ); }
+        else { _children.erase( std::begin( _children ) + index ); if ( index < _iterator ) _iterator--; }
+    }
+    else
+    {
+        if ( index == _riterator ) { _children.erase( std::begin( _children ) + index ); _riterator--; throw exception_remove_self( ); }
+        else { _children.erase( std::begin( _children ) + index ); if ( index < _riterator ) _riterator--; }
+    }
 }
 void node::remove_child_by_name( std::string const & name )
 {
     assert_log( !name.empty( ), "無効な名前です。", return );
-    _update_end_signal.emplace_back( [ this, name ]
+    if ( auto child = this->get_child_by_name( name ) )
     {
-        if ( auto child = this->get_child_by_name( name ) )
-        {
-            remove_child_nonsafe( child );
-        }
-        else
-        {
-            log( "remove_child_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
-        }
-    } );
+        remove_child( child );
+    }
+    else
+    {
+        log( "remove_child_by_name(name = %s): 子供が見つかりませんでした。", name.c_str( ) );
+    }
 }
 void node::remove_child_by_tag( int tag )
 {
     assert_log( tag != node::INVALID_TAG, "無効なタグです。", return );
-    _update_end_signal.emplace_back( [ this, tag ]
+    if ( auto child = this->get_child_by_tag( tag ) )
     {
-        if ( auto child = this->get_child_by_tag( tag ) )
-        {
-            remove_child_nonsafe( child );
-        }
-        else
-        {
-            log( "remove_child_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
-        }
-    } );
+        remove_child( child );
+    }
+    else
+    {
+        log( "remove_child_by_tag(tag = %d): 子供が見つかりませんでした。", tag );
+    }
 }
 void node::remove_all_children( )
 {
-    _update_end_signal.emplace_back( [ this ]
-    {
-        _children.clear( );
-    } );
+    _children.clear( );
 }
 void node::remove_from_parent( )
 {
-    if ( !_own_removing )
-    {
-        _own_removing = true;
-
-        assert_log( _parent, "親が未定義です。", return );
-        _parent->_update_end_signal.emplace_back( [ this ]
-        {
-            _parent->remove_child_nonsafe( shared_from_this( ) );
-        } );
-    }
+    assert_log( _parent, "親が未定義です。", return );
+    _parent->remove_child( shared_from_this( ) );
 }
 softptr<node> node::get_root( )
 {

@@ -147,6 +147,10 @@ public:
     float get_opacity( ) const;
 protected:
     std::vector<hardptr<node>> _children;
+private:
+    bool _iterator_direction = false; // falseが増加イテレーター、trueが減少イテレーター。
+    int _iterator = 0;
+    int _riterator = 0;
 public:
     std::vector<hardptr<node>> const& get_children( ) const;
     void sort_children( std::function<bool( hardptr<node>& a, hardptr<node>& b )> const& func );
@@ -186,25 +190,18 @@ public:
     template<class ty>
     softptr<ty> add_child( hardptr<ty> value )
     {
-        _update_end_signal.emplace_back( [ this, value ]
-        {
-            value->_parent = shared_from_this( );
-            _children.emplace_back( value );
-        } );
+        value->_parent = shared_from_this( );
+        _children.emplace_back( value );
         return value;
     }
-    softptr<node> get_child_by_name( std::string const& name )const;
-    softptr<node> get_child_by_tag( int tag )const;
-    void remove_child( softptr<node> child );
-private:
-    void remove_child_nonsafe( softptr<node> child );
-public:
+    softptr<node> get_child_by_name( std::string const& name ) const;
+    softptr<node> get_child_by_tag( int tag ) const;
+    void remove_child( softptr<node> child ) noexcept( false );
     void remove_child_by_name( std::string const& name );
     void remove_child_by_tag( int tag );
     void remove_all_children( );
-    void remove_from_parent( );
+    void remove_from_parent( ) noexcept( false );
 private:
-    bool _own_removing = false;
     std::vector<std::function<void( )>> _update_end_signal;
 protected:
     bool _swallow = false;

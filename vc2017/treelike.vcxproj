@@ -354,6 +354,7 @@
     <ClInclude Include="..\include\treelike\utility\recursion_usable_mutex.h" />
     <ClInclude Include="..\include\treelike\utility\scoped_mutex.h" />
     <ClInclude Include="..\include\treelike\utility\string.h" />
+    <ClInclude Include="..\include\treelike\utility\time_stamp.h" />
     <ClInclude Include="..\include\treelike\utility\user_pointer.hpp" />
     <ClInclude Include="..\include\treelike\utility\utf8.h" />
     <ClInclude Include="..\include\treelike\utility\write_file_on_destroyed.h" />

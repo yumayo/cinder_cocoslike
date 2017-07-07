@@ -278,6 +278,9 @@
     <ClInclude Include="..\include\treelike.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\treelike\utility\time_stamp.h">
+      <Filter>Header Files\treelike\utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\treelike\action\action_manager.cpp">
