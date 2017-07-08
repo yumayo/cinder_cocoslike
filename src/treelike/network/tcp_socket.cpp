@@ -5,21 +5,18 @@ namespace network
 {
 tcp_socket::tcp_socket( boost::asio::io_service& io )
     : socket( io )
-    , handle( _ip_address, _port )
+    , handle( "", 0 )
 {
     buffer.fill( 0 );
 }
 void tcp_socket::close( )
 {
-    _ip_address = "";
-    _port = 0;
     socket.close( );
     buffer.fill( 0 );
 }
 void tcp_socket::set_client_handle( std::string const& ip_address, int port )
 {
-    _ip_address = ip_address;
-    _port = port;
+    handle = network_handle( ip_address, port );
 }
 void tcp_socket::buffer_clear( size_t bytes_transferred )
 {

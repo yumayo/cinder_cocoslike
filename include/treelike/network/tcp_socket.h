@@ -20,9 +20,6 @@ public:
     std::array<char, 65536> buffer;
     std::string stack;
     network_handle handle;
-private:
-    std::string _ip_address;
-    int _port;
 };
 }
 }
