@@ -12,6 +12,7 @@ tcp_socket::tcp_socket( boost::asio::io_service& io )
 void tcp_socket::close( )
 {
     socket.close( );
+    handle = network_handle( "", 0 );
     buffer.fill( 0 );
 }
 void tcp_socket::set_client_handle( std::string const& ip_address, int port )

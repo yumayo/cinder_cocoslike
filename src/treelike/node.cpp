@@ -327,25 +327,26 @@ void node::_update( float delta )
             }
         }
     }
-    _action_manager.update( delta );
-    if ( _schedule_update ) update( delta );
-
     for ( auto const& signal : _update_end_signal ) signal( );
     _update_end_signal.clear( );
+
+    _action_manager.update( delta );
+    if ( _schedule_update ) update( delta );
 }
 void node::_render( cinder::mat4 m )
 {
+    if ( _block_visible ) return;
     m = translate( m, get_position_3d( ) );
     m = scale( m, get_scale_3d( ) );
     m = rotate( m, get_rotation( ), get_axis( ) );
     m = translate( m, -get_content_size_3d( ) * get_anchor_point_3d( ) );
-    gl::setModelMatrix( m );
     if ( _visible )
     {
         //std::pair<vec2, vec2> aabb;
         //if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
         {
             gl::color( _color );
+            gl::setModelMatrix( m );
             this->render( );
         }
         //#ifdef _DEBUG

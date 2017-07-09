@@ -62,27 +62,45 @@ bool tcp_server::_member::is_max( )
 }
 void tcp_server::_member::write( tcp_socket & sock_obj, char const* begin, size_t byte, std::function<void( )> on_send )
 {
-    std::string writable_string;
-
-    writable_string += std::string( "#B#G#I#N#E#" );
-    writable_string += utility::base64_encode( begin, byte );
-    writable_string += std::string( "#E#N#D#" );
-
-    boost::asio::async_write(
-        sock_obj.socket,
-        boost::asio::buffer( writable_string.data( ), writable_string.size( ) ),
-        [ this, &sock_obj, on_send ] ( const boost::system::error_code& e, size_t bytes_transferred )
+    size_t num = byte / 32768;
+    std::vector<int> sub;
+    sub.emplace_back( 0 );
+    for ( size_t i = 0; i < num; ++i )
     {
-        if ( e )
+        sub.emplace_back( 32768 );
+    }
+    sub.emplace_back( byte - 32768 * num );
+
+    for ( size_t i = 0; i < sub.size( ) - 1; ++i )
+    {
+        std::string writable_string;
+        if ( i == 0 )
         {
-            log( "【tcp_server】送信できませんでした。: %s", e.message( ).c_str( ) );
-            if ( parent.on_send_failed ) parent.on_send_failed( sock_obj.handle );
+            writable_string += std::string( "#B#G#I#N#E#" );
         }
-        else
+        int offset = 0;
+        for ( size_t j = 0; j <= i; ++j ) offset += sub[j];
+        writable_string += utility::base64_encode( begin + offset, sub[i + 1] );
+        if ( i == sub.size( ) - 1 - 1 )
         {
-            if ( on_send ) on_send( );
+            writable_string += std::string( "#E#N#D#" );
         }
-    } );
+        boost::asio::async_write(
+            sock_obj.socket,
+            boost::asio::buffer( writable_string.data( ), writable_string.size( ) ),
+            [ this, &sock_obj, on_send ] ( const boost::system::error_code& e, size_t bytes_transferred )
+        {
+            if ( e )
+            {
+                log( "【tcp_server】送信できませんでした。: %s", e.message( ).c_str( ) );
+                if ( parent.on_send_failed ) parent.on_send_failed( sock_obj.handle );
+            }
+            else
+            {
+                if ( on_send ) on_send( );
+            }
+        } );
+    }
 }
 void tcp_server::_member::read( tcp_socket & sock_obj )
 {

@@ -42,5 +42,9 @@ int tcp_client::get_port( )
 {
     return _m->get_port( );
 }
+void tcp_client::on( std::string const& name, std::function<void( Json::Value root )> const& func )
+{
+    on_received_named_json.insert( std::make_pair( name, func ) );
+}
 }
 }

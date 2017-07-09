@@ -23,6 +23,7 @@ public:
     int get_port( );
     void close( );
     void open( );
+    void on( std::string const& name, std::function<void( network_handle const&, Json::Value )> const& func );
 public:
     void update( float delta_second ) override;
 public:

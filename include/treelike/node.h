@@ -179,13 +179,18 @@ private:
 protected:
     bool _running = true;
 public:
-    virtual void set_running( int const& value = true ) { _running = value; }
+    virtual void set_running( bool const& value = true ) { _running = value; }
     inline bool const& get_running( ) const { return _running; }
 protected:
     bool _visible = true;
 public:
-    virtual void set_visible( int const& value = true ) { _visible = value; }
+    virtual void set_visible( bool const& value = true ) { _visible = value; }
     inline bool const& get_visible( ) const { return _visible; }
+protected:
+    bool _block_visible = false;
+public:
+    virtual void set_block_visible( bool const& value = true ) { _block_visible = value; }
+    inline bool const& get_block_visible( ) const { return _block_visible; }
 public:
     template<class ty>
     softptr<ty> add_child( hardptr<ty> value )

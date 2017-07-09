@@ -56,6 +56,9 @@ void udp_connection::update( float delta_second )
 {
     _m->update( delta_second );
 }
+void udp_connection::on( std::string const& name, std::function<void( network_handle const&, Json::Value )> const& func )
+{
+    on_received_named_json.insert( std::make_pair( name, func ) );
 }
-
+}
 }

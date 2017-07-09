@@ -24,12 +24,12 @@ public:
     }
     template<class type2>
     soft_pointer( soft_pointer<type2> const& _Other ) noexcept
-        : std::weak_ptr<type>( _Other )
+        : std::weak_ptr<type>( std::dynamic_pointer_cast<type>( _Other.lock( ) ) )
     {
     }
     template<class type2>
     soft_pointer( soft_pointer<type2>&& _Other ) noexcept
-        : std::weak_ptr<type>( std::move( _Other ) )
+        : std::weak_ptr<type>( std::dynamic_pointer_cast<type>( _Other.lock( ) ) )
     {
     }
     template<class type2>
@@ -45,13 +45,13 @@ public:
     template<class type2>
     soft_pointer& operator=( soft_pointer<type2> const& right ) noexcept
     {
-        this->_Resetw( right.lock( ) );
+        this->_Resetw( std::dynamic_pointer_cast<type>( right.lock( ) ) );
         return ( *this );
     }
     template<class type2>
     soft_pointer& operator=( hard_pointer<type2> const& right ) noexcept
     {
-        this->_Resetw( right );
+        this->_Resetw( std::dynamic_pointer_cast<type>( right ) );
         return ( *this );
     }
     // ポインタの実態を返します。

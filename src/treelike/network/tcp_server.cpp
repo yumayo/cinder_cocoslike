@@ -76,5 +76,9 @@ std::vector<network_handle> tcp_server::get_clients( )
     }
     return clients;
 }
+void tcp_server::on( std::string const& name, std::function<void( network_handle const&, Json::Value )> const& func )
+{
+    on_received_named_json.insert( std::make_pair( name, func ) );
+}
 }
 }

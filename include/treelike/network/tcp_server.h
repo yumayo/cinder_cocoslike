@@ -22,6 +22,7 @@ public:
     void speech( std::string const& message, std::function<void( )> on_send = nullptr );
     void speech( char const* message, size_t size, std::function<void( )> on_send = nullptr );
     void close( network_handle const& handle );
+    void on( std::string const& name, std::function<void( network_handle const&, Json::Value )> const& func );
 public:
     std::vector<network_handle> get_clients( );
 public:

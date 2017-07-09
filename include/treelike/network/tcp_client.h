@@ -19,6 +19,7 @@ public:
     void write( std::string const& message, std::function<void( )> on_send = nullptr );
     void write( char const* message, size_t size, std::function<void( )> on_send = nullptr );
     int get_port( );
+    void on( std::string const& name, std::function<void( Json::Value root )> const& func );
 public:
     // Ú‘±‚ª¬Œ÷‚µ‚½‚çŒÄ‚Î‚ê‚Ü‚·B
     std::function<void( )> on_connection;
