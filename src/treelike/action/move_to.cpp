@@ -11,8 +11,9 @@ CREATE_CPP( move_to, float duration, cinder::vec2 position )
 }
 bool move_to::init( float duration, cinder::vec2 position )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     _position = vec3( position, 0.0F );
+    _is_2d = true;
     return true;
 }
 CREATE_CPP( move_to, float duration, cinder::vec3 position )
@@ -21,18 +22,19 @@ CREATE_CPP( move_to, float duration, cinder::vec3 position )
 }
 bool move_to::init( float duration, cinder::vec3 position_3d )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     _position = position_3d;
+    _is_2d = false;
     return true;
 }
 void move_to::setup( )
 {
     _start_position = _target->get_position_3d( );
+    if ( _is_2d ) _position.z = _start_position.z;
 }
 void move_to::step( float t )
 {
     t = clamp( t, 0.0F, 1.0F );
-
     auto const to = _position;
     auto const from = _start_position;
     auto const temp = vec3( ease_liner( t, from.x, to.x ), ease_liner( t, from.y, to.y ), ease_liner( t, from.z, to.z ) );

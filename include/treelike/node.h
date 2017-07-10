@@ -14,7 +14,7 @@ class node : public std::enable_shared_from_this<node>
     friend class app_delegate;
     friend class scene_manager;
 public:
-    static const int INVALID_TAG = -1;
+    static const int INVALID_TAG;
 public:
     CREATE_H( node );
 public:
@@ -147,6 +147,8 @@ public:
 protected:
     std::vector<hardptr<node>> _children;
 private:
+    static const bool INCREMENT;
+    static const bool DECREMENT;
     bool _iterator_direction = false; // falseが増加イテレーター、trueが減少イテレーター。
     int _iterator = 0;
     int _riterator = 0;

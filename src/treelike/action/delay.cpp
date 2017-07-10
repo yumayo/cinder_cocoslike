@@ -11,7 +11,7 @@ CREATE_CPP( delay, float duration )
 }
 bool delay::init( float duration )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     return true;
 }
 }

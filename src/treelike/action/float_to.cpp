@@ -10,7 +10,7 @@ CREATE_CPP( float_to, float duration, float from, float to, std::function<void( 
 }
 bool float_to::init( float duration, float from, float to, std::function<void( float value )> callback )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     _from = from;
     _to = to;
     _callback = callback;

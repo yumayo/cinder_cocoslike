@@ -19,6 +19,7 @@ protected:
 protected:
     cinder::vec3 _start_scale;
     cinder::vec3 _scale;
+    bool _is_2d;
 };
 }
 }

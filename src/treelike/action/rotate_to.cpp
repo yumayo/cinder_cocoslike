@@ -11,7 +11,7 @@ CREATE_CPP( rotate_to, float duration, float radian )
 }
 bool rotate_to::init( float duration, float radian )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     _rotation = radian;
     return true;
 }

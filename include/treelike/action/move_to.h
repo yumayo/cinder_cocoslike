@@ -19,6 +19,7 @@ protected:
 protected:
     cinder::vec3 _start_position;
     cinder::vec3 _position;
+    bool _is_2d;
 };
 }
 }

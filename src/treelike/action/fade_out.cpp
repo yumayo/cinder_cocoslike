@@ -21,7 +21,6 @@ void fade_out::setup( )
 void fade_out::step( float t )
 {
     t = clamp( t, 0.0F, 1.0F );
-
     auto const to = 0.0F;
     auto const from = _opacity;
     auto const temp = ease_liner( t, from, to );

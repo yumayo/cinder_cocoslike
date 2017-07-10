@@ -31,8 +31,11 @@ void app_delegate::draw( )
     cinder::gl::clear( cinder::ColorA( 0.1F, 0.1F, 0.1F, 1.0F ) );
     cinder::CameraOrtho camera;
     auto window_size_half = vec2( getWindowSize( ) ) / 2.0F;
-    camera.lookAt( vec3( window_size_half.x, window_size_half.y, -1 ), vec3( window_size_half.x, window_size_half.y, 0 ) );
+    camera.setWorldUp( vec3( 0.0F, -1.0F, 0.0F ) );
+    camera.lookAt( vec3( window_size_half.x, window_size_half.y, -1.0F ), vec3( window_size_half.x, window_size_half.y, 0.0F ) );
     camera.setOrtho( -window_size_half.x, window_size_half.x, -window_size_half.y, window_size_half.y, 0.125F, 2.0F - 0.125F );
+    gl::setProjectionMatrix( camera.getProjectionMatrix( ) );
+    gl::setViewMatrix( camera.getViewMatrix( ) );
     treelike::scene_manager::get_instans( )->top( )->_render( camera, cinder::mat4( ) );
     treelike::scene_manager::get_instans( )->get_dont_destroy_node( )->_render( camera, cinder::mat4( ) );
 }

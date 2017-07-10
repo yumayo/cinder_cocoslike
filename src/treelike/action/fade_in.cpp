@@ -21,7 +21,6 @@ void fade_in::setup( )
 void fade_in::step( float t )
 {
     t = clamp( t, 0.0F, 1.0F );
-
     auto const to = 1.0F;
     auto const from = _opacity;
     auto const temp = ease_liner( t, from, to );

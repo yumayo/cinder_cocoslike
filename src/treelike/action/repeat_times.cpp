@@ -9,7 +9,7 @@ CREATE_CPP( repeat_times, hardptr<finite_time_action> const& time_action, int nu
 }
 bool repeat_times::init( hardptr<finite_time_action> const& time_action, int number_of_times )
 {
-    _time_action = time_action;
+    repeat_forever::init( time_action );
     _init_number_of_times = number_of_times;
     _number_of_times = _init_number_of_times;
     return true;

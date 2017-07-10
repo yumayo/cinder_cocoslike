@@ -36,27 +36,22 @@ void action::setup( )
 void action::step( float t )
 {
 }
-
 void action::set_target( hardptr<node> const& value )
 {
     _target = value;
 }
-
 softptr<node> action::get_target( )
 {
     return _target;
 }
-
 void action::set_tag( int value )
 {
     _tag = value;
 }
-
 int action::get_tag( )
 {
     return _tag;
 }
-
 void action::set_name( std::string const & value )
 {
     _name = value;
@@ -64,17 +59,14 @@ void action::set_name( std::string const & value )
     std::hash<std::string> h;
     _hash = h( value );
 }
-
 std::string action::get_name( )
 {
     return _name;
 }
-
 void action::set_pause( bool value )
 {
     _pause = value;
 }
-
 bool action::get_pause( )
 {
     return _pause;

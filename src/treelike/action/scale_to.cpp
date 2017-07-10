@@ -11,8 +11,9 @@ CREATE_CPP( scale_to, float duration, cinder::vec2 scale )
 }
 bool scale_to::init( float duration, cinder::vec2 scale )
 {
-    _duration = duration;
-    _scale = vec3( scale, 1.0F );
+    finite_time_action::init( duration );
+    _scale = vec3( scale, 0.0F );
+    _is_2d = true;
     return true;
 }
 CREATE_CPP( scale_to, float duration, cinder::vec3 scale )
@@ -21,13 +22,15 @@ CREATE_CPP( scale_to, float duration, cinder::vec3 scale )
 }
 bool scale_to::init( float duration, cinder::vec3 scale )
 {
-    _duration = duration;
+    finite_time_action::init( duration );
     _scale = scale;
+    _is_2d = false;
     return true;
 }
 void scale_to::setup( )
 {
     _start_scale = _target->get_scale_3d( );
+    if ( _is_2d ) _scale.z = _start_scale.z;
 }
 void scale_to::step( float t )
 {

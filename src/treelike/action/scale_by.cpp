@@ -11,8 +11,8 @@ CREATE_CPP( scale_by, float duration, cinder::vec2 scale )
 }
 bool scale_by::init( float duration, cinder::vec2 scale )
 {
-    _duration = duration;
-    _init_scale = vec3( scale, 1.0F );
+    scale_to::init( duration, scale );
+    _init_scale = vec3( scale, 0.0F ); // 2dの場合はスケールの上下はないので0.0Fです。
     return true;
 }
 CREATE_CPP( scale_by, float duration, cinder::vec3 scale )
@@ -21,7 +21,7 @@ CREATE_CPP( scale_by, float duration, cinder::vec3 scale )
 }
 bool scale_by::init( float duration, cinder::vec3 scale )
 {
-    _duration = duration;
+    scale_to::init( duration, scale );
     _init_scale = scale;
     return true;
 }

@@ -11,7 +11,7 @@ CREATE_CPP( axis_by, float duration, cinder::vec3 axis )
 }
 bool axis_by::init( float duration, cinder::vec3 axis )
 {
-    _duration = duration;
+    axis_to::init( duration, axis );
     _init_axis = axis;
     return true;
 }
