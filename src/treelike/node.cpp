@@ -333,7 +333,7 @@ void node::_update( float delta )
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 }
-void node::_render( cinder::mat4 m )
+void node::_render( cinder::Camera const& camera, cinder::mat4 m )
 {
     if ( _block_visible ) return;
     m = translate( m, get_position_3d( ) );
@@ -342,18 +342,12 @@ void node::_render( cinder::mat4 m )
     m = translate( m, -get_content_size_3d( ) * get_anchor_point_3d( ) );
     if ( _visible )
     {
-        //std::pair<vec2, vec2> aabb;
-        //if ( utility::hit_window_aabb( m, shared_from_this( ), &aabb ) )
+        if ( utility::hit_camera_aabb( m, camera, shared_from_this( ) ) )
         {
             gl::color( _color );
             gl::setModelMatrix( m );
             this->render( );
         }
-        //#ifdef _DEBUG
-        //gl::setModelMatrix( mat4( ) );
-        //gl::color( Color::white( ) );
-        //gl::drawStrokedRect( Rectf( aabb.first, aabb.second ) );
-        //#endif
     }
     m = translate( m, get_content_size_3d( ) * get_pivot_3d( ) );
     _iterator_direction = false;
@@ -361,7 +355,7 @@ void node::_render( cinder::mat4 m )
     {
         try
         {
-            _children[_iterator]->_render( m );
+            _children[_iterator]->_render( camera, m );
         }
         catch ( exception_node_remove_self const& e )
         {

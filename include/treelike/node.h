@@ -1,12 +1,11 @@
 #pragma once
-#include <cinder/Vector.h>
-#include <cinder/Quaternion.h>
-#include <cinder/app/App.h>
-#include <cinder/Color.h>
-#include <cinder/gl/GlslProg.h>
 #include <vector>
 #include <string>
 #include <treelike/forward.h>
+#include <cinder/Vector.h>
+#include <cinder/Color.h>
+#include <cinder/app/App.h>
+#include <cinder/Camera.h>
 #include <treelike/action/action_manager.h>
 namespace treelike
 {
@@ -50,7 +49,7 @@ private:
 protected:
     // camera‚âshader‚È‚Çq‹Ÿ‚É‚à‰e‹¿‚ğ—^‚¦‚½‚¢‚±‚Æ‚ğ‚µ‚½‚¢ê‡‚ÍŒp³‚µ‚Ä’Ç‰Á‚Ì‹@”\‚ğ‚Â‚¯‚Ä‚­‚¾‚³‚¢B
     virtual void _update( float delta );
-    virtual void _render( cinder::mat4 model_view_matrix );
+    virtual void _render( cinder::Camera const& camera, cinder::mat4 model_view_matrix );
 protected:
     bool init( );
 protected:
