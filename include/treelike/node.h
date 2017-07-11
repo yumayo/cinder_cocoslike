@@ -9,6 +9,22 @@
 #include <treelike/action/action_manager.h>
 namespace treelike
 {
+class exception_node_remove_self : public std::runtime_error
+{
+public:
+    exception_node_remove_self( )
+        : std::runtime_error( "[node]自分自身が削除されました。" )
+    {
+    }
+};
+class exception_node_iterator_broken : public std::runtime_error
+{
+public:
+    exception_node_iterator_broken( )
+        : std::runtime_error( "[node]update中にイテレーターを破壊しようとしました。" )
+    {
+    }
+};
 class node : public std::enable_shared_from_this<node>
 {
     friend class app_delegate;
@@ -147,9 +163,33 @@ public:
 protected:
     std::vector<hardptr<node>> _children;
 private:
-    static const bool INCREMENT;
-    static const bool DECREMENT;
-    bool _iterator_direction = false; // falseが増加イテレーター、trueが減少イテレーター。
+    struct iteration
+    {
+        static const char RUNNING;
+        static const char INCREMENT;
+        static const char DECREMENT;
+    };
+    class scoped_iteration_increment
+    {
+        node& n;
+    public:
+        scoped_iteration_increment( node& n ) :n( n ) 
+        {
+            n._iteration_state = ( node::iteration::RUNNING | node::iteration::INCREMENT );
+        }
+        ~scoped_iteration_increment( ) { n._iteration_state = 0; }
+    };
+    class scoped_iteration_decrement
+    {
+        node& n;
+    public:
+        scoped_iteration_decrement( node& n ) :n( n ) 
+        {
+            n._iteration_state = ( node::iteration::RUNNING | node::iteration::DECREMENT );
+        }
+        ~scoped_iteration_decrement( ) { n._iteration_state = 0; }
+    };
+    char _iteration_state = 0;
     int _iterator = 0;
     int _riterator = 0;
 public:
@@ -165,11 +205,6 @@ protected:
 public:
     virtual void set_tag( int const& value ) { _tag = value; }
     inline int const& get_tag( ) const { return _tag; }
-private:
-    int _order = 0;
-public:
-    virtual void set_order( int const& value );
-    int const& get_order( ) const;
 protected:
     std::string _name = u8"";
 public:
@@ -207,8 +242,6 @@ public:
     void remove_child_by_tag( int tag );
     void remove_all_children( );
     void remove_from_parent( ) noexcept( false );
-private:
-    std::vector<std::function<void( )>> _update_end_signal;
 protected:
     bool _swallow = false;
 public:

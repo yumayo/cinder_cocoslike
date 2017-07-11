@@ -8,16 +8,9 @@ namespace treelike
 using namespace cinder;
 using namespace treelike::utility;
 const int node::INVALID_TAG = -std::numeric_limits<int>::max( );
-const bool node::INCREMENT = false;
-const bool node::DECREMENT = true;
-class exception_node_remove_self : public std::runtime_error
-{
-public:
-    exception_node_remove_self( )
-        : std::runtime_error( "[node]自分自身が削除されました。" )
-    {   // construct from message string
-    }
-};
+const char node::iteration::RUNNING = 1 << 1;
+const char node::iteration::INCREMENT = ( node::iteration::RUNNING | 0 << 2 );
+const char node::iteration::DECREMENT = ( node::iteration::RUNNING | 1 << 2 );
 CREATE_CPP( node )
 {
     CREATE( node );
@@ -40,7 +33,7 @@ bool node::_mouse_began( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -71,7 +64,7 @@ bool node::_mouse_moved( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -101,7 +94,7 @@ bool node::_mouse_ended( cinder::app::MouseEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -132,7 +125,7 @@ bool node::_touch_began( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -163,7 +156,7 @@ bool node::_touch_moved( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -193,7 +186,7 @@ bool node::_touch_ended( cinder::app::TouchEvent::Touch event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -224,7 +217,7 @@ void node::_touches_began( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -246,7 +239,7 @@ void node::_touches_moved( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -268,7 +261,7 @@ void node::_touches_ended( cinder::app::TouchEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -290,7 +283,7 @@ void node::_key_down( cinder::app::KeyEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             try
@@ -312,7 +305,7 @@ void node::_key_up( cinder::app::KeyEvent event )
 {
     if ( !_block_schedule_event )
     {
-        _iterator_direction = node::DECREMENT;
+        scoped_iteration_decrement scp_decrement( *this );
         for ( _riterator = (int)_children.size( ) - 1; _riterator >= 0; --_riterator )
         {
             _children[_riterator]->_key_up( event );
@@ -328,7 +321,7 @@ void node::_update( float delta )
 {
     if ( !_block_schedule_update )
     {
-        _iterator_direction = node::INCREMENT;
+        scoped_iteration_increment scp_increment( *this );
         for ( _iterator = 0; _iterator < (int)_children.size( ); ++_iterator )
         {
             try
@@ -341,9 +334,6 @@ void node::_update( float delta )
             }
         }
     }
-    for ( auto const& signal : _update_end_signal ) signal( );
-    _update_end_signal.clear( );
-
     _action_manager.update( delta );
     if ( _schedule_update ) update( delta );
 }
@@ -361,7 +351,7 @@ void node::_render( cinder::Camera const& camera, cinder::mat4 m )
         this->render( );
     }
     m = translate( m, get_content_size_3d( ) * get_pivot_3d( ) );
-    _iterator_direction = node::INCREMENT;
+    scoped_iteration_increment scp_increment( *this );
     for ( _iterator = 0; _iterator < (int)_children.size( ); ++_iterator )
     {
         try
@@ -400,6 +390,7 @@ std::vector<hardptr<node>> const& node::get_children( ) const
 }
 void node::sort_children( std::function<bool( hardptr<node>&a, hardptr<node>&b )> const & func )
 {
+    if ( ( _iteration_state & iteration::RUNNING ) == iteration::RUNNING ) throw exception_node_iterator_broken( );
     std::sort( _children.begin( ), _children.end( ), func );
 }
 void node::set_parent( softptr<node> value )
@@ -412,21 +403,6 @@ void node::set_parent( softptr<node> value )
 softptr<node> const& node::get_parent( ) const
 {
     return _parent;
-}
-void node::set_order( int const& value )
-{
-    _order = value;
-    _update_end_signal.emplace_back( [ this, value ]
-    {
-        std::sort( _children.begin( ), _children.end( ), [ ] ( hardptr<node>& a, hardptr<node>& b )
-        {
-            return a->_order < b->_order;
-        } );
-    } );
-}
-int const& node::get_order( ) const
-{
-    return _order;
 }
 void node::set_name( std::string const& value )
 {
@@ -476,15 +452,19 @@ void node::remove_child( softptr<node> child )
     } );
     if ( erase_itr == std::end( _children ) ) return;
     auto index = std::distance( std::begin( _children ), erase_itr );
-    if ( _iterator_direction == node::INCREMENT ) // コピペしまくってるのは、自分自身を削除した後にthisにアクセスしてしまうと、エラーになる可能性が高いので。
+    if ( _iteration_state == ( iteration::RUNNING | iteration::INCREMENT ) ) // コピペしまくってるのは、自分自身を削除した後にthisにアクセスしてしまうと、エラーになる可能性が高いので。
     {
         if ( index == _iterator ) { _children.erase( std::begin( _children ) + index ); _iterator--; throw exception_node_remove_self( ); }
         else { _children.erase( std::begin( _children ) + index ); if ( index < _iterator ) _iterator--; }
     }
-    else // if ( _iterator_direction == node::DECREMENT )
+    else if ( _iteration_state == ( iteration::RUNNING | iteration::DECREMENT ) )
     {
         if ( index == _riterator ) { _children.erase( std::begin( _children ) + index ); _riterator--; throw exception_node_remove_self( ); }
         else { _children.erase( std::begin( _children ) + index ); if ( index < _riterator ) _riterator--; }
+    }
+    else
+    {
+        _children.erase( std::begin( _children ) + index );
     }
 }
 void node::remove_child_by_name( std::string const & name )
