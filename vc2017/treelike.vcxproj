@@ -231,6 +231,8 @@
     <ClCompile Include="..\src\treelike\action\move_by.cpp" />
     <ClCompile Include="..\src\treelike\action\move_to.cpp" />
     <ClCompile Include="..\src\treelike\action\move_to_target.cpp" />
+    <ClCompile Include="..\src\treelike\action\opacity_by.cpp" />
+    <ClCompile Include="..\src\treelike\action\opacity_to.cpp" />
     <ClCompile Include="..\src\treelike\action\remove_self.cpp" />
     <ClCompile Include="..\src\treelike\action\repeat_forever.cpp" />
     <ClCompile Include="..\src\treelike\action\repeat_times.cpp" />
@@ -299,6 +301,8 @@
     <ClInclude Include="..\include\treelike\action\move_by.h" />
     <ClInclude Include="..\include\treelike\action\move_to.h" />
     <ClInclude Include="..\include\treelike\action\move_to_target.h" />
+    <ClInclude Include="..\include\treelike\action\opacity_by.h" />
+    <ClInclude Include="..\include\treelike\action\opacity_to.h" />
     <ClInclude Include="..\include\treelike\action\remove_self.h" />
     <ClInclude Include="..\include\treelike\action\repeat_forever.h" />
     <ClInclude Include="..\include\treelike\action\repeat_times.h" />

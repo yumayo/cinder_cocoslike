@@ -13,9 +13,12 @@ namespace utility
 bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c );
 
 // http://marupeke296.com/COL_2D_No4_SquareToSquare.html
-bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d );
-bool hit_point_plane_2d( cinder::vec2 point, hardptr<node> const& object );
-bool hit_point_plane_2d_default_size( cinder::vec2 point, hardptr<node> const& object );
+bool hit_point_rect( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d );
+bool hit_point_circle( cinder::vec2 point, cinder::vec2 a );
+bool hit_point_rect( cinder::vec2 point, hardptr<node> const& object );
+bool hit_point_circle( cinder::vec2 point, hardptr<node> const& object );
+bool hit_point_rect_non_scale( cinder::vec2 point, hardptr<node> const& object );
+bool hit_point_ciecle_non_scale( cinder::vec2 point, hardptr<node> const& object );
 
 // https://gist.github.com/yoshiki/7702066
 bool hit_segment( cinder::vec2 s1, cinder::vec2 e1, cinder::vec2 s2, cinder::vec2 e2 );

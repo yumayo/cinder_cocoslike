@@ -9,6 +9,8 @@
 #include <treelike/action/move_by.h>
 #include <treelike/action/move_to.h>
 #include <treelike/action/move_to_target.h>
+#include <treelike/action/opacity_by.h>
+#include <treelike/action/opacity_to.h>
 #include <treelike/action/remove_self.h>
 #include <treelike/action/repeat_forever.h>
 #include <treelike/action/repeat_times.h>

@@ -62,14 +62,14 @@ bool tcp_server::_member::is_max( )
 }
 void tcp_server::_member::write( tcp_socket & sock_obj, char const* begin, size_t byte, std::function<void( )> on_send )
 {
-    size_t num = byte / 32768;
+    size_t num = byte / 12288;
     std::vector<int> sub;
     sub.emplace_back( 0 );
     for ( size_t i = 0; i < num; ++i )
     {
-        sub.emplace_back( 32768 );
+        sub.emplace_back( 12288 );
     }
-    sub.emplace_back( byte - 32768 * num );
+    sub.emplace_back( byte - 12288 * num );
 
     for ( size_t i = 0; i < sub.size( ) - 1; ++i )
     {

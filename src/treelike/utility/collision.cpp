@@ -31,7 +31,7 @@ bool hit_point_polygon_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, c
     double const c3 = cross_z( CA, AP );
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0;
 }
-bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d )
+bool hit_point_rect( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cinder::vec2 c, cinder::vec2 d )
 {
     vec2 const AB = b - a;
     vec2 const BP = point - b;
@@ -47,7 +47,11 @@ bool hit_point_plane_2d( cinder::vec2 point, cinder::vec2 a, cinder::vec2 b, cin
     float const c4 = cross_z( DA, AP );
     return c1 >= 0.0 && c2 >= 0.0 && c3 >= 0.0 && c4 >= 0.0;
 }
-bool hit_point_plane_2d( cinder::vec2 point, hardptr<node> const & object )
+bool hit_point_circle( cinder::vec2 point, cinder::vec2 a, float radius )
+{
+    return length( a - point ) < radius;
+}
+bool hit_point_rect( cinder::vec2 point, hardptr<node> const & object )
 {
     auto const mat = object->get_world_matrix( );
     auto const _content_size = object->get_content_size( );
@@ -71,9 +75,28 @@ bool hit_point_plane_2d( cinder::vec2 point, hardptr<node> const & object )
     auto const md = translate( obj, vec2( 0.0F, _content_size.y ) );
     auto const d = vec2( md[2][0], md[2][1] );
 
-    return utility::hit_point_plane_2d( point, a, b, c, d );
+    return utility::hit_point_rect( point, a, b, c, d );
 }
-bool hit_point_plane_2d_default_size( cinder::vec2 point, hardptr<node> const & object )
+bool hit_point_circle( cinder::vec2 point, hardptr<node> const & object )
+{
+    auto const mat = object->get_world_matrix( );
+    auto const _content_size = object->get_content_size( );
+    auto const _anchor_point = object->get_anchor_point( );
+    auto const _position = object->get_position( );
+    auto const _scale = object->get_scale( );
+    auto const _rotation = object->get_rotation( );
+
+    auto obj = mat;
+    obj = translate( obj, _position );
+    obj = scale( obj, _scale );
+    obj = rotate( obj, _rotation );
+    // obj = translate( obj, -_content_size * _anchor_point ); 円の場合はposがそのまま中心となるので。
+
+    auto const a = vec2( obj[2][0], obj[2][1] );
+
+    return utility::hit_point_circle( point, a, _content_size.x / 2 );
+}
+bool hit_point_rect_non_scale( cinder::vec2 point, hardptr<node> const & object )
 {
     auto const mat = object->get_world_matrix( );
     auto const _content_size = object->get_content_size( );
@@ -97,7 +120,26 @@ bool hit_point_plane_2d_default_size( cinder::vec2 point, hardptr<node> const & 
     auto const md = translate( obj, vec2( 0.0F, _content_size.y ) );
     auto const d = vec2( md[2][0], md[2][1] );
 
-    return utility::hit_point_plane_2d( point, a, b, c, d );
+    return utility::hit_point_rect( point, a, b, c, d );
+}
+bool hit_point_ciecle_non_scale( cinder::vec2 point, hardptr<node> const & object )
+{
+    auto const mat = object->get_world_matrix( );
+    auto const _content_size = object->get_content_size( );
+    auto const _anchor_point = object->get_anchor_point( );
+    auto const _position = object->get_position( );
+    auto const _scale = object->get_scale( );
+    auto const _rotation = object->get_rotation( );
+
+    auto obj = mat;
+    obj = translate( obj, _position );
+    //obj = scale( obj, _scale ); ボタンの拡大アクション時にスケールごと当たり判定を起こしたくないので。
+    obj = rotate( obj, _rotation );
+    // obj = translate( obj, -_content_size * _anchor_point ); 円の場合はposがそのまま中心となるので。
+
+    auto const a = vec2( obj[2][0], obj[2][1] );
+
+    return utility::hit_point_circle( point, a, _content_size.x / 2 );
 }
 bool hit_segment( cinder::vec2 s1, cinder::vec2 e1, cinder::vec2 s2, cinder::vec2 e2 )
 {
@@ -136,14 +178,14 @@ cinder::vec2 get_hit_segment_intersection( cinder::vec2 s1, cinder::vec2 e1, cin
 bool hit_quad_quad( cinder::vec2 a1, cinder::vec2 b1, cinder::vec2 c1, cinder::vec2 d1, cinder::vec2 a2, cinder::vec2 b2, cinder::vec2 c2, cinder::vec2 d2 )
 {
     return
-        utility::hit_point_plane_2d( a2, a1, b1, c1, d1 ) || // ここから
-        utility::hit_point_plane_2d( b2, a1, b1, c1, d1 ) || // a側からbの頂点を見て判断をしていきます。
-        utility::hit_point_plane_2d( c2, a1, b1, c1, d1 ) ||
-        utility::hit_point_plane_2d( d2, a1, b1, c1, d1 ) || // ここまで
-        utility::hit_point_plane_2d( a1, a2, b2, c2, d2 ) || // ここから
-        utility::hit_point_plane_2d( b1, a2, b2, c2, d2 ) || // b側からaの頂点を見て判断をしていきます。
-        utility::hit_point_plane_2d( c1, a2, b2, c2, d2 ) ||
-        utility::hit_point_plane_2d( d1, a2, b2, c2, d2 ) || // ここまで
+        utility::hit_point_rect( a2, a1, b1, c1, d1 ) || // ここから
+        utility::hit_point_rect( b2, a1, b1, c1, d1 ) || // a側からbの頂点を見て判断をしていきます。
+        utility::hit_point_rect( c2, a1, b1, c1, d1 ) ||
+        utility::hit_point_rect( d2, a1, b1, c1, d1 ) || // ここまで
+        utility::hit_point_rect( a1, a2, b2, c2, d2 ) || // ここから
+        utility::hit_point_rect( b1, a2, b2, c2, d2 ) || // b側からaの頂点を見て判断をしていきます。
+        utility::hit_point_rect( c1, a2, b2, c2, d2 ) ||
+        utility::hit_point_rect( d1, a2, b2, c2, d2 ) || // ここまで
         utility::hit_segment( d1, a1, c2, d2 ); // それでも当たらないものは 
                                                 //      ┌------┐
                                                 //  ┌---|------|---┐
