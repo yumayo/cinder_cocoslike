@@ -16,7 +16,7 @@ void user_default::save( )
 {
     Json::StyledWriter writer;
     auto data = writer.write( _root );
-    auto dataRef = writeFile( app::getWritablePath( _target_file_name ) );
+    auto dataRef = writeFile( _target_full_path );
     dataRef->getStream( )->writeData( data.c_str( ), data.size( ) );
 }
 user_default* user_default::get_instans( )
@@ -32,15 +32,17 @@ void user_default::remove_instans( )
 }
 user_default::user_default( )
 {
-    if ( !boost::filesystem::exists( app::getWritablePath( _target_file_name ) ) )
+    _target_full_path = app::getAssetDirectories( ).front( ).string( ) + "\\" + _target_file_name;
+
+    if ( !boost::filesystem::exists( _target_full_path ) )
     {
-        std::ofstream output( app::getWritablePath( _target_file_name ) );
+        std::ofstream output( _target_full_path );
         Json::Value root;
         output << Json::StyledWriter( ).write( root );
     }
 
     std::stringstream buffer;
-    buffer << std::ifstream( app::getWritablePath( _target_file_name ) ).rdbuf( ) << std::flush;
+    buffer << std::ifstream( _target_full_path ).rdbuf( ) << std::flush;
 
     Json::Reader reader;
     assert_log( reader.parse( buffer, _root ), "無効なJsonファイルです。", return );

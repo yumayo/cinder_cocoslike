@@ -10,6 +10,7 @@ public:
 private:
     Json::Value _root;
     std::string _target_file_name = "user_default.json";
+    std::string _target_full_path;
 public:
     static user_default* get_instans( );
     static void remove_instans( );
